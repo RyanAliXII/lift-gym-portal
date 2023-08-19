@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -15,6 +16,8 @@ type PackageHandler struct {
 
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	pkgs := h.packageRepo.GetPackages()
+	 i := c.Get("sample")
+	fmt.Println(i)
 	return c.Render(http.StatusOK, "packages/main", Data{
 		"title": "Packages",
 		"module":"Packages",
@@ -24,7 +27,6 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 func (h * PackageHandler) NewPackage (c echo.Context) error {
 	description := c.FormValue("description")
 	price := c.FormValue("price")
-
 	parsedPrice, parseErr := strconv.ParseFloat(price, 64) 
 	if parseErr != nil {
 		return c.Redirect(http.StatusSeeOther, "/packages")
@@ -37,6 +39,7 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 	if newPackageErr != nil {
 		return c.Redirect(http.StatusSeeOther, "/packages")
 	}
+	c.Set("sample", "hello world")
 	return c.Redirect(http.StatusSeeOther, "/packages")
 }
 func NewPackageHandler() PackageHandler {
