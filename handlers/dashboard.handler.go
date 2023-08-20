@@ -11,8 +11,10 @@ type DashboardHandler struct {
 
 }
 func (h *DashboardHandler) RenderDashboardPage(c echo.Context) error{
+
 	return c.Render(http.StatusOK, "dashboard/main", Data{
 		"title": "Dashboard",
+		"module": "Dashboard",
 	} )
 }
 
