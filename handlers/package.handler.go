@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -34,6 +35,7 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 	pkg := model.Package{}
 	bindErr := c.Bind(&pkg)
 	if bindErr != nil  {
+		fmt.Println(bindErr.Error())
 		return c.JSON(http.StatusOK, Data{
 			"status": http.StatusBadRequest,
 			"message": "Unknown error occured.",
@@ -50,9 +52,36 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, Data{
 		"status": http.StatusOK,
-		"message": "New package created.",
+		"message": "Package created.",
 
 	})
+}
+
+func (h  PackageHandler) UpdatePackage(c echo.Context) error {
+	pkg := model.Package{}
+	bindErr := c.Bind(&pkg)
+	if bindErr != nil  {
+		fmt.Println(bindErr.Error())
+		return c.JSON(http.StatusOK, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	updatePackageErr := h.packageRepo.UpdatePackage(pkg)
+	if updatePackageErr != nil {
+		return c.JSON(http.StatusOK, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	return c.JSON(http.StatusOK, Data{
+		"status": http.StatusOK,
+		"message": "Package updated.",
+
+	})
+
 }
 func NewPackageHandler() PackageHandler {
 

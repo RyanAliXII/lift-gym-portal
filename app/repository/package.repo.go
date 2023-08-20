@@ -22,6 +22,15 @@ func (repo * PackageRepository) NewPackage (pkg model.Package) error{
 	}
 	return insertErr
 }
+func (repo * PackageRepository) UpdatePackage (pkg model.Package) error{
+	
+	query := `UPDATE package set description = ?, price = ? where id = ?`
+	_, updateErr := repo.db.Exec(query, pkg.Description, pkg.Price, pkg.Id)
+	if updateErr != nil {
+		fmt.Println("Error inserting data: ", updateErr.Error())
+	}
+	return updateErr
+}
 func (repo * PackageRepository)GetPackages()[]model.Package{
 	pkgs := make([]model.Package, 0)
 	query := `SELECT id, description, price from package`
