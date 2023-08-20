@@ -12,7 +12,7 @@
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
-        <div id="content">
+        <div id="PackagePage">
           {{template "partials/dashboard-topbar"}}
 
           <div class="container-fluid">
@@ -55,7 +55,7 @@
                       <tr>
                         <td>{{$package.Description}}</td>
                         <td>{{$package.Price}}</td>
-                        <td>
+                        <td class="d-flex gap-1">
                           <button class="btn btn-outline-primary">
                             <i class="fas fa-edit"></i>
                           </button>
@@ -96,6 +96,24 @@
     {{template "packages/add-package-modal" .}} {{template
     "partials/dashboard-scripts"}}
   </body>
-  <script></script>
+  <script src="js/vue/vue.global.prod.js"></script>
+  <script>
+    const { createApp, ref } = Vue;
+    createApp({
+      setup() {
+        const message = ref("Hello vue!");
+        const packages = ref([]);
+
+        const fetchPackages = async () => {};
+
+        return {
+          message,
+        };
+      },
+      compilerOptions: {
+        delimiters: ["{", "}"],
+      },
+    }).mount("#PackagePage");
+  </script>
   {{end}}
 </html>
