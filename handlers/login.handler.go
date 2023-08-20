@@ -13,7 +13,6 @@ import (
 )
 
 type LoginHandler struct {
-
 	userRepository  repository.UserRepository
 }
 
