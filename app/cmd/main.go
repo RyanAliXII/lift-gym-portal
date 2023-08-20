@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/gob"
 	"html/template"
 	"io"
 	"io/fs"
 	"lift-fitness-gym/app/db"
+	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/handlers"
 	"os"
 	"path/filepath"
@@ -27,6 +29,7 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 var store *mysqlstore.MySQLStore
 
 func main() {
+	gob.Register(model.User{})
 	godotenv.Load(".env")
 	dbENVS := db.GetConnectionEnvs()
 	sessionSecret := os.Getenv("SESSION_SECRET")

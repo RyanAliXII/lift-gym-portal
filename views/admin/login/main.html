@@ -17,6 +17,13 @@
                   <div class="p-5">
                     <div class="text-center">
                       <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                      <div
+                        class="alert alert-danger"
+                        role="alert"
+                        v-show="message.length > 0"
+                      >
+                        {message}
+                      </div>
                     </div>
                     <form class="user" @submit.prevent="onSubmit">
                       <div class="form-group">
@@ -28,6 +35,7 @@
                           name="email"
                           aria-describedby="emailHelp"
                           placeholder="Enter Email Address..."
+                          required
                         />
                       </div>
                       <div class="form-group">
@@ -37,6 +45,7 @@
                           class="form-control form-control-user"
                           name="password"
                           id="password"
+                          required
                           placeholder="Password"
                         />
                       </div>
@@ -69,8 +78,10 @@
           email: "",
           password: "",
         });
+        message = ref("");
         const onSubmit = async () => {
           try {
+            message.value = "";
             const response = await fetch("/login", {
               body: JSON.stringify(loginForm.value),
               method: "POST",
@@ -78,7 +89,12 @@
                 "content-type": "application/json",
               }),
             });
-            const { data } = await response.json();
+            const data = await response.json();
+            if (response.status === 200) {
+              location.replace("/dashboard");
+            } else {
+              message.value = data?.message ?? "";
+            }
           } catch (error) {
             console.error(error);
           }
@@ -87,6 +103,7 @@
         return {
           loginForm,
           onSubmit,
+          message,
         };
       },
       compilerOptions: {
