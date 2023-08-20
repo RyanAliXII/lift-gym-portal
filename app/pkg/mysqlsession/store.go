@@ -10,7 +10,7 @@ import (
 
 var store * mysqlstore.MySQLStore
 
-var once * sync.Once
+var once sync.Once
 
 func GetMySQLStore() * mysqlstore.MySQLStore{
 	once.Do(func() {
