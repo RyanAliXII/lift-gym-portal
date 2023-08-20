@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
@@ -60,7 +61,15 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		MaxAge:   3600 * 24, // 1 day
 		HttpOnly: true,
 	}
-	s.Values["user"] = dbUser
+	s.Values["data"] = mysqlsession.SessionData{
+		User: mysqlsession.SessionUser{
+			Id: dbUser.Id,
+			GivenName: dbUser.GivenName,
+			MiddleName: dbUser.MiddleName,
+			Surname: dbUser.Surname,
+			Email: dbUser.Email,
+		},
+	}
 	saveErr := s.Save(c.Request(), c.Response())
 	if saveErr != nil {
 		fmt.Println(saveErr)
