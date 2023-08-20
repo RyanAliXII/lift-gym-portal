@@ -9,6 +9,7 @@ func RegisterHandlers(router *echo.Echo) {
 
 	
 	router.GET("/login", loginHandler.RenderLoginPage)
+	router.POST("/login", loginHandler.Login)
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage)
 	router.GET("/packages", packageHandlder.RenderPackagePage)
 	router.POST("/packages", packageHandlder.NewPackage)

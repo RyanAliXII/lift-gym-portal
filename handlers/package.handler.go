@@ -27,7 +27,7 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 
 		})
 	}
-	return c.Render(http.StatusOK, "packages/main", Data{
+	return c.Render(http.StatusOK, "admin/packages/main", Data{
 		"title": "Packages",
 		"module":"Packages",
 	})

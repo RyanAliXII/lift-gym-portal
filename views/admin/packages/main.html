@@ -1,7 +1,7 @@
-{{define "packages/main"}}
+{{define "admin/packages/main"}}
 <!DOCTYPE html>
 <html lang="en">
-  {{template "partials/dashboard-head" .}}
+  {{template "partials/sb-head" .}}
 
   <body id="PackagePage">
     <!-- Page Wrapper -->
@@ -95,10 +95,9 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    {{template "packages/add-package-modal" .}} {{template
-    "packages/edit-package-modal" .}} {{template "partials/dashboard-scripts"}}
+    {{template "admin/packages/add-package-modal" .}} {{template
+    "admin/packages/edit-package-modal" .}} {{template "partials/sb-scripts"}}
   </body>
-  <script src="js/vue/vue.global.prod.js"></script>
   <script>
     const { createApp, ref, onMounted } = Vue;
     createApp({

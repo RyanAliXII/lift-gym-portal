@@ -14,17 +14,21 @@ var db * sqlx.DB
 
 var once sync.Once
 
+
+type ConnectionEnvs struct {
+	Name string
+	User string
+	Port string
+	Password string
+	Host string
+	DSN string
+}
+
 func GetConnection () * sqlx.DB{
-	name := os.Getenv("DB_NAME")
-	user := os.Getenv("DB_USER")
-	port := os.Getenv("DB_PORT")
-	password := os.Getenv("DB_PASSWORD")	
-	host := os.Getenv("DB_HOST")
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",user, password, host, port, name)
-	fmt.Println(dsn)
+	envs := GetConnectionEnvs()
 	var err error
 	once.Do(func() {
-		db, err = sqlx.Open("mysql", dsn)
+		db, err = sqlx.Open("mysql", envs.DSN)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -36,4 +40,21 @@ func GetConnection () * sqlx.DB{
 	})
 
 	return db
+}
+
+func GetConnectionEnvs()ConnectionEnvs{
+	var name = os.Getenv("DB_NAME")
+	var user = os.Getenv("DB_USER")
+	var port = os.Getenv("DB_PORT")
+	var password = os.Getenv("DB_PASSWORD")	
+	var	host = os.Getenv("DB_HOST")
+	var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&loc=Local",user, password, host, port, name)
+	return  ConnectionEnvs{
+		Name: name,
+		User: user,
+		Port: port,
+		Password: password,
+		Host: host,
+		DSN: dsn,
+	}
 }
