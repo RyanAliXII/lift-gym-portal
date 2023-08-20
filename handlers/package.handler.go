@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -16,12 +15,21 @@ type PackageHandler struct {
 
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	pkgs := h.packageRepo.GetPackages()
-	 i := c.Get("sample")
-	fmt.Println(i)
+	
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		return c.JSON(http.StatusOK,  Data{
+			"status": http.StatusOK,
+			"data": Data{
+				"packages": pkgs,
+			},
+			"message": "packages fetched successfully.",
+
+		})
+	}
 	return c.Render(http.StatusOK, "packages/main", Data{
 		"title": "Packages",
 		"module":"Packages",
-		"packages": pkgs,
 	})
 }
 func (h * PackageHandler) NewPackage (c echo.Context) error {

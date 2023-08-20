@@ -51,21 +51,20 @@
                     </thead>
 
                     <tbody>
-                      {{ range $index, $package := .packages}}
-                      <tr>
-                        <td>{{$package.Description}}</td>
-                        <td>{{$package.Price}}</td>
-                        <td class="d-flex gap-1">
-                          <button class="btn btn-outline-primary">
-                            <i class="fas fa-edit"></i>
-                          </button>
-                          <button class="btn btn-outline-danger">
-                            <i class="fas fa-trash"></i>
-                          </button>
+                      <tr v-for="package in packages">
+                        <td>{package.description}</td>
+                        <td>{package.price}</td>
+                        <td>
+                          <div>
+                            <button class="btn btn-outline-primary">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-danger">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
-
-                      {{end}}
                     </tbody>
                   </table>
                 </div>
@@ -98,16 +97,35 @@
   </body>
   <script src="js/vue/vue.global.prod.js"></script>
   <script>
-    const { createApp, ref } = Vue;
+    const { createApp, ref, onMounted } = Vue;
     createApp({
       setup() {
-        const message = ref("Hello vue!");
         const packages = ref([]);
+        const addPackageForm = ref({
+          price: 0,
+          description: "",
+        });
 
-        const fetchPackages = async () => {};
+        const fetchPackages = async () => {
+          try {
+            const response = await fetch("/packages", {
+              headers: new Headers({ "content-type": "application/json" }),
+            });
+            const { data } = await response.json();
+            if (response.status === 200) {
+              packages.value = data?.packages ?? [];
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        };
 
+        onMounted(() => {
+          fetchPackages();
+        });
         return {
-          message,
+          packages,
+          addPackageForm,
         };
       },
       compilerOptions: {
