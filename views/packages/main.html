@@ -56,7 +56,10 @@
                         <td>{package.price}</td>
                         <td>
                           <div class="d-flex" style="gap: 5px">
-                            <button class="btn btn-outline-primary">
+                            <button
+                              class="btn btn-outline-primary"
+                              @click="initializeEditForm(package)"
+                            >
                               <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-outline-danger">
@@ -93,7 +96,7 @@
       <i class="fas fa-angle-up"></i>
     </a>
     {{template "packages/add-package-modal" .}} {{template
-    "partials/dashboard-scripts"}}
+    "packages/edit-package-modal" .}} {{template "partials/dashboard-scripts"}}
   </body>
   <script src="js/vue/vue.global.prod.js"></script>
   <script>
@@ -102,6 +105,11 @@
       setup() {
         const packages = ref([]);
         const addPackageForm = ref({
+          price: 0,
+          description: "",
+        });
+        const editPackageForm = ref({
+          id: 0,
           price: 0,
           description: "",
         });
@@ -120,6 +128,11 @@
             console.error(err);
           }
         };
+
+        const initializeEditForm = (package) => {
+          editPackageForm.value = { ...package };
+          $("#editPackageModal").modal("show");
+        };
         const onSubmitNewPackage = async () => {
           try {
             $("#addPackageModal").modal("hide");
@@ -132,7 +145,7 @@
               fetchPackages();
               Swal.fire(
                 "New Package",
-                "New Package has been successfully created.",
+                "Package has been successfully created.",
                 "success"
               );
             }
@@ -140,7 +153,29 @@
             console.error(err);
           }
         };
-        const onUpdateNewPackage = async () => {};
+        const onSubmitUpdatePackage = async () => {
+          try {
+            $("#editPackageModal").modal("hide");
+            const response = await fetch(
+              `/packages/${editPackageForm?.value.id}`,
+              {
+                headers: new Headers({ "content-type": "application/json" }),
+                method: "PUT",
+                body: JSON.stringify(editPackageForm.value),
+              }
+            );
+            if (response.status === 200) {
+              fetchPackages();
+              Swal.fire(
+                "Update Package",
+                "Package has been successfully updated.",
+                "success"
+              );
+            }
+          } catch {
+            console.error(err);
+          }
+        };
 
         onMounted(() => {
           fetchPackages();
@@ -148,7 +183,10 @@
         return {
           packages,
           addPackageForm,
+          editPackageForm,
+          onSubmitUpdatePackage,
           onSubmitNewPackage,
+          initializeEditForm,
         };
       },
       compilerOptions: {

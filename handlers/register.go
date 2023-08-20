@@ -12,5 +12,5 @@ func RegisterHandlers(router *echo.Echo) {
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage)
 	router.GET("/packages", packageHandlder.RenderPackagePage)
 	router.POST("/packages", packageHandlder.NewPackage)
-	router.PUT("/packages", packageHandlder.UpdatePackage)
+	router.PUT("/packages/:id", packageHandlder.UpdatePackage)
 }

@@ -33,7 +33,7 @@ func (repo * PackageRepository) UpdatePackage (pkg model.Package) error{
 }
 func (repo * PackageRepository)GetPackages()[]model.Package{
 	pkgs := make([]model.Package, 0)
-	query := `SELECT id, description, price from package`
+	query := `SELECT id, description, price from package ORDER by updated_at DESC`
 	selectErr := repo.db.Select(&pkgs, query)
 	if selectErr != nil {
 		fmt.Println("Error selecting data: ", selectErr.Error())

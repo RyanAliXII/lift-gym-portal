@@ -5,6 +5,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -36,7 +37,7 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 	bindErr := c.Bind(&pkg)
 	if bindErr != nil  {
 		fmt.Println(bindErr.Error())
-		return c.JSON(http.StatusOK, Data{
+		return c.JSON(http.StatusBadRequest, Data{
 			"status": http.StatusBadRequest,
 			"message": "Unknown error occured.",
 
@@ -44,7 +45,7 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 	}
 	newPackageErr := h.packageRepo.NewPackage(pkg)
 	if newPackageErr != nil {
-		return c.JSON(http.StatusOK, Data{
+		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 			"message": "Unknown error occured.",
 
@@ -58,11 +59,22 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 }
 
 func (h  PackageHandler) UpdatePackage(c echo.Context) error {
+
+	
+	id, convErr :=  strconv.Atoi(c.Param("id"))
 	pkg := model.Package{}
 	bindErr := c.Bind(&pkg)
 	if bindErr != nil  {
 		fmt.Println(bindErr.Error())
-		return c.JSON(http.StatusOK, Data{
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	if convErr != nil || pkg.Id != id {
+		fmt.Println("Conversion error")
+		return c.JSON(http.StatusBadRequest, Data{
 			"status": http.StatusBadRequest,
 			"message": "Unknown error occured.",
 
@@ -70,7 +82,7 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 	}
 	updatePackageErr := h.packageRepo.UpdatePackage(pkg)
 	if updatePackageErr != nil {
-		return c.JSON(http.StatusOK, Data{
+		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 			"message": "Unknown error occured.",
 
@@ -84,7 +96,6 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 
 }
 func NewPackageHandler() PackageHandler {
-
 	return PackageHandler{
 		packageRepo: repository.NewPackageRepository(),
 	}

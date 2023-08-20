@@ -1,17 +1,17 @@
-{{define "packages/add-package-modal"}}
+{{define "packages/edit-package-modal"}}
 
 <div
   class="modal fade"
-  id="addPackageModal"
+  id="editPackageModal"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="addPackageModal"
+  aria-labelledby="editPackageModal"
   aria-hidden="true"
 >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">New Package</h5>
+        <h5 class="modal-title">Edit Package</h5>
         <button
           type="button"
           class="close"
@@ -22,13 +22,13 @@
         </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="onSubmitNewPackage">
+        <form @submit.prevent="onSubmitUpdatePackage">
           <div class="form-group">
             <label for="description" class="col-form-label">Description</label>
             <textarea
               class="form-control"
               name="description"
-              v-model="addPackageForm.description"
+              v-model="editPackageForm.description"
             ></textarea>
           </div>
           <div class="form-group">
@@ -38,7 +38,7 @@
               class="form-control"
               name="price"
               step=".01"
-              v-model="addPackageForm.price"
+              v-model="editPackageForm.price"
             />
           </div>
 
@@ -51,7 +51,7 @@
               Close
             </button>
             <button type="submit" class="btn btn-primary">
-              Create Package
+              Update Package
             </button>
           </div>
         </form>
