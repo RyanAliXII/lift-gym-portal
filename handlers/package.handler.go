@@ -4,7 +4,6 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,7 +14,6 @@ type PackageHandler struct {
 
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	pkgs := h.packageRepo.GetPackages()
-	
 	contentType := c.Request().Header.Get("Content-Type")
 	if contentType == "application/json" {
 		return c.JSON(http.StatusOK,  Data{
@@ -33,22 +31,28 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	})
 }
 func (h * PackageHandler) NewPackage (c echo.Context) error {
-	description := c.FormValue("description")
-	price := c.FormValue("price")
-	parsedPrice, parseErr := strconv.ParseFloat(price, 64) 
-	if parseErr != nil {
-		return c.Redirect(http.StatusSeeOther, "/packages")
-	}
-	pkg := model.Package{
-		Description: description,
-		Price: parsedPrice,
+	pkg := model.Package{}
+	bindErr := c.Bind(&pkg)
+	if bindErr != nil  {
+		return c.JSON(http.StatusOK, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+
+		})
 	}
 	newPackageErr := h.packageRepo.NewPackage(pkg)
 	if newPackageErr != nil {
-		return c.Redirect(http.StatusSeeOther, "/packages")
+		return c.JSON(http.StatusOK, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
 	}
-	c.Set("sample", "hello world")
-	return c.Redirect(http.StatusSeeOther, "/packages")
+	return c.JSON(http.StatusOK, Data{
+		"status": http.StatusOK,
+		"message": "New package created.",
+
+	})
 }
 func NewPackageHandler() PackageHandler {
 
