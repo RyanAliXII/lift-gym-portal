@@ -1,6 +1,6 @@
-package http
+package mysqlsession
 
-type Session struct {
+type SessionData struct {
 	User struct {
 		Id         int    `json:"id" db:"id"`
 		GivenName  string `json:"givenName" db:"given_name"`
