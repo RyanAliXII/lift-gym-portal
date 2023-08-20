@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginHandler struct {
@@ -31,14 +31,21 @@ func (h * LoginHandler) Login (c echo.Context) error {
 			"message": "Invalid username or password.",
 		})
 	}
-	fetchedUser, getUserErr  := h.userRepository.GetUserByEmail(user.Email)
+	dbUser, getUserErr  := h.userRepository.GetUserByEmail(user.Email)
 	if getUserErr != nil {
 		return c.JSON(http.StatusBadRequest, Data{
 			"status": http.StatusBadRequest,
 		   "message": "Invalid username or password.",
 	   })
 	}
-	fmt.Println(fetchedUser)
+	
+	comparePassErr := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	if comparePassErr != nil {
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+		   "message": "Invalid username or password.",
+	   })
+	}
 	return c.JSON(http.StatusOK, Data{
 		"status": http.StatusOK,
 	   "message": "Success.",
