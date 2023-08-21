@@ -211,7 +211,7 @@
 
               const { data } = await response.json();
               if (data?.errors && response.status >= 400) {
-                fieldErrors.value = { ...data?.errors };
+                fieldErrors.value = { ...initialFieldErrors, ...data?.errors };
               }
               if (response.status === 200) {
                 registrationForm.value = { ...initialForm };
