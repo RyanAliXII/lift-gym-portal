@@ -20,9 +20,9 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	csrf := c.Get("csrf")
 	if contentType == "application/json" {
 		pkgs, getPkgsErr := h.packageRepo.GetPackages()
-	if getPkgsErr != nil {
-		logger.Error(getPkgsErr.Error(), zap.String("error", "getPkgsErr"))
-	}
+		if getPkgsErr != nil {
+			logger.Error(getPkgsErr.Error(), zap.String("error", "getPkgsErr"))
+		}
 		return c.JSON(http.StatusOK,  Data{
 			"status": http.StatusOK,
 			"data": Data{
@@ -34,7 +34,6 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	}
 	return c.Render(http.StatusOK, "admin/packages/main", Data{
 		"title": "Packages",
-		
 		"csrf": csrf,
 	})
 }
