@@ -42,7 +42,6 @@ func (h *ClientHandler) NewClient(c echo.Context) error {
 		})
 	}
 	validateErr, fieldErrs := client.Validate()
-
 	if validateErr != nil {
 		logger.Error(validateErr.Error(), zap.String("error", "validateErr"))
 		return c.JSON(http.StatusBadRequest, Data{

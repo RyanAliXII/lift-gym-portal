@@ -36,7 +36,15 @@ func (repo *ClientRepository) New(client model.Client)(error) {
 		transaction.Commit()
 		return nil
 }
+func (repo *ClientRepository) GetClientByEmail(email string) (model.Client, error) {
+	client := model.Client{}
+	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.emergency_contact,client.mobile_number, account.email from client
+		INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1`
+	
+	getErr := repo.db.Get(&client, getQuery, email)
+	return client, getErr 
 
+}
 func NewClientRepository () ClientRepository{
 	return ClientRepository{
 		db: db.GetConnection(),

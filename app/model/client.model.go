@@ -19,41 +19,30 @@ type Client struct {
 	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
+	Model
 }
-
 func (m Client) Validate() (error, map[string]string) {
-
-	fieldErrs := make(map[string]string)
-	validationErrs :=  validation.ValidateStruct(&m, 
-	validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
-	validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)) ,
-	validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
-	validation.Field(&m.Address, validation.Required),
-	validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email),	
-	validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
-		p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
-		isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
-		if !isValid {
-			return fmt.Errorf("invalid number")
-		}
-		return nil
-	})), 
+	return m.Model.ValidationRules(&m, 
+		validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
+		validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)),
+		validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
+		validation.Field(&m.Address, validation.Required),
+		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email),	
+	    validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("invalid number")
+			}
+			return nil
+	 })), 
 	validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
 		p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
 		isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
 		if !isValid {
 			return fmt.Errorf("invalid number")
 		}
-		return nil	
-	})),)
+		return nil})))
 	
-	if validationErrs != nil  {
-		for k, validationErr := range validationErrs.(validation.Errors) {
-			fieldErrs[k] = validationErr.Error()
-		}
-
-	}
-
 	
-	return validationErrs, fieldErrs
 }
