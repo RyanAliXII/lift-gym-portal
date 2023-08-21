@@ -1,6 +1,10 @@
 package handlers
 
-import "github.com/labstack/echo/v4"
+import (
+	"lift-fitness-gym/app/http/middlewares"
+
+	"github.com/labstack/echo/v4"
+)
 
 func RegisterHandlers(router *echo.Echo) {
 	loginHandler := NewLoginHandler()
@@ -10,7 +14,7 @@ func RegisterHandlers(router *echo.Echo) {
 	
 	router.GET("/login", loginHandler.RenderLoginPage)
 	router.POST("/login", loginHandler.Login)
-	router.GET("/dashboard", dashboardHandler.RenderDashboardPage)
+	router.GET("/dashboard", dashboardHandler.RenderDashboardPage, middlewares.AuthMiddleware)
 	router.GET("/packages", packageHandlder.RenderPackagePage)
 	router.POST("/packages", packageHandlder.NewPackage)
 	router.PUT("/packages/:id", packageHandlder.UpdatePackage)

@@ -1,18 +1,18 @@
 package main
 
 import (
+	"encoding/gob"
 	"html/template"
 	"io"
 	"io/fs"
 	"lift-fitness-gym/app/db"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/handlers"
-	"os"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	"github.com/srinathgs/mysqlstore"
 )
 
 
@@ -24,16 +24,11 @@ type TemplateRegistry struct {
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
-var store *mysqlstore.MySQLStore
 
 func main() {
+	gob.Register(mysqlsession.SessionData{})
 	godotenv.Load(".env")
-	dbENVS := db.GetConnectionEnvs()
-	sessionSecret := os.Getenv("SESSION_SECRET")
-	store, storeErr := mysqlstore.NewMySQLStore(dbENVS.DSN, "session", "/", 3600 * 24, []byte(sessionSecret))
-	if storeErr != nil {
-		panic(storeErr.Error())
-	}
+	store := mysqlsession.GetMySQLStore()
 	db.GetConnection()
 	db.CreateRootAccount()
 	e := echo.New()
