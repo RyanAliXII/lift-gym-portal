@@ -1,5 +1,13 @@
 package model
 
+import (
+	"fmt"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+	"github.com/nyaruka/phonenumbers"
+)
+
 type Client struct {
 	Id               int    `json:"id" db:"id"`
 	GivenName        string `json:"givenName" db:"given_name"`
@@ -13,8 +21,39 @@ type Client struct {
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
 }
 
-func (m Client) Validate() error {
-	// return validation.ValidateStruct(&m, validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
-	// validation.Field(&m.l, validation.Required, validation.Length(1, 255),)
-	return nil
+func (m Client) Validate() (error, map[string]string) {
+
+	fieldErrs := make(map[string]string)
+	validationErrs :=  validation.ValidateStruct(&m, 
+	validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
+	validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)) ,
+	validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
+	validation.Field(&m.Address, validation.Required),
+	validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email),	
+	validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
+		p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
+		isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+		if !isValid {
+			return fmt.Errorf("invalid number")
+		}
+		return nil
+	})), 
+	validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
+		p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
+		isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+		if !isValid {
+			return fmt.Errorf("invalid number")
+		}
+		return nil	
+	})),)
+	
+	if validationErrs != nil  {
+		for k, validationErr := range validationErrs.(validation.Errors) {
+			fieldErrs[k] = validationErr.Error()
+		}
+
+	}
+
+	
+	return validationErrs, fieldErrs
 }

@@ -31,11 +31,14 @@
                     >
                     <input
                       class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.givenName.length > 0 }"
                       name="givenName"
                       type="text"
-                      required
                       v-model="registrationForm.givenName"
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.givenName}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="middleName" class="col-form-label"
@@ -43,22 +46,28 @@
                     >
                     <input
                       class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.middleName.length > 0 }"
                       name="middleName"
                       v-model="registrationForm.middleName"
                       type="text"
-                      required
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.middleName}
+                    </div>
                   </div>
 
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="surname" class="col-form-label">Surname</label>
                     <input
                       class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.surname.length > 0 }"
                       name="surname"
                       v-model="registrationForm.surname"
                       type="text"
-                      required
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.surname}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="dateOfBirth" class="col-form-label"
@@ -69,7 +78,6 @@
                       name="dateOfBirth"
                       v-model="registrationForm.dateOfBirth"
                       type="date"
-                      required
                     />
                   </div>
                 </div>
@@ -79,8 +87,12 @@
                   >
                   <textarea
                     class="form-control"
+                    :class="{'is-invalid' : fieldErrors?.address.length > 0 }"
                     v-model="registrationForm.address"
                   ></textarea>
+                  <div class="invalid-feedback d-block">
+                    {fieldErrors?.surname}
+                  </div>
                 </div>
                 <div
                   class="w-100 bg-gray-300 d-flex align-items-center"
@@ -94,10 +106,13 @@
                     <input
                       class="form-control"
                       name="email"
-                      type="text"
+                      :class="{'is-invalid' : fieldErrors?.email.length > 0 }"
+                      type="email"
                       v-model="registrationForm.email"
-                      required
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.email}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="mobile" class="col-form-label"
@@ -106,10 +121,13 @@
                     <input
                       class="form-control"
                       name="mobileNumber"
+                      :class="{'is-invalid' : fieldErrors?.mobileNumber.length > 0 }"
                       v-model="registrationForm.mobileNumber"
                       type="text"
-                      required
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.mobileNumber}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="emergencyContact" class="col-form-label"
@@ -118,10 +136,13 @@
                     <input
                       class="form-control"
                       name="emergencyContact"
+                      :class="{'is-invalid' : fieldErrors?.emergencyContact.length > 0 }"
                       v-model="registrationForm.emergencyContact"
                       type="text"
-                      required
                     />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.emergencyContact}
+                    </div>
                   </div>
                 </div>
                 <button class="btn btn-primary">Submit</button>
@@ -155,7 +176,7 @@
       const { createApp, ref, onMounted } = Vue;
       createApp({
         setup() {
-          const registrationForm = ref({
+          const initialForm = {
             givenName: "",
             middleName: "",
             surname: "",
@@ -164,7 +185,19 @@
             email: "",
             mobileNumber: "",
             emergencyContact: "",
-          });
+          };
+          const initialFieldErrors = {
+            givenName: "",
+            middleName: "",
+            surname: "",
+            dateOfBirth: "",
+            address: "",
+            email: "",
+            mobileNumber: "",
+            emergencyContact: "",
+          };
+          const registrationForm = ref({ ...initialForm });
+          const fieldErrors = ref({ ...initialFieldErrors });
           const onSubmit = async () => {
             try {
               console.log();
@@ -176,6 +209,15 @@
                   "X-CSRF-Token": csrf,
                 }),
               });
+
+              const { data } = await response.json();
+              if (data?.errors && response.status >= 400) {
+                fieldErrors.value = { ...fieldErrors.value, ...data?.errors };
+              }
+              if (response.status === 200) {
+                registrationForm.value = { ...initialForm };
+                fieldErrors.value = { ...initialFieldErrors };
+              }
             } catch (error) {
               console.error(error);
             }
@@ -184,6 +226,7 @@
           return {
             onSubmit,
             registrationForm,
+            fieldErrors,
           };
         },
         compilerOptions: {

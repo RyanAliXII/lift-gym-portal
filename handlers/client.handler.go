@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -42,13 +41,26 @@ func (h *ClientHandler) NewClient(c echo.Context) error {
 
 		})
 	}
+	validateErr, fieldErrs := client.Validate()
+
+	if validateErr != nil {
+		logger.Error(validateErr.Error(), zap.String("error", "validateErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Validation error.",
+			"data" : Data{
+				"errors" : fieldErrs,
+			},
+
+		})
+	}
 	diceware := &acopw.Diceware{
 		Separator: "-",
 		Length: 2,
 		Capitalize: true,
 	}
 	generatedPassword,generateErr  := diceware.Generate()
-	fmt.Println(generatedPassword)
+
 	if generateErr != nil {
 		logger.Error(generateErr.Error(), zap.String("error", "generateErr"))
 		return c.JSON(http.StatusInternalServerError, Data{

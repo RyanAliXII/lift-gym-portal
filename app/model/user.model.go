@@ -9,8 +9,8 @@ type User struct {
 	Password   string `json:"password" db:"password"`
 }
 
-func (m * User) Validate ()	error {
-
+func (m  User) Validate ()	error {
+	
 	return nil
 
 }
