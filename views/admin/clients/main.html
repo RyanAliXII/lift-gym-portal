@@ -1,7 +1,7 @@
 {{define "admin/clients/main"}}
 <!DOCTYPE html>
 <html lang="en">
-  {{template "partials/sb-head"}}
+  {{template "partials/sb-head" .}}
   <body id="PackagePage">
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -17,14 +17,10 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
-              <button
-                class="btn btn-primary"
-                data-toggle="modal"
-                data-target="#newClientModal"
-              >
+              <a class="btn btn-primary" href="/clients/registration">
                 <i class="fas fa-plus"></i>
                 New Client
-              </button>
+              </a>
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -94,8 +90,7 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    {{template "admin/member/add-member-modal" .}} {{template
-    "admin/packages/edit-package-modal" .}} {{template "partials/sb-scripts"}}
+    {{template "partials/sb-scripts" .}}
   </body>
 </html>
 {{end}}

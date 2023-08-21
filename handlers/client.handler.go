@@ -8,10 +8,16 @@ import (
 
 type ClientHandler struct {
 }
-func (h * ClientHandler) RenderMemberHandler(c echo.Context) error {
+func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin/clients/main", Data{
 		"title": "Clients",
 		"module": "Clients",
+	})
+}
+func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
+	return c.Render(http.StatusOK, "admin/clients/register-client", Data{
+		"title": "Client | Registration ",
+		"module": "Registration Form",
 	})
 }
 
