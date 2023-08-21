@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"lift-fitness-gym/app/pkg/applog"
 	"log"
 	"os"
 	"sync"
@@ -14,6 +15,8 @@ var db * sqlx.DB
 
 var once sync.Once
 
+
+var logger = applog.Get()
 
 type ConnectionEnvs struct {
 	Name string
