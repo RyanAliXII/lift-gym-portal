@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -37,21 +36,18 @@ func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
 func (h * ClientHandler)RenderClientUpdatePage(c echo.Context) error{
 	csrf := c.Get("csrf")
 	id := c.Param("id")
-	clientId, convErr := strconv.Atoi(id)
-	if convErr != nil {
-		return c.JSON(http.StatusNotFound, Data{})
-	}
+	clientId, _ := strconv.Atoi(id)
+	
 	client, getClientErr := h.clientRepo.GetClientById(clientId)
 	if getClientErr != nil {
 		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
-		return c.JSON(http.StatusNotFound, Data{})
 	}
-	fmt.Println(client)
 	return c.Render(http.StatusOK, "admin/clients/update-client", Data{
 		"title": "Client | Update Profile ",
 		"module": "Client Profile",
 		"csrf" : csrf,
 		"client": client,
+		"isClientExist":  client.Id > 0,
 	})
 	
 }
