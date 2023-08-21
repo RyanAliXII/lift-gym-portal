@@ -28,7 +28,6 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc{
 		return next(c)
 	}
 }
-
 func handleResponse(c echo.Context) error{
 	contentType := c.Request().Header.Get("content-type")
 	contentTypeWithJSONResponse := []string{"application/x-www-form-urlencoded,application/json"}

@@ -13,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 
@@ -33,10 +34,12 @@ func main() {
 	db.CreateRootAccount()
 	e := echo.New()
 	e.Use(session.Middleware(store))
+	e.Use(middleware.CSRF())
 	e.Static("/", "/assets")
 	e.Renderer = &TemplateRegistry{
 		templates: loadTemplates("./views"),
 	}
+	
 	handlers.RegisterHandlers(e)
 	e.Logger.Fatal(	e.Start(":5000"))
 

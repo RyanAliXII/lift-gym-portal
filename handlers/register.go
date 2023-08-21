@@ -8,9 +8,6 @@ import (
 
 func RegisterHandlers(router *echo.Echo) {
 	loginHandler := NewLoginHandler()
-
-
-	
 	router.GET("/login", loginHandler.RenderLoginPage)
 	router.POST("/login", loginHandler.Login)
 	adminRoutes(router.Group(""))
