@@ -48,14 +48,14 @@ func (m Client) Validate() (error, map[string]string) {
 				return fmt.Errorf("invalid number")
 			}
 			return nil
-	 })), 
-	validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
-		p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
-		isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
-		if !isValid {
-			return fmt.Errorf("invalid number")
-		}
-		return nil})))
-	
+		 })), 
+		validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("invalid number")
+			}
+			return nil})))
+		
 	
 }

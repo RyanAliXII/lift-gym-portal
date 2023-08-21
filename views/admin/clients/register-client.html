@@ -210,12 +210,17 @@
               });
 
               const { data } = await response.json();
-              if (data?.errors && response.status >= 400) {
-                fieldErrors.value = { ...initialFieldErrors, ...data?.errors };
-              }
               if (response.status === 200) {
                 registrationForm.value = { ...initialForm };
                 fieldErrors.value = { ...initialFieldErrors };
+                Swal.fire(
+                  "Client Registered",
+                  `Client has been registered. <br> The password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
+                  "success"
+                );
+              }
+              if (data?.errors && response.status >= 400) {
+                fieldErrors.value = { ...initialFieldErrors, ...data?.errors };
               }
             } catch (error) {
               console.error(error);
