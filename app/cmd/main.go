@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/fs"
 	"lift-fitness-gym/app/db"
+	"lift-fitness-gym/app/http/middlewares"
+	"lift-fitness-gym/app/pkg/applog"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/handlers"
 	"path/filepath"
@@ -33,16 +35,18 @@ func main() {
 	db.GetConnection()
 	db.CreateRootAccount()
 	e := echo.New()
+	logger := applog.Get()
+	defer logger.Sync()
+	e.Use(middlewares.LoggerMiddleware)
 	e.Use(session.Middleware(store))
 	e.Use(middleware.CSRF())
 	e.Static("/", "/assets")
 	e.Renderer = &TemplateRegistry{
 		templates: loadTemplates("./views"),
 	}
-	
 	handlers.RegisterHandlers(e)
 	e.Logger.Fatal(	e.Start(":5000"))
-
+	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}
