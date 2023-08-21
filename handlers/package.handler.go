@@ -15,13 +15,14 @@ type PackageHandler struct {
 }
 
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
-	pkgs, getPkgsErr := h.packageRepo.GetPackages()
-	if getPkgsErr != nil {
-		logger.Error(getPkgsErr.Error(), zap.String("error", "getPkgsErr"))
-	}
+	
 	contentType := c.Request().Header.Get("Content-Type")
 	csrf := c.Get("csrf")
 	if contentType == "application/json" {
+		pkgs, getPkgsErr := h.packageRepo.GetPackages()
+	if getPkgsErr != nil {
+		logger.Error(getPkgsErr.Error(), zap.String("error", "getPkgsErr"))
+	}
 		return c.JSON(http.StatusOK,  Data{
 			"status": http.StatusOK,
 			"data": Data{
@@ -33,7 +34,7 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	}
 	return c.Render(http.StatusOK, "admin/packages/main", Data{
 		"title": "Packages",
-		"module":"Packages",
+		
 		"csrf": csrf,
 	})
 }

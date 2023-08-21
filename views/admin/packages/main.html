@@ -144,7 +144,7 @@
                 "X-CSRF-Token": csrf,
               }),
               method: "POST",
-              body: JSON.stringify(addPackageForm.value),
+              body: JSON.stringify(""),
             });
             if (response.status === 200) {
               fetchPackages();
