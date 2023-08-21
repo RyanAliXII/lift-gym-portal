@@ -1,0 +1,243 @@
+{{define "admin/clients/update-client"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+  <body id="ClientRegistrationPage">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div>
+          {{template "partials/dashboard-topbar"}}
+
+          <div class="container-fluid">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="card shadow mb-4 p-3">
+              <form @submit.prevent="onSubmit">
+                <div
+                  class="w-100 bg-gray-300 d-flex align-items-center"
+                  style="height: 40px"
+                >
+                  <span class="ml-2">General Information</span>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="givenName" class="col-form-label"
+                      >Given name</label
+                    >
+                    <input
+                      class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.givenName.length > 0 }"
+                      name="givenName"
+                      type="text"
+                      v-model="registrationForm.givenName"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.givenName}
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="middleName" class="col-form-label"
+                      >Middle name</label
+                    >
+                    <input
+                      class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.middleName.length > 0 }"
+                      name="middleName"
+                      v-model="registrationForm.middleName"
+                      type="text"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.middleName}
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="surname" class="col-form-label">Surname</label>
+                    <input
+                      class="form-control"
+                      :class="{'is-invalid' : fieldErrors?.surname.length > 0 }"
+                      name="surname"
+                      v-model="registrationForm.surname"
+                      type="text"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.surname}
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="dateOfBirth" class="col-form-label"
+                      >Date of birth</label
+                    >
+                    <input
+                      class="form-control"
+                      name="dateOfBirth"
+                      v-model="registrationForm.dateOfBirth"
+                      type="date"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="dateOfBirth" class="col-form-label"
+                    >Address</label
+                  >
+                  <textarea
+                    class="form-control"
+                    :class="{'is-invalid' : fieldErrors?.address.length > 0 }"
+                    v-model="registrationForm.address"
+                  ></textarea>
+                  <div class="invalid-feedback d-block">
+                    {fieldErrors?.surname}
+                  </div>
+                </div>
+                <div
+                  class="w-100 bg-gray-300 d-flex align-items-center"
+                  style="height: 40px"
+                >
+                  <span class="ml-2">Account and Contact Information</span>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="email" class="col-form-label">Email</label>
+                    <input
+                      class="form-control"
+                      name="email"
+                      :class="{'is-invalid' : fieldErrors?.email.length > 0 }"
+                      type="email"
+                      v-model="registrationForm.email"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.email}
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="mobile" class="col-form-label"
+                      >Mobile Number</label
+                    >
+                    <input
+                      class="form-control"
+                      name="mobileNumber"
+                      :class="{'is-invalid' : fieldErrors?.mobileNumber.length > 0 }"
+                      v-model="registrationForm.mobileNumber"
+                      type="text"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.mobileNumber}
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="emergencyContact" class="col-form-label"
+                      >Emergency Contact Number</label
+                    >
+                    <input
+                      class="form-control"
+                      name="emergencyContact"
+                      :class="{'is-invalid' : fieldErrors?.emergencyContact.length > 0 }"
+                      v-model="registrationForm.emergencyContact"
+                      type="text"
+                    />
+                    <div class="invalid-feedback d-block">
+                      {fieldErrors?.emergencyContact}
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2021</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    {{template "partials/sb-scripts" .}}
+    <script>
+      const csrf = "{{.csrf}}";
+      const { createApp, ref, onMounted } = Vue;
+      createApp({
+        setup() {
+          const initialForm = {
+            givenName: "",
+            middleName: "",
+            surname: "",
+            dateOfBirth: "",
+            address: "",
+            email: "",
+            mobileNumber: "",
+            emergencyContact: "",
+          };
+          const initialFieldErrors = {
+            givenName: "",
+            middleName: "",
+            surname: "",
+            dateOfBirth: "",
+            address: "",
+            email: "",
+            mobileNumber: "",
+            emergencyContact: "",
+          };
+          const registrationForm = ref({ ...initialForm });
+          const fieldErrors = ref({ ...initialFieldErrors });
+          const onSubmit = async () => {
+            try {
+              const response = await fetch("/clients", {
+                body: JSON.stringify(registrationForm.value),
+                method: "POST",
+                headers: new Headers({
+                  "content-type": "application/json",
+                  "X-CSRF-Token": csrf,
+                }),
+              });
+
+              const { data } = await response.json();
+              if (response.status === 200) {
+                registrationForm.value = { ...initialForm };
+                fieldErrors.value = { ...initialFieldErrors };
+                Swal.fire(
+                  "Client Registered",
+                  `Client has been registered. <br> The password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
+                  "success"
+                );
+              }
+              if (data?.errors && response.status >= 400) {
+                fieldErrors.value = { ...initialFieldErrors, ...data?.errors };
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          };
+
+          return {
+            onSubmit,
+            registrationForm,
+            fieldErrors,
+          };
+        },
+        compilerOptions: {
+          delimiters: ["{", "}"],
+        },
+      }).mount("#ClientRegistrationPage");
+    </script>
+  </body>
+</html>
+{{end}}

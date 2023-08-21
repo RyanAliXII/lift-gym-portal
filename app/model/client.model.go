@@ -19,6 +19,7 @@ type Client struct {
 	Address          string `json:"address" db:"address"`
 	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
+	AccountId 		 string `json:"accountId" db:"account_id"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
 	Model
 }

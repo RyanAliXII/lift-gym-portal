@@ -42,7 +42,14 @@ func (repo *ClientRepository) GetClientByEmail(email string) (model.Client, erro
 		INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1`
 	getErr := repo.db.Get(&client, getQuery, email)
 	return client, getErr 
+}
 
+func (repo * ClientRepository) GetClientById (id int) (model.Client, error) {
+	client := model.Client{}
+	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.emergency_contact,client.mobile_number, account.email, account.id as account_id from client
+		INNER JOIN account on client.account_id = account.id where client.id  = ? LIMIT 1`
+	getErr := repo.db.Get(&client, getQuery)
+	return client, getErr
 }
 func NewClientRepository () ClientRepository{
 	return ClientRepository{

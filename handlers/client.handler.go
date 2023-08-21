@@ -23,12 +23,23 @@ func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	})
 }
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
-	csrf := c.Get("csrf")
+	csrf := c.Get("csrf") 
+	
 	return c.Render(http.StatusOK, "admin/clients/register-client", Data{
 		"title": "Client | Registration ",
 		"module": "Registration Form",
 		"csrf" : csrf,
 	})
+}
+
+func (h * ClientHandler)RenderClientUpdatePage(c echo.Context) error{
+	csrf := c.Get("csrf")
+	return c.Render(http.StatusOK, "admin/clients/update-client", Data{
+		"title": "Client | Update Profile ",
+		"module": "Client Profile",
+		"csrf" : csrf,
+	})
+	
 }
 func (h *ClientHandler) NewClient(c echo.Context) error {
 	client := model.Client{}
