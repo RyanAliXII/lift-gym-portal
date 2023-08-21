@@ -58,8 +58,3 @@ func (m Client) Validate() (error, map[string]string) {
 			}
 			return nil})))
 }
-
-func (m * Client) FixDateOfBirth(){
-
-	
-}
