@@ -71,6 +71,7 @@
     {{template "partials/sb-scripts"}}
   </body>
   <script>
+    const csrf = "{{.csrf}}";
     const { createApp, ref, onMounted } = Vue;
     createApp({
       setup() {
@@ -87,6 +88,7 @@
               method: "POST",
               headers: new Headers({
                 "content-type": "application/json",
+                "X-CSRF-Token": csrf,
               }),
             });
             const data = await response.json();
