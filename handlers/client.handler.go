@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"git.sr.ht/~jamesponddotco/acopw-go"
 	"github.com/labstack/echo/v4"
@@ -23,8 +25,8 @@ func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	})
 }
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
-	csrf := c.Get("csrf") 
-	
+	csrf := c.Get("csrf")
+
 	return c.Render(http.StatusOK, "admin/clients/register-client", Data{
 		"title": "Client | Registration ",
 		"module": "Registration Form",
@@ -34,10 +36,22 @@ func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
 
 func (h * ClientHandler)RenderClientUpdatePage(c echo.Context) error{
 	csrf := c.Get("csrf")
+	id := c.Param("id")
+	clientId, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		return c.JSON(http.StatusNotFound, Data{})
+	}
+	client, getClientErr := h.clientRepo.GetClientById(clientId)
+	if getClientErr != nil {
+		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
+		return c.JSON(http.StatusNotFound, Data{})
+	}
+	fmt.Println(client)
 	return c.Render(http.StatusOK, "admin/clients/update-client", Data{
 		"title": "Client | Update Profile ",
 		"module": "Client Profile",
 		"csrf" : csrf,
+		"client": client,
 	})
 	
 }

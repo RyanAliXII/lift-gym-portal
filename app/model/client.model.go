@@ -57,6 +57,9 @@ func (m Client) Validate() (error, map[string]string) {
 				return fmt.Errorf("invalid number")
 			}
 			return nil})))
-		
+}
+
+func (m * Client) FixDateOfBirth(){
+
 	
 }

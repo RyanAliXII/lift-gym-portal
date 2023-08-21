@@ -31,6 +31,7 @@
                     >
                     <input
                       class="form-control"
+                      value="{{.client.GivenName}}"
                       :class="{'is-invalid' : fieldErrors?.givenName.length > 0 }"
                       name="givenName"
                       type="text"
@@ -174,17 +175,18 @@
     <script>
       const csrf = "{{.csrf}}";
       const { createApp, ref, onMounted } = Vue;
+
       createApp({
         setup() {
           const initialForm = {
-            givenName: "",
-            middleName: "",
-            surname: "",
-            dateOfBirth: "",
-            address: "",
-            email: "",
-            mobileNumber: "",
-            emergencyContact: "",
+            givenName: "{{.client.GivenName}}",
+            middleName: "{{.client.MiddleName}}",
+            surname: "{{.client.Surname}}",
+            dateOfBirth: "{{.client.DateOfBirth}}",
+            address: "{{.client.Address}}",
+            email: "{{.client.Email}}",
+            mobileNumber: "{{.client.MobileNumber}}",
+            emergencyContact: "{{.client.EmergencyContact}}",
           };
           const initialFieldErrors = {
             givenName: "",
