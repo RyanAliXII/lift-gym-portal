@@ -17,6 +17,7 @@ type PackageHandler struct {
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	pkgs := h.packageRepo.GetPackages()
 	contentType := c.Request().Header.Get("Content-Type")
+	csrf := c.Get("csrf")
 	if contentType == "application/json" {
 		return c.JSON(http.StatusOK,  Data{
 			"status": http.StatusOK,
@@ -30,6 +31,7 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin/packages/main", Data{
 		"title": "Packages",
 		"module":"Packages",
+		"csrf": csrf,
 	})
 }
 func (h * PackageHandler) NewPackage (c echo.Context) error {

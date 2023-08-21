@@ -20,8 +20,10 @@ type LoginHandler struct {
 
 
 func (h *LoginHandler) RenderLoginPage(c echo.Context) error{
+	csrf := c.Get("csrf")
 	return c.Render(http.StatusOK, "admin/login/main", Data{
 		"title": "Sign In",
+		"csrf": csrf,
 	} )
 }
 
