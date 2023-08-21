@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
-  <body id="PackagePage">
+  <body id="ClientRegistrationPage">
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
@@ -17,103 +17,117 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="card shadow mb-4 p-3">
-              <form>
-            <div class="w-100 bg-gray-300 d-flex align-items-center" style="height: 40px;">
-                General Information
-            </div>
-            <div class="row">
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="givenName" class="col-form-label">Given name</label>
-                <input
-                  class="form-control"
-                  name="givenName"
-                  type="text"
-                  required
-          
-                />
-              </div>
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="middleName" class="col-form-label"
-                  >Middle name</label
+              <form @submit.prevent="onSubmit">
+                <div
+                  class="w-100 bg-gray-300 d-flex align-items-center"
+                  style="height: 40px"
                 >
-                <input
-                  class="form-control"
-                  name="middleName"
-                  type="text"
-                  required
-                
-                />
-              </div>
-              
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="surname" class="col-form-label">Surname</label>
-                <input
-                  class="form-control"
-                  name="surname"
-                  type="text"
-                  required
-      
-                />
-              </div>
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="dateOfBirth" class="col-form-label"
-                  >Date of birth</label
-                >
-                <input
-                  class="form-control"
-                  name="dateOfBirt"
-                  type="date"
-                  required
-   
-                />
-              </div>
-              
-            </div>
-            <div class="form-group ">
-              <label for="dateOfBirth" class="col-form-label"
-                >Address</label
-              >
-              <textarea class="form-control"></textarea>
-            </div>
-            <div class="w-100 bg-gray-300 d-flex align-items-center" style="height: 40px;">
-              Account and Contact Information
-            </div>
-            <div class="row">
+                  <span class="ml-2">General Information</span>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="givenName" class="col-form-label"
+                      >Given name</label
+                    >
+                    <input
+                      class="form-control"
+                      name="givenName"
+                      type="text"
+                      required
+                      v-model="registrationForm.givenName"
+                    />
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="middleName" class="col-form-label"
+                      >Middle name</label
+                    >
+                    <input
+                      class="form-control"
+                      name="middleName"
+                      v-model="registrationForm.middleName"
+                      type="text"
+                      required
+                    />
+                  </div>
 
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="email" class="col-form-label">Email</label>
-                <input
-                  class="form-control"
-                  name="email"
-                  type="text"
-                  required
-                 
-                />
-              </div>
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="mobile" class="col-form-label">Mobile Number</label>
-                <input
-                  class="form-control"
-                  name="mobileNumber"
-                  type="text"
-                  required
-                  
-                />
-              </div>
-              <div class="form-group col-sm-12 col-lg-4">
-                <label for="emergencyContactNumber" class="col-form-label">Emergency Contact Number</label>
-                <input
-                  class="form-control"
-                  name="emergencyContactNumber"
-                  type="text"
-                  required
-     
-                />
-              </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="surname" class="col-form-label">Surname</label>
+                    <input
+                      class="form-control"
+                      name="surname"
+                      v-model="registrationForm.surname"
+                      type="text"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="dateOfBirth" class="col-form-label"
+                      >Date of birth</label
+                    >
+                    <input
+                      class="form-control"
+                      name="dateOfBirth"
+                      v-model="registrationForm.dateOfBirth"
+                      type="date"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="dateOfBirth" class="col-form-label"
+                    >Address</label
+                  >
+                  <textarea
+                    class="form-control"
+                    v-model="registrationForm.address"
+                  ></textarea>
+                </div>
+                <div
+                  class="w-100 bg-gray-300 d-flex align-items-center"
+                  style="height: 40px"
+                >
+                  <span class="ml-2">Account and Contact Information</span>
+                </div>
+                <div class="row">
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="email" class="col-form-label">Email</label>
+                    <input
+                      class="form-control"
+                      name="email"
+                      type="text"
+                      v-model="registrationForm.email"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="mobile" class="col-form-label"
+                      >Mobile Number</label
+                    >
+                    <input
+                      class="form-control"
+                      name="mobileNumber"
+                      v-model="registrationForm.mobileNumber"
+                      type="text"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-sm-12 col-lg-4">
+                    <label for="emergencyContact" class="col-form-label"
+                      >Emergency Contact Number</label
+                    >
+                    <input
+                      class="form-control"
+                      name="emergencyContact"
+                      v-model="registrationForm.emergencyContact"
+                      type="text"
+                      required
+                    />
+                  </div>
+                </div>
+                <button class="btn btn-primary">Submit</button>
+              </form>
             </div>
-            </form>
           </div>
-          
         </div>
         <!-- End of Main Content -->
 
@@ -136,6 +150,47 @@
       <i class="fas fa-angle-up"></i>
     </a>
     {{template "partials/sb-scripts" .}}
+    <script>
+      const csrf = "{{.csrf}}";
+      const { createApp, ref, onMounted } = Vue;
+      createApp({
+        setup() {
+          const registrationForm = ref({
+            givenName: "",
+            middleName: "",
+            surname: "",
+            dateOfBirth: "",
+            address: "",
+            email: "",
+            mobileNumber: "",
+            emergencyContact: "",
+          });
+          const onSubmit = async () => {
+            try {
+              console.log();
+              const response = await fetch("/clients", {
+                body: JSON.stringify(registrationForm.value),
+                method: "POST",
+                headers: new Headers({
+                  "content-type": "application/json",
+                  "X-CSRF-Token": csrf,
+                }),
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          };
+
+          return {
+            onSubmit,
+            registrationForm,
+          };
+        },
+        compilerOptions: {
+          delimiters: ["{", "}"],
+        },
+      }).mount("#ClientRegistrationPage");
+    </script>
   </body>
 </html>
 {{end}}

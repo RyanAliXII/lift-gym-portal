@@ -8,3 +8,9 @@ type User struct {
 	Email      string `json:"email" db:"email"`
 	Password   string `json:"password" db:"password"`
 }
+
+func (m * User) Validate ()	error {
+
+	return nil
+
+}

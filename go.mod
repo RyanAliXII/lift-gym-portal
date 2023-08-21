@@ -3,6 +3,9 @@ module lift-fitness-gym
 go 1.19
 
 require (
+	git.sr.ht/~jamesponddotco/acopw-go v0.2.0 // indirect
+	git.sr.ht/~jamesponddotco/xstd-go v0.0.0-20230506171649-ea779401c9ea // indirect
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/gorilla/context v1.1.1 // indirect
