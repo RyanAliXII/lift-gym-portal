@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"lift-fitness-gym/app/db"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
@@ -22,12 +23,24 @@ type Client struct {
 	Model
 }
 func (m Client) Validate() (error, map[string]string) {
+
+	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
 		validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)),
 		validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
 		validation.Field(&m.Address, validation.Required),
-		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email),	
+		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email, validation.By(func(value interface{}) error {
+			recordCount := 0
+			query := `SELECT COUNT(1) as record_count from client
+			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			db.Get(&recordCount, query, m.Email)
+			if recordCount > 0 {
+				return fmt.Errorf("email is already registered")
+			}
+		
+			return nil
+		})),	
 	    validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")

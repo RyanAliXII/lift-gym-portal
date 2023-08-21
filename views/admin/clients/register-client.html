@@ -200,7 +200,6 @@
           const fieldErrors = ref({ ...initialFieldErrors });
           const onSubmit = async () => {
             try {
-              console.log();
               const response = await fetch("/clients", {
                 body: JSON.stringify(registrationForm.value),
                 method: "POST",
@@ -212,7 +211,7 @@
 
               const { data } = await response.json();
               if (data?.errors && response.status >= 400) {
-                fieldErrors.value = { ...fieldErrors.value, ...data?.errors };
+                fieldErrors.value = { ...data?.errors };
               }
               if (response.status === 200) {
                 registrationForm.value = { ...initialForm };
