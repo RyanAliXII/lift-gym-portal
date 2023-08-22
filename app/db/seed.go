@@ -19,6 +19,14 @@ func CreateRootAccount() {
 		zap.String("surname", surname), zap.String("email", email), zap.String("password", password), )
 		return
 	}
+	recordCount := 0
+	db.Get(&recordCount,`SELECT COUNT(1) as record_count from user
+	INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) AND is_root = true LIMIT 1;`, email)
+	
+	if recordCount > 0 {
+		return 
+	}
+	
 	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if hashingErr != nil {
 		logger.Error(hashingErr.Error(), zap.String("error", "hashingErr"))
@@ -30,8 +38,8 @@ func CreateRootAccount() {
 		transaction.Rollback()
 		return 
 	}
-	insertAccountQuery := `INSERT INTO account(email, password) VALUES(?, ?)`
-	result, insertAccountErr := transaction.Exec(insertAccountQuery, email, hashedPassword)
+	insertAccountQuery := `INSERT INTO account(email, password, is_root) VALUES(?, ?, ?)`
+	result, insertAccountErr := transaction.Exec(insertAccountQuery, email, hashedPassword, true)
 	if insertAccountErr != nil {
 		logger.Error(insertAccountErr.Error(), zap.String("error", "insertAccountErr"))
 		transaction.Rollback()
