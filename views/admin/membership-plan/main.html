@@ -141,7 +141,7 @@
         };
         const onSubmitNewPlan = async () => {
           try {
-            $("#addPackageModal").modal("hide");
+            $("#addMembershipPlanModal").modal("hide");
             const response = await fetch("/memberships", {
               headers: new Headers({
                 "content-type": "application/json",
@@ -153,7 +153,7 @@
             const { data } = await response.json();
 
             if (response.status === 200) {
-              fetchPackages();
+              //fetchPackages();
               Swal.fire(
                 "New Membership Plan",
                 "Membership plan has been successfully created.",
