@@ -50,14 +50,15 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="package in packages">
-                        <td>{package.description}</td>
-                        <td>{package.price}</td>
+                      <tr v-for="plan in membershipPlans">
+                        <td>{plan.description}</td>
+                        <td>{plan.price}</td>
+                        <td>{plan.months}</td>
                         <td>
                           <div class="d-flex" style="gap: 5px">
                             <button
                               class="btn btn-outline-primary"
-                              @click="initializeEditForm(package)"
+                              @click="initializeEditForm(plan)"
                             >
                               <i class="fas fa-edit"></i>
                             </button>
@@ -95,7 +96,8 @@
       <i class="fas fa-angle-up"></i>
     </a>
     {{template "admin/membership-plan/add-membership-plan-modal" .}} {{template
-    "admin/packages/edit-package-modal" .}} {{template "partials/sb-scripts"}}
+    "admin/membership-plan/edit-membership-plan-modal" .}} {{template
+    "partials/sb-scripts"}}
   </body>
   <script>
     const { createApp, ref, onMounted } = Vue;
@@ -107,20 +109,22 @@
       months: "",
     };
     const INITIAL_FORM = {
+      id: 0,
       price: 0,
       description: "",
       months: 0,
     };
     createApp({
       setup() {
-        const packages = ref([]);
+        const membershipPlans = ref([]);
         const addMembershipPlanForm = ref({ ...INITIAL_FORM });
         const addMembershipPlanErrors = ref({ ...INITIAL_ERRORS });
-        const editPackageForm = ref({ ...INITIAL_FORM });
+        const editMembershipPlanForm = ref({ ...INITIAL_FORM });
+        const editMembershipPlanErrors = ref({ ...INITIAL_ERRORS });
 
-        const fetchPackages = async () => {
+        const fetchMembershipPlans = async () => {
           try {
-            const response = await fetch("/packages", {
+            const response = await fetch("/memberships", {
               headers: new Headers({
                 "content-type": "application/json",
               }),
@@ -128,20 +132,19 @@
 
             if (response.status === 200) {
               const { data } = await response.json();
-              packages.value = data?.packages ?? [];
+              membershipPlans.value = data?.membershipPlans ?? [];
             }
-          } catch (err) {
-            console.error(err);
+          } catch (error) {
+            console.log(error);
           }
         };
 
-        const initializeEditForm = (package) => {
-          editPackageForm.value = { ...package };
-          $("#editPackageModal").modal("show");
+        const initializeEditForm = (plan) => {
+          editMembershipPlanForm.value = { ...plan };
+          $("#editMembershipPlanModal").modal("show");
         };
         const onSubmitNewPlan = async () => {
           try {
-            $("#addMembershipPlanModal").modal("hide");
             const response = await fetch("/memberships", {
               headers: new Headers({
                 "content-type": "application/json",
@@ -153,7 +156,8 @@
             const { data } = await response.json();
 
             if (response.status === 200) {
-              //fetchPackages();
+              fetchMembershipPlans();
+              $("#addMembershipPlanModal").modal("hide");
               Swal.fire(
                 "New Membership Plan",
                 "Membership plan has been successfully created.",
@@ -170,43 +174,52 @@
             console.error(error);
           }
         };
-        const onSubmitUpdatePackage = async () => {
+        const onSubmitUpdateMembershipPlan = async () => {
           try {
-            $("#editPackageModal").modal("hide");
             const response = await fetch(
-              `/packages/${editPackageForm?.value.id}`,
+              `/memberships/${editMembershipPlanForm?.value.id}`,
               {
                 headers: new Headers({
                   "content-type": "application/json",
                   "X-CSRF-Token": csrf,
                 }),
                 method: "PUT",
-                body: JSON.stringify(editPackageForm.value),
+                body: JSON.stringify(editMembershipPlanForm.value),
               }
             );
-
+            const { data } = await response.json();
             if (response.status === 200) {
-              fetchPackages();
+              $("#editMembershipPlanModal").modal("hide");
+              fetchMembershipPlans();
               Swal.fire(
                 "Update Package",
                 "Package has been successfully updated.",
                 "success"
               );
             }
-          } catch {
-            console.error(err);
+            if (response.status === 400 && data?.errors) {
+              editMembershipPlanErrors.value = {
+                ...INITIAL_ERRORS,
+                ...data?.errors,
+              };
+            }
+          } catch (error) {
+            console.error(error);
           }
         };
 
-        onMounted(() => {});
+        onMounted(() => {
+          fetchMembershipPlans();
+        });
         return {
-          packages,
           addMembershipPlanForm,
-          editPackageForm,
-          onSubmitUpdatePackage,
+          editMembershipPlanForm,
+          onSubmitUpdateMembershipPlan,
           onSubmitNewPlan,
           initializeEditForm,
           addMembershipPlanErrors,
+          editMembershipPlanErrors,
+          membershipPlans,
         };
       },
       compilerOptions: {
