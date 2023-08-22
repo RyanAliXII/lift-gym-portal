@@ -1,0 +1,106 @@
+{{define "admin/clients/register-client"}}
+
+<div
+  class="modal fade"
+  id="newClientModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="newClientModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Client Form</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitNewPackage">
+          <div class="form-group">
+            <label for="givenName" class="col-form-label">Given name</label>
+            <input
+              class="form-control"
+              name="givenName"
+              type="text"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+          <div class="form-group">
+            <label for="middleName" class="col-form-label"
+              >Middle name or initial</label
+            >
+            <input
+              class="form-control"
+              name="middleName"
+              type="text"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+          <div class="form-group">
+            <label for="surname" class="col-form-label">Surname</label>
+            <input
+              class="form-control"
+              name="surname"
+              type="text"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+          <div class="form-group">
+            <label for="dateOfBirth" class="col-form-label"
+              >Date of birth</label
+            >
+            <input
+              class="form-control"
+              name="dateOfBirth"
+              type="date"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+          <div class="form-group">
+            <label for="email" class="col-form-label">Email</label>
+            <input
+              class="form-control"
+              name="email"
+              type="text"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+          <div class="form-group">
+            <label for="mobile" class="col-form-label">Mobile Number</label>
+            <input
+              class="form-control"
+              name="mobileNumber"
+              type="text"
+              required
+              v-model="addPackageForm.price"
+            />
+          </div>
+
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

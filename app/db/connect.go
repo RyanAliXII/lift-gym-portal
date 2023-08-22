@@ -51,7 +51,7 @@ func GetConnectionEnvs()ConnectionEnvs{
 	var port = os.Getenv("DB_PORT")
 	var password = os.Getenv("DB_PASSWORD")	
 	var	host = os.Getenv("DB_HOST")
-	var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&loc=Local",user, password, host, port, name)
+	var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",user, password, host, port, name)
 	return  ConnectionEnvs{
 		Name: name,
 		User: user,
