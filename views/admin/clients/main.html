@@ -39,30 +39,29 @@
                   >
                     <thead>
                       <tr>
-                        <th>Description</th>
-                        <th>Price</th>
+                        <th>Given name</th>
+                        <th>Middle name</th>
+                        <th>Surname</th>
                         <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <tr v-for="package in packages">
-                        <td>{package.description}</td>
-                        <td>{package.price}</td>
+                      {{range .clients}}
+                      <tr>
+                        <td>{{.GivenName}}</td>
+                        <td>{{.MiddleName}}</td>
+                        <td>{{.Surname}}</td>
                         <td>
-                          <div class="d-flex" style="gap: 5px">
-                            <button
-                              class="btn btn-outline-primary"
-                              @click="initializeEditForm(package)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-outline-danger">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </div>
+                          <a
+                            href="/clients/{{.Id}}"
+                            class="btn btn-outline-primary"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </a>
                         </td>
                       </tr>
+                      {{end}}
                     </tbody>
                   </table>
                 </div>

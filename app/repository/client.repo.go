@@ -36,6 +36,13 @@ func (repo *ClientRepository) New(client model.Client)(error) {
 		transaction.Commit()
 		return nil
 }
+func (repo * ClientRepository)Get()([]model.Client, error) {
+	clients := make([]model.Client , 0)
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id from client
+	INNER JOIN account on client.account_id = account.id ORDER BY client.updated_at DESC`
+	selectErr := repo.db.Select(&clients, selectQuery)
+	return clients, selectErr 
+}
 func (repo *ClientRepository) GetClientByEmail(email string) (model.Client, error) {
 	client := model.Client{}
 	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.emergency_contact,client.mobile_number, account.email from client

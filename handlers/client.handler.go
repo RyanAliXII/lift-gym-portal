@@ -17,10 +17,12 @@ type ClientHandler struct {
 }
 func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	csrf := c.Get("csrf")
+	clients, _ := h.clientRepo.Get()
 	return c.Render(http.StatusOK, "admin/clients/main", Data{
 		"title": "Clients",
 		"module": "Clients",
 		"csrf" : csrf,
+		"clients": clients,
 	})
 }
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
