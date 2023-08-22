@@ -25,5 +25,6 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/clients", clientHandler.RenderClientPage)
 	router.GET("/clients/:id", clientHandler.RenderClientUpdatePage)
 	router.POST("/clients", clientHandler.NewClient)
+	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)
 }

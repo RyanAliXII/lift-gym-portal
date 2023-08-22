@@ -148,7 +148,13 @@
                 </div>
                 <div class="d-flex" style="gap: 10px">
                   <button class="btn btn-primary">Update Profile</button>
-                  <button class="btn btn-secondary">Reset Password</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="initializeResetPassword('{{.client.Id}}')"
+                  >
+                    Reset Password
+                  </button>
                 </div>
               </form>
             </div>
@@ -232,11 +238,48 @@
               console.error(error);
             }
           };
+          const initializeResetPassword = (id) => {
+            Swal.fire({
+              title: "Reset Password",
+              text: "Are you sure you want to reset this account password?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                resetPassword(id);
+              }
+            });
+          };
+          const resetPassword = async (id) => {
+            try {
+              const response = await fetch(`/clients/${id}/password`, {
+                method: "PATCH",
+                headers: new Headers({
+                  "content-type": "application/json",
+                  "X-CSRF-Token": csrf,
+                }),
+              });
 
+              const { data } = await response.json();
+              if (response.status === 200) {
+                Swal.fire(
+                  "Password Reset",
+                  `Password has been reset. <br> The new password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
+                  "success"
+                );
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          };
           return {
             onSubmit,
             registrationForm,
             fieldErrors,
+            initializeResetPassword,
           };
         },
         compilerOptions: {

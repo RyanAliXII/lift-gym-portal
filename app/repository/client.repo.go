@@ -43,6 +43,18 @@ func (repo * ClientRepository)Get()([]model.Client, error) {
 	selectErr := repo.db.Select(&clients, selectQuery)
 	return clients, selectErr 
 }
+func (repo * ClientRepository)UpdatePassword (newPassword string, clientId int )(error){
+	client, getClientErr := repo.GetClientById(clientId)
+	if getClientErr != nil {
+		return getClientErr
+	}
+	updateQuery := "UPDATE account SET password = ? WHERE id = ?"
+	_, updateErr := repo.db.Exec(updateQuery, newPassword, client.AccountId)
+	if updateErr != nil {
+		return updateErr
+	}
+	return nil
+} 
 func (repo *ClientRepository) GetClientByEmail(email string) (model.Client, error) {
 	client := model.Client{}
 	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.emergency_contact,client.mobile_number, account.email from client

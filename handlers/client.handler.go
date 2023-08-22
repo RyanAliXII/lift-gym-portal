@@ -39,7 +39,6 @@ func (h * ClientHandler)RenderClientUpdatePage(c echo.Context) error{
 	csrf := c.Get("csrf")
 	id := c.Param("id")
 	clientId, _ := strconv.Atoi(id)
-	
 	client, getClientErr := h.clientRepo.GetClientById(clientId)
 	if getClientErr != nil {
 		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
@@ -117,7 +116,55 @@ func (h *ClientHandler) NewClient(c echo.Context) error {
 		},
 	})
 }
+func (h *ClientHandler) ResetPassword(c echo.Context) error {
+	id := c.Param("id")
+	clientId, convErr := strconv.Atoi(id)
 
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
+	diceware := &acopw.Diceware{
+		Separator: "-",
+		Length: 2,
+		Capitalize: true,
+	}
+	generatedPassword, generateErr  := diceware.Generate()
+	if generateErr != nil {
+		logger.Error(generateErr.Error(), zap.String("error", "generateErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
+	if hashingErr != nil {
+		logger.Error(hashingErr.Error(), zap.String("error", "hashingErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",})
+
+	}
+	updateErr := h.clientRepo.UpdatePassword(string(hashedPassword), clientId)
+	if updateErr!= nil {
+		logger.Error(updateErr.Error(), zap.String("error", "updateErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",})
+
+	}
+	return c.JSON(http.StatusOK, Data{
+		"status": http.StatusOK,
+		"message": "Password Reset",
+		"data": Data{
+			"password": generatedPassword,
+		},
+	})
+}
 
 func NewClientHandler() ClientHandler {
 	return ClientHandler{
