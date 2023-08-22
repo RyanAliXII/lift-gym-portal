@@ -28,4 +28,6 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/clients", clientHandler.NewClient)
 	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)
+	router.GET("/members", clientHandler.RenderMembersPage)
+	router.GET("/subs", clientHandler.RenderSubsPage)
 }
