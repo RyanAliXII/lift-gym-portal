@@ -55,6 +55,32 @@ func (repo * ClientRepository)UpdatePassword (newPassword string, clientId int )
 	}
 	return nil
 } 
+
+func (repo  ClientRepository) Update(client model.Client) (error) {
+	dbClient, getClientErr := repo.GetClientById(client.Id)
+	if getClientErr != nil {
+		return getClientErr
+	}
+	transaction, transactErr := repo.db.Begin()
+	if transactErr != nil {
+		transaction.Rollback()
+		return transactErr
+	}
+	updateClientQuery := `UPDATE client SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ? where id = ?`
+	_, updateClientErr := transaction.Exec(updateClientQuery, client.GivenName,client.MiddleName, client.Surname, client.DateOfBirth, client.Address, client.MobileNumber, client.EmergencyContact, client.Id)
+	if updateClientErr != nil {
+		transaction.Rollback()
+		return updateClientErr
+	}
+	updateAccountQuery := `UPDATE account SET email = ? WHERE id = ?`
+	_, updateAccountErr := transaction.Exec(updateAccountQuery, client.Email, dbClient.AccountId)
+	if updateAccountErr != nil {
+		transaction.Rollback()
+		return updateAccountErr
+	}
+	transaction.Commit()
+	return nil
+}
 func (repo *ClientRepository) GetClientByEmail(email string) (model.Client, error) {
 	client := model.Client{}
 	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.emergency_contact,client.mobile_number, account.email from client

@@ -24,6 +24,7 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/packages/:id", packageHandler.UpdatePackage)
 	router.GET("/clients", clientHandler.RenderClientPage)
 	router.GET("/clients/:id", clientHandler.RenderClientUpdatePage)
+	router.PUT("/clients/:id", clientHandler.UpdateClient)
 	router.POST("/clients", clientHandler.NewClient)
 	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)

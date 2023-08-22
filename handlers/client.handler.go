@@ -116,6 +116,44 @@ func (h *ClientHandler) NewClient(c echo.Context) error {
 		},
 	})
 }
+
+func (h *ClientHandler) UpdateClient(c echo.Context) error {
+	client := model.Client{}
+	bindErr := c.Bind(&client)
+	if bindErr != nil {
+		logger.Error(bindErr.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	validateErr, fieldErrs := client.ValidateUpdate()
+	if validateErr != nil {
+		logger.Error(validateErr.Error(), zap.String("error", "validateErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Validation error.",
+			"data" : Data{
+				"errors" : fieldErrs,
+			},
+
+		})
+	}
+	updateClientErr := h.clientRepo.Update(client)
+	if updateClientErr != nil {
+		logger.Error(updateClientErr .Error(), zap.String("error", "updateClientErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	return c.JSON(http.StatusOK, Data{
+		"status": http.StatusOK,
+		"message": "Client updated.",
+	})
+}
 func (h *ClientHandler) ResetPassword(c echo.Context) error {
 	id := c.Param("id")
 	clientId, convErr := strconv.Atoi(id)

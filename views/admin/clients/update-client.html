@@ -189,6 +189,7 @@
       createApp({
         setup() {
           const initialForm = {
+            id: parseInt("{{.client.Id}}"),
             givenName: "{{.client.GivenName}}",
             middleName: "{{.client.MiddleName}}",
             surname: "{{.client.Surname}}",
@@ -212,9 +213,9 @@
           const fieldErrors = ref({ ...initialFieldErrors });
           const onSubmit = async () => {
             try {
-              const response = await fetch("/clients", {
+              const response = await fetch("/clients/{{.client.Id}}", {
                 body: JSON.stringify(registrationForm.value),
-                method: "POST",
+                method: "PUT",
                 headers: new Headers({
                   "content-type": "application/json",
                   "X-CSRF-Token": csrf,
@@ -223,11 +224,9 @@
 
               const { data } = await response.json();
               if (response.status === 200) {
-                registrationForm.value = { ...initialForm };
-                fieldErrors.value = { ...initialFieldErrors };
                 Swal.fire(
                   "Client Registered",
-                  `Client has been registered. <br> The password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
+                  "Client profile has been updated.",
                   "success"
                 );
               }
