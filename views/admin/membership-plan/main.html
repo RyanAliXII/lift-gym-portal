@@ -210,6 +210,12 @@
 
         onMounted(() => {
           fetchMembershipPlans();
+          $("#addMembershipPlanModal").on("hidden.bs.modal", function () {
+            addMembershipPlanErrors.value = { ...INITIAL_ERRORS };
+          });
+          $("#editMembershipPlanModal").on("hidden.bs.modal", function () {
+            editMembershipPlanErrors.value = { ...INITIAL_ERRORS };
+          });
         });
         return {
           addMembershipPlanForm,
