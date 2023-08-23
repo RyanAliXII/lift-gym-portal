@@ -4,13 +4,14 @@ const fsw = require("@nodelib/fs.walk");
 
 const getEntries = (filesPath) => {
   const files = fsw.walkSync(filesPath, { pathSegmentSeparator: "/" });
-  const entries = [];
+  const entries = {};
   files.forEach((entry) => {
     const isDirectory = entry.dirent.isDirectory();
     if (!isDirectory) {
       const filename = entry.dirent.name;
       if (path.extname(filename) === ".js") {
-        entries.push(entry.path);
+        const newPath = `.${entry.path.replace(filesPath, "")}`;
+        entries[newPath] = entry.path;
       }
     }
   });
@@ -21,7 +22,7 @@ module.exports = {
   entry: getEntries("./views"),
   mode: "development",
   output: {
-    filename: "app.js",
+    filename: "[name]",
     path: path.resolve(__dirname, "assets/js"),
   },
   resolve: {

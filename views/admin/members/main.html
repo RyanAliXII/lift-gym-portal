@@ -64,6 +64,11 @@
                       {{end}}
                     </tbody>
                   </table>
+                  <form @submit.prevent="onSubmit">
+                    <input type="text" v-bind="name" />
+                    <small>{errors.name}</small>
+                    <button type="submit">Submit</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -91,6 +96,6 @@
     </a>
   </body>
   {{template "partials/sb-scripts" .}}
-  <script src="/js/app.js"></script>
+  <script src="/js/admin/members/main.js"></script>
 </html>
 {{end}}

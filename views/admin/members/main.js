@@ -1,13 +1,28 @@
-import { createApp, ref, onMounted } from "vue";
+import { createApp, onMounted } from "vue";
+import { useForm } from "vee-validate";
+import { object, string } from "yup";
 createApp({
   setup() {
-    const message = "Sample message from this app";
+    const { values, defineInputBinds, errors, handleSubmit } = useForm({
+      validationSchema: object({
+        name: string().required(),
+      }),
+      initialValues: {
+        name: "",
+      },
+    });
 
     onMounted(() => {
       console.log("App Mounted");
     });
+    const name = defineInputBinds("name");
+    const onSubmit = handleSubmit((values) => {
+      console.log(values);
+    });
     return {
-      message,
+      name,
+      errors,
+      onSubmit,
     };
   },
   compilerOptions: {
