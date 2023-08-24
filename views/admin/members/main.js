@@ -3,6 +3,7 @@ import Choices from "choices.js";
 import { object, number } from "yup";
 import { useForm } from "vee-validate";
 import {
+  cancelSubscription,
   fetchClients,
   fetchMembers,
   fetchMembershipPlans,
@@ -63,8 +64,8 @@ createApp({
         year: "numeric",
       });
     };
-    const initCancellation = (member) => {
-      swal.fire({
+    const initCancellation = async (member) => {
+      const result = await swal.fire({
         showCancelButton: true,
         confirmButtonText: "Yes, cancel it.",
         title: "Cancel Subscription",
@@ -73,6 +74,16 @@ createApp({
         cancelButtonText: "I don't want to cancel the subscription",
         icon: "warning",
       });
+      if (result.isConfirmed) {
+        cancelSubscription(member.subscriptionId, async () => {
+          swal.fire(
+            "Cancel Subscription",
+            "Subscription has been cancelled",
+            "success"
+          );
+          members.value = await fetchMembers();
+        });
+      }
     };
     const init = async () => {
       const plans = await fetchMembershipPlans();

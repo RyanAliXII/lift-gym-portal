@@ -18,7 +18,7 @@ type MemberRepository struct {
 func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	members := make([]model.Member, 0)
 	selectQuery := `
-	SELECT client.id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
 	subscription.created_at FROM subscription
 	INNER JOIN client on subscription.client_id = client.id
 	INNER JOIN account on client.account_id = account.id
@@ -29,7 +29,7 @@ func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	selectErr := repo.db.Select(&members, selectQuery)
 	return members, selectErr
 }
-func (repo *MemberRepository)Subscribe (sub model.Subscribe) error {
+func (repo *MemberRepository)Subscribe(sub model.Subscribe) error {
 	transaction, transactErr := repo.db.Beginx()
 	if transactErr != nil {
 		transaction.Rollback()
@@ -63,7 +63,12 @@ func (repo *MemberRepository)Subscribe (sub model.Subscribe) error {
 	transaction.Commit()
 	return insertErr
 }
-
+func (repo * MemberRepository)CancelSubscription(subId int) error {
+	updateQuery := `UPDATE subscription SET cancelled_at = NOW() where id = ?`
+	_, updateErr := repo.db.Exec(updateQuery, subId)
+	fmt.Println("CANCELLED")
+	return updateErr
+}
 func NewMemberRepository() MemberRepository{
 	return MemberRepository {
 		db: db.GetConnection(),

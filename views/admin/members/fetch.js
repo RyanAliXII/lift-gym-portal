@@ -48,7 +48,25 @@ export const subscribe = async (form = {}, onSuccess = () => {}) => {
       onSuccess();
     }
   } catch (error) {
+    console.error(error);
   } finally {
     $("#subscribeClientModal").modal("hide");
+  }
+};
+
+export const cancelSubscription = async (id = 0, onSuccess = () => {}) => {
+  try {
+    const response = await fetch(`/subscriptions/${id}`, {
+      method: "DELETE",
+      headers: new Headers({
+        "content-type": "application/json",
+        "X-CSRF-Token": window.csrf,
+      }),
+    });
+    if (response.status === 200) {
+      onSuccess();
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
