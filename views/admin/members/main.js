@@ -85,7 +85,10 @@ createApp({
             "success"
           );
         }
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        $("#subscribeClientModal").modal("hide");
+      }
     };
     const init = async () => {
       const plans = await fetchMembershipPlans();
