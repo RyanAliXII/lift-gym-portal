@@ -1,0 +1,90 @@
+{{define "admin/membership-plan/add-membership-plan-modal"}}
+
+<div
+  class="modal fade"
+  id="addMembershipPlanModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addMembershipPlanModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Membership Plan</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitNewPlan">
+          <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea
+              class="form-control"
+              name="description"
+              v-model="addMembershipPlanForm.description"
+              :class="{'is-invalid':addMembershipPlanErrors.description.length > 0}"
+            ></textarea>
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block':addMembershipPlanErrors.description.length > 0}"
+            >
+              { addMembershipPlanErrors.description }
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="price" class="col-form-label">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              name="price"
+              step=".01"
+              :class="{'is-invalid':addMembershipPlanErrors.price.length > 0}"
+              v-model="addMembershipPlanForm.price"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block':addMembershipPlanErrors.price.length > 0}"
+            >
+              { addMembershipPlanErrors.price }
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="price" class="col-form-label">Months</label>
+            <input
+              type="number"
+              class="form-control"
+              name="months"
+              :class="{'is-invalid':addMembershipPlanErrors.months.length > 0}"
+              v-model="addMembershipPlanForm.months"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block':addMembershipPlanErrors.months.length > 0}"
+            >
+              { addMembershipPlanErrors.months }
+            </div>
+          </div>
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Create Plan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
