@@ -5,6 +5,7 @@ import (
 )
 
 type Model struct {
+	
 }
 
 func (m *Model) ValidationRules(structPtr interface{}, fields ...*validation.FieldRules) (error, map[string]string) {

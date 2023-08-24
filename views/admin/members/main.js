@@ -1,4 +1,4 @@
-import { createApp, onMounted } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import Choices from "choices.js";
 import { object, number } from "yup";
 import { useForm } from "vee-validate";
@@ -33,6 +33,18 @@ createApp({
       validationSchema: SubscribeValidation,
     });
 
+    const members = ref([]);
+    const fetchMembers = async () => {
+      try {
+        const response = await fetch("/members", {
+          headers: new Headers({ "content-type": "application/json" }),
+        });
+        const { data } = await response.json();
+        members.value = data?.members ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const fetchMembershipPlans = async () => {
       try {
         const response = await fetch("/memberships", {
@@ -61,7 +73,6 @@ createApp({
       let client = clientSelect.getValue();
       let plan = planSelect.getValue();
       setValues({ clientId: client?.value, membershipPlanId: plan?.value });
-      console.log();
       const { valid } = await validate();
       if (valid) {
         subscribe();
@@ -84,11 +95,19 @@ createApp({
             `Client has been subscribed successfully.`,
             "success"
           );
+          fetchMembers();
         }
       } catch (error) {
       } finally {
         $("#subscribeClientModal").modal("hide");
       }
+    };
+    const formatDate = (dateStr) => {
+      return new Date(dateStr).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      });
     };
     const init = async () => {
       const plans = await fetchMembershipPlans();
@@ -115,11 +134,14 @@ createApp({
     defineInputBinds("clientId");
     defineInputBinds("membershipPlanId");
     onMounted(() => {
+      fetchMembers();
       init();
     });
     return {
       onSubmit,
       errors,
+      members,
+      formatDate,
     };
   },
   compilerOptions: {

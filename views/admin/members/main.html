@@ -24,7 +24,7 @@
                 data-target="#subscribeClientModal"
               >
                 <i class="fas fa-plus"></i>
-                Subscribe a client
+                New Subscription
               </button>
             </div>
             <!-- DataTables Example -->
@@ -44,29 +44,34 @@
                   >
                     <thead>
                       <tr>
-                        <th>Given name</th>
-                        <th>Middle name</th>
-                        <th>Surname</th>
+                        <th>Name</th>
+                        <th>Membership Plan</th>
+                        <th>Subscription Start Date</th>
+                        <th>Membership Valid Until</th>
                         <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      {{range .clients}}
-                      <tr>
-                        <td>{{.GivenName}}</td>
-                        <td>{{.MiddleName}}</td>
-                        <td>{{.Surname}}</td>
-                        <td>
-                          <a
-                            href="/clients/{{.Id}}"
-                            class="btn btn-outline-primary"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      {{end}}
+                      <template v-for="member of members">
+                        <tr>
+                          <td>{member.givenName} {member.surname}</td>
+                          <td>{member.membershipPlan.description}</td>
+                          <td>{formatDate(member.subscriptionStartDate)}</td>
+                          <td>{formatDate(member.validUntil)}</td>
+                          <td>
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="Cancel subscription"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
                     </tbody>
                   </table>
                 </div>

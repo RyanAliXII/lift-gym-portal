@@ -14,6 +14,21 @@ import (
 type MemberRepository struct {
 	db * sqlx.DB
 }
+
+func (repo * MemberRepository)GetMembers()([]model.Member,  error){
+	members := make([]model.Member, 0)
+	selectQuery := `
+	SELECT client.id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	subscription.created_at FROM subscription
+	INNER JOIN client on subscription.client_id = client.id
+	INNER JOIN account on client.account_id = account.id
+	INNER JOIN membership_plan on subscription.membership_plan_id = membership_plan.id
+	where subscription.valid_until >= NOW()
+	ORDER BY subscription.created_at DESC
+	`
+	selectErr := repo.db.Select(&members, selectQuery)
+	return members, selectErr
+}
 func (repo *MemberRepository)Subscribe (sub model.Subscribe) error {
 	transaction, transactErr := repo.db.Beginx()
 	if transactErr != nil {
