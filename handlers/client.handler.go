@@ -206,9 +206,6 @@ func (h *ClientHandler) ResetPassword(c echo.Context) error {
 func (h * ClientHandler) RenderMembersPage ( c echo.Context) error {
 	return c.Render(http.StatusOK,"admin/members/main", Data{})
 }
-func (h * ClientHandler) RenderSubsPage( c echo.Context) error {
-	return c.Render(http.StatusOK,"admin/subs/main", Data{})
-}
 func NewClientHandler() ClientHandler {
 	return ClientHandler{
 		clientRepo: repository.NewClientRepository(),
