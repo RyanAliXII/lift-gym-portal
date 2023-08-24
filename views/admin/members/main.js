@@ -8,6 +8,7 @@ import {
   fetchMembershipPlans,
   subscribe,
 } from "./fetch";
+import swal from "sweetalert2";
 
 const SubscribeValidation = object({
   clientId: number()
@@ -39,7 +40,6 @@ createApp({
     });
 
     const members = ref([]);
-    c;
     const onSubmit = async () => {
       let client = clientSelect.getValue();
       let plan = planSelect.getValue();
@@ -61,6 +61,17 @@ createApp({
         month: "long",
         day: "2-digit",
         year: "numeric",
+      });
+    };
+    const initCancellation = (member) => {
+      swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, cancel it.",
+        title: "Cancel Subscription",
+        text: "Are you sure you want to cancel the subscription?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to cancel the subscription",
+        icon: "warning",
       });
     };
     const init = async () => {
@@ -95,6 +106,7 @@ createApp({
       errors,
       members,
       formatDate,
+      initCancellation,
     };
   },
   compilerOptions: {
