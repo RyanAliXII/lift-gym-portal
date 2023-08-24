@@ -18,6 +18,17 @@ type ClientHandler struct {
 func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	csrf := c.Get("csrf")
 	clients, _ := h.clientRepo.Get()
+	contentType := c.Request().Header.Get("content-type")
+	if contentType == "application/json" {
+
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"clients": clients,
+			},
+			Message: "Clients fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "admin/clients/main", Data{
 		"title": "Clients",
 		"module": "Clients",

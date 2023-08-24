@@ -17,10 +17,15 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
-              <!-- <a class="btn btn-primary" href="/clients/registration">
+              <button
+                class="btn btn-primary"
+                type="button"
+                data-toggle="modal"
+                data-target="#subscribeClientModal"
+              >
                 <i class="fas fa-plus"></i>
-                New Client
-              </a> -->
+                Subscribe a client
+              </button>
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -64,15 +69,11 @@
                       {{end}}
                     </tbody>
                   </table>
-                  <form @submit.prevent="onSubmit">
-                    <input type="text" v-bind="name" />
-                    <small>{errors.name}</small>
-                    <button type="submit">Submit</button>
-                  </form>
                 </div>
               </div>
             </div>
           </div>
+          {{template "admin/members/subscribe-modal" .}}
         </div>
         <!-- End of Main Content -->
 
