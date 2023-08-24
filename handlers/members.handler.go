@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -10,11 +10,8 @@ import (
 )
 
 type MemberHandler struct {
-
-
+	memberRepository repository.MemberRepository 
 }
-
-
 func (h *MemberHandler) RenderMembersPage(c echo.Context) error{
 	 csrf := c.Get("csrf")
 	return c.Render(http.StatusOK, "admin/members/main", Data{
@@ -43,7 +40,16 @@ func (h * MemberHandler)Subscribe(c echo.Context) error{
 			Message: "Unknown error  occured.",
 		})
 	}
-	fmt.Println(subscribeBody)
+	subscribeErr := h.memberRepository.Subscribe(subscribeBody)
+	if subscribeErr != nil {
+		logger.Error(subscribeErr.Error(), zap.String("error", "subscribeErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Data: nil,
+			Message: "Unknown error occured.",
+
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Data: nil,
@@ -51,5 +57,7 @@ func (h * MemberHandler)Subscribe(c echo.Context) error{
 	})
 }
 func NewMembersHandler() MemberHandler{
-	return MemberHandler{}
+	return MemberHandler{
+		memberRepository: repository.NewMemberRepository(),
+	}
 }
