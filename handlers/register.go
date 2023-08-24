@@ -17,7 +17,9 @@ func adminRoutes (router  * echo.Group){
 	dashboardHandler := NewDashboardHandler()
 	packageHandler := NewPackageHandler()
 	clientHandler := NewClientHandler()
+	membersHandler := NewMembersHandler()
 	membershipPlanHandler := NewMembershipPlanHandler()
+
 	router.Use(middlewares.AuthMiddleware)
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage)
@@ -29,7 +31,9 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/clients", clientHandler.NewClient)
 	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)
+	router.GET("/members", membersHandler.RenderMembersPage)
 	router.GET("/memberships", membershipPlanHandler.RenderMembershipPlanPage)
 	router.POST("/memberships", membershipPlanHandler.NewMembershipPlan)
 	router.PUT("/memberships/:id", membershipPlanHandler.UpdatePlan)
+
 }

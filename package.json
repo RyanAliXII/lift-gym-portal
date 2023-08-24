@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "watch": "webpack --watch"
+  },
+  "devDependencies": {
+    "@nodelib/fs.walk": "^2.0.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0",
+    "vee-validate": "^4.11.3",
+    "vue": "^3.3.4",
+    "yup": "^1.2.0"
+  }
+}
