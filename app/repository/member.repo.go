@@ -14,7 +14,7 @@ type MemberRepository struct {
 	db * sqlx.DB
 }
 func (repo *MemberRepository)Subscribe (sub model.Subscribe) error {
-
+									
 
 	return nil	
 }
