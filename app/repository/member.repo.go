@@ -23,7 +23,7 @@ func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	INNER JOIN client on subscription.client_id = client.id
 	INNER JOIN account on client.account_id = account.id
 	INNER JOIN membership_plan on subscription.membership_plan_id = membership_plan.id
-	where subscription.valid_until >= NOW()
+	where subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
 	ORDER BY subscription.created_at DESC
 	`
 	selectErr := repo.db.Select(&members, selectQuery)
@@ -37,13 +37,14 @@ func (repo *MemberRepository)Subscribe (sub model.Subscribe) error {
 	}
 	plan := model.MembershipPlan{}
 	recordCount := 0
-	//check if has an active subscription
-	checkActiveSubErr := transaction.Get(&recordCount, "SELECT COUNT(1) as recordCount FROM subscription WHERE client_id = ? and subscription.valid_until >= NOW()", sub.ClientId)
+	//check if client has an active subscription
+	checkActiveSubErr := transaction.Get(&recordCount, "SELECT COUNT(1) as recordCount FROM subscription WHERE client_id = ? and subscription.valid_until >= NOW() and cancelled_at is null", sub.ClientId)
 	if checkActiveSubErr != nil {
 		transaction.Rollback()
 		return checkActiveSubErr
 	}
 	if recordCount > 0 {
+		transaction.Rollback()
 		return fmt.Errorf("client has an active subscription.")
 	}
 	getErr := transaction.Get(&plan, "SELECT months from membership_plan where id = ?", sub.MembershipPlanId)

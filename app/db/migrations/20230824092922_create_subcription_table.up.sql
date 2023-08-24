@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS subscription(
     client_id INT NOT NULL,
     membership_plan_id INT NOT NULL,
     valid_until DATE NOT NULL,
-    cancelled_at TIMESTAMP,
+    cancelled_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES client(id),

@@ -14,10 +14,8 @@ type MemberHandler struct {
 }
 func (h *MemberHandler) RenderMembersPage(c echo.Context) error{
 	 csrf := c.Get("csrf")
-
 	contentType := c.Request().Header.Get("content-type")
 	members, getErr := h.memberRepository.GetMembers()
-
 	if getErr != nil {
 		logger.Error(getErr.Error(), zap.String("error", "getErr"))
 	}

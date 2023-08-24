@@ -2,7 +2,13 @@ import { createApp, onMounted, ref } from "vue";
 import Choices from "choices.js";
 import { object, number } from "yup";
 import { useForm } from "vee-validate";
-import swal from "sweetalert2";
+import {
+  fetchClients,
+  fetchMembers,
+  fetchMembershipPlans,
+  subscribe,
+} from "./fetch";
+
 const SubscribeValidation = object({
   clientId: number()
     .required("Client is required")
@@ -13,7 +19,6 @@ const SubscribeValidation = object({
     .integer("Membership plan is required")
     .min(1, "Membership plan is required"),
 });
-
 createApp({
   setup() {
     let clientSelect = null;
@@ -34,72 +39,21 @@ createApp({
     });
 
     const members = ref([]);
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch("/members", {
-          headers: new Headers({ "content-type": "application/json" }),
-        });
-        const { data } = await response.json();
-        members.value = data?.members ?? [];
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    const fetchMembershipPlans = async () => {
-      try {
-        const response = await fetch("/memberships", {
-          headers: new Headers({ "content-type": "application/json" }),
-        });
-        const { data } = await response.json();
-        return data?.membershipPlans;
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    };
-    const fetchClients = async () => {
-      try {
-        const response = await fetch("/clients", {
-          headers: new Headers({ "content-type": "application/json" }),
-        });
-        const { data } = await response.json();
-        return data?.clients;
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    };
+    c;
     const onSubmit = async () => {
       let client = clientSelect.getValue();
       let plan = planSelect.getValue();
       setValues({ clientId: client?.value, membershipPlanId: plan?.value });
       const { valid } = await validate();
       if (valid) {
-        subscribe();
-      }
-    };
-
-    const subscribe = async () => {
-      try {
-        const response = await fetch("/members", {
-          method: "POST",
-          body: JSON.stringify(subscribeForm),
-          headers: new Headers({
-            "content-type": "application/json",
-            "X-CSRF-Token": window.csrf,
-          }),
-        });
-        if (response.status === 200) {
+        subscribe(subscribeForm, async () => {
           swal.fire(
             "Subscribe Client",
             `Client has been subscribed successfully.`,
             "success"
           );
-          fetchMembers();
-        }
-      } catch (error) {
-      } finally {
-        $("#subscribeClientModal").modal("hide");
+          members.value = await fetchMembers();
+        });
       }
     };
     const formatDate = (dateStr) => {
@@ -112,6 +66,7 @@ createApp({
     const init = async () => {
       const plans = await fetchMembershipPlans();
       const clients = await fetchClients();
+      members.value = await fetchMembers();
       const planOptions = plans.map((p) => ({
         value: p.id,
         label: p.description,
@@ -126,7 +81,6 @@ createApp({
       planSelect = new Choices("#selectPlan", {
         choices: planOptions,
       });
-
       clientSelect = new Choices("#selectClient", {
         choices: clientOptions,
       });
@@ -134,7 +88,6 @@ createApp({
     defineInputBinds("clientId");
     defineInputBinds("membershipPlanId");
     onMounted(() => {
-      fetchMembers();
       init();
     });
     return {
