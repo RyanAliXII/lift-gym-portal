@@ -97,6 +97,9 @@
     </a>
   </body>
   {{template "partials/sb-scripts" .}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   <script src="/js/admin/members/main.js"></script>
 </html>
 {{end}}

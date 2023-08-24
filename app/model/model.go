@@ -11,9 +11,13 @@ func (m *Model) ValidationRules(structPtr interface{}, fields ...*validation.Fie
 	fieldErrs := make(map[string]string)
 	validationErrs :=  validation.ValidateStruct(structPtr,  fields...)
 	if validationErrs != nil  {
-		for k, validationErr := range validationErrs.(validation.Errors) {
-			fieldErrs[k] = validationErr.Error()
+		_, isValidationErrors:= validationErrs.(validation.Errors)
+		if isValidationErrors{
+			for k, validationErr := range validationErrs.(validation.Errors) {
+				fieldErrs[k] = validationErr.Error()
+			}
 		}
+		
 	}
 	return validationErrs, fieldErrs
 }
