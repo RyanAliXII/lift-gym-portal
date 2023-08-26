@@ -31,6 +31,8 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 func main() {
 	gob.Register(mysqlsession.SessionData{})
 	godotenv.Load(".env")
+	// mailer.SendVerifyAccountEmail()
+
 	store := mysqlsession.GetMySQLStore()
 	db.GetConnection()
 	db.CreateRootAccount()
