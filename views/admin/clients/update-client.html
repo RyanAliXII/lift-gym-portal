@@ -203,7 +203,7 @@
           const fieldErrors = ref({ ...initialFieldErrors });
           const onSubmit = async () => {
             try {
-              const response = await fetch("/clients/{{.client.Id}}", {
+              const response = await fetch("/app/clients/{{.client.Id}}", {
                 body: JSON.stringify(registrationForm.value),
                 method: "PUT",
                 headers: new Headers({
@@ -235,7 +235,8 @@
               showCancelButton: true,
               confirmButtonColor: "#3085d6",
               cancelButtonColor: "#d33",
-              confirmButtonText: "Yes, delete it!",
+              confirmButtonText: "Yes, reset it",
+              cancelButtonText: "I don't want to reset the password",
             }).then((result) => {
               if (result.isConfirmed) {
                 resetPassword(id);
@@ -244,7 +245,7 @@
           };
           const resetPassword = async (id) => {
             try {
-              const response = await fetch(`/clients/${id}/password`, {
+              const response = await fetch(`/app/clients/${id}/password`, {
                 method: "PATCH",
                 headers: new Headers({
                   "content-type": "application/json",

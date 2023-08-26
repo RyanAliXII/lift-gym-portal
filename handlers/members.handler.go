@@ -31,6 +31,8 @@ func (h *MemberHandler) RenderMembersPage(c echo.Context) error{
 	}
 	return c.Render(http.StatusOK, "admin/members/main", Data{
 		"csrf": csrf,
+		"title": "Members",
+		"module": "Members",
 	})
 }
 

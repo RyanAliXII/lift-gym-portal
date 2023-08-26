@@ -37,7 +37,7 @@ func handleResponse(c echo.Context) error{
 			"message": "Unauthorized.",
 		})
 	}	
-	return c.Redirect(http.StatusFound, "/login")
+	return c.Redirect(http.StatusFound, "/app/login")
 }
 
 

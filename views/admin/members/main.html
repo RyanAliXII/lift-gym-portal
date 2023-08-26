@@ -55,7 +55,11 @@
                     <tbody>
                       <template v-for="member of members">
                         <tr>
-                          <td>{member.givenName} {member.surname}</td>
+                          <td>
+                            <a :href="`/app/clients/${member.id}`"
+                              >{member.givenName} {member.surname}</a
+                            >
+                          </td>
                           <td>{member.membershipPlan.description}</td>
                           <td>{formatDate(member.subscriptionStartDate)}</td>
                           <td>{formatDate(member.validUntil)}</td>

@@ -1,6 +1,6 @@
 export const fetchMembers = async () => {
   try {
-    const response = await fetch("/members", {
+    const response = await fetch("/app/members", {
       headers: new Headers({ "content-type": "application/json" }),
     });
     const { data } = await response.json();
@@ -12,7 +12,7 @@ export const fetchMembers = async () => {
 };
 export const fetchClients = async () => {
   try {
-    const response = await fetch("/clients?type=unsubscribed", {
+    const response = await fetch("/app/clients?type=unsubscribed", {
       headers: new Headers({ "content-type": "application/json" }),
     });
     const { data } = await response.json();
@@ -24,7 +24,7 @@ export const fetchClients = async () => {
 };
 export const fetchMembershipPlans = async () => {
   try {
-    const response = await fetch("/memberships", {
+    const response = await fetch("/app/memberships", {
       headers: new Headers({ "content-type": "application/json" }),
     });
     const { data } = await response.json();
@@ -36,7 +36,7 @@ export const fetchMembershipPlans = async () => {
 };
 export const subscribe = async (form = {}, onSuccess = () => {}) => {
   try {
-    const response = await fetch("/members", {
+    const response = await fetch("/app/members", {
       method: "POST",
       body: JSON.stringify(form),
       headers: new Headers({
@@ -56,7 +56,7 @@ export const subscribe = async (form = {}, onSuccess = () => {}) => {
 
 export const cancelSubscription = async (id = 0, onSuccess = () => {}) => {
   try {
-    const response = await fetch(`/subscriptions/${id}`, {
+    const response = await fetch(`/app/subscriptions/${id}`, {
       method: "DELETE",
       headers: new Headers({
         "content-type": "application/json",

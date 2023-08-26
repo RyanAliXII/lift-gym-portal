@@ -35,6 +35,7 @@ func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin/packages/main", Data{
 		"title": "Packages",
 		"csrf": csrf,
+		"module": "Packages",
 	})
 }
 func (h * PackageHandler) NewPackage (c echo.Context) error {

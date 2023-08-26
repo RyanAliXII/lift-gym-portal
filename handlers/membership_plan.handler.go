@@ -31,6 +31,8 @@ func (h *MembershipPlanHandler) RenderMembershipPlanPage(c echo.Context) error{
 	}
 	return c.Render(http.StatusOK, "admin/membership-plan/main", Data{
 		"csrf": csrf,
+		"title": "Memberships",
+		"module": "Memberships",
 	} )
 }
 func (h *MembershipPlanHandler) NewMembershipPlan(c echo.Context) error{

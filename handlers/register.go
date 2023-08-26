@@ -7,10 +7,9 @@ import (
 )
 
 func RegisterHandlers(router *echo.Echo) {
-	loginHandler := NewLoginHandler()
-	router.GET("/login", loginHandler.RenderLoginPage)
-	router.POST("/login", loginHandler.Login)
-	adminRoutes(router.Group(""))
+	
+
+	adminRoutes(router.Group("/app"))
 }
 
 func adminRoutes (router  * echo.Group){
@@ -19,7 +18,9 @@ func adminRoutes (router  * echo.Group){
 	clientHandler := NewClientHandler()
 	membersHandler := NewMembersHandler()
 	membershipPlanHandler := NewMembershipPlanHandler()
-
+	loginHandler := NewLoginHandler()
+	router.GET("/login", loginHandler.RenderAdminLoginPage)
+	router.POST("/login", loginHandler.Login)
 	router.Use(middlewares.AuthMiddleware)
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage)
@@ -29,7 +30,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/clients/:id", clientHandler.RenderClientUpdatePage)
 	router.PUT("/clients/:id", clientHandler.UpdateClient)
 	router.POST("/clients", clientHandler.NewClient)
-	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
+	router.PATCH("/clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)
 	router.GET("/members", membersHandler.RenderMembersPage)
 	router.POST("/members", membersHandler.Subscribe)
@@ -37,5 +38,13 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/memberships", membershipPlanHandler.RenderMembershipPlanPage)
 	router.POST("/memberships", membershipPlanHandler.NewMembershipPlan)
 	router.PUT("/memberships/:id", membershipPlanHandler.UpdatePlan)
+
+}
+
+
+func clientRoutes(router * echo.Group){
+
+	
+
 
 }

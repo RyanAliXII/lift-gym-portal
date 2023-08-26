@@ -106,7 +106,7 @@
 
         const fetchPackages = async () => {
           try {
-            const response = await fetch("/packages", {
+            const response = await fetch("/app/packages", {
               headers: new Headers({
                 "content-type": "application/json",
               }),
@@ -128,7 +128,7 @@
         const onSubmitNewPackage = async () => {
           try {
             $("#addPackageModal").modal("hide");
-            const response = await fetch("/packages", {
+            const response = await fetch("/app/packages", {
               headers: new Headers({
                 "content-type": "application/json",
                 "X-CSRF-Token": csrf,
@@ -152,7 +152,7 @@
           try {
             $("#editPackageModal").modal("hide");
             const response = await fetch(
-              `/packages/${editPackageForm?.value.id}`,
+              `/app/packages/${editPackageForm?.value.id}`,
               {
                 headers: new Headers({
                   "content-type": "application/json",

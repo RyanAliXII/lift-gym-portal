@@ -190,7 +190,7 @@
           const fieldErrors = ref({ ...initialFieldErrors });
           const onSubmit = async () => {
             try {
-              const response = await fetch("/clients", {
+              const response = await fetch("/app/clients", {
                 body: JSON.stringify(registrationForm.value),
                 method: "POST",
                 headers: new Headers({

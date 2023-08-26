@@ -17,7 +17,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
-              <a class="btn btn-primary" href="/clients/registration">
+              <a class="btn btn-primary" href="/app/clients/registration">
                 <i class="fas fa-plus"></i>
                 New Client
               </a>
@@ -54,7 +54,7 @@
                         <td>{{.Surname}}</td>
                         <td>
                           <a
-                            href="/clients/{{.Id}}"
+                            href="/app/clients/{{.Id}}"
                             class="btn btn-outline-primary"
                           >
                             <i class="fas fa-edit"></i>
