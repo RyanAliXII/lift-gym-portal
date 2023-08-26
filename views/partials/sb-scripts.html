@@ -46,6 +46,22 @@
       const collapses = loadCollapses().filter((c) => e.currentTarget.id != c);
       localStorage.setItem("shownCollapses", JSON.stringify(collapses));
     });
+    $("#sidebarToggle").on("click", function (e) {
+      const sidebar = $(".sidebar");
+      if (sidebar.hasClass("toggled")) {
+        sidebar.removeClass("toggled");
+        return;
+      }
+      sidebar.addClass("toggled");
+    });
+    $("#sidebarToggleTop").on("click", function (e) {
+      const sidebar = $(".sidebar");
+      if (sidebar.hasClass("toggled")) {
+        sidebar.removeClass("toggled");
+        return;
+      }
+      sidebar.addClass("toggled");
+    });
   });
 </script>
 {{end}}
