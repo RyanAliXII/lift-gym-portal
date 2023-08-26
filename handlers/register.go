@@ -49,7 +49,6 @@ func clientRoutes(router * echo.Group){
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.Use(middlewares.ClientAuthMiddleware)
-
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 
 }
