@@ -4,6 +4,7 @@ type SessionData struct {
 	User SessionUser `json:"user"`
 }
 
+
 type SessionUser struct {
 	Id         int    `json:"id" db:"id"`
 	GivenName  string `json:"givenName" db:"given_name"`
