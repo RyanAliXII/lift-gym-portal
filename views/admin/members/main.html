@@ -17,10 +17,15 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
-              <!-- <a class="btn btn-primary" href="/clients/registration">
+              <button
+                class="btn btn-primary"
+                type="button"
+                data-toggle="modal"
+                data-target="#subscribeClientModal"
+              >
                 <i class="fas fa-plus"></i>
-                New Client
-              </a> -->
+                New Subscription
+              </button>
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -39,40 +44,42 @@
                   >
                     <thead>
                       <tr>
-                        <th>Given name</th>
-                        <th>Middle name</th>
-                        <th>Surname</th>
+                        <th>Name</th>
+                        <th>Membership Plan</th>
+                        <th>Subscription Start Date</th>
+                        <th>Membership Valid Until</th>
                         <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      {{range .clients}}
-                      <tr>
-                        <td>{{.GivenName}}</td>
-                        <td>{{.MiddleName}}</td>
-                        <td>{{.Surname}}</td>
-                        <td>
-                          <a
-                            href="/clients/{{.Id}}"
-                            class="btn btn-outline-primary"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      {{end}}
+                      <template v-for="member of members">
+                        <tr>
+                          <td>{member.givenName} {member.surname}</td>
+                          <td>{member.membershipPlan.description}</td>
+                          <td>{formatDate(member.subscriptionStartDate)}</td>
+                          <td>{formatDate(member.validUntil)}</td>
+                          <td>
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="Cancel subscription"
+                              @click="initCancellation(member)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
                     </tbody>
                   </table>
-                  <form @submit.prevent="onSubmit">
-                    <input type="text" v-bind="name" />
-                    <small>{errors.name}</small>
-                    <button type="submit">Submit</button>
-                  </form>
                 </div>
               </div>
             </div>
           </div>
+          {{template "admin/members/subscribe-modal" .}}
         </div>
         <!-- End of Main Content -->
 
@@ -96,6 +103,9 @@
     </a>
   </body>
   {{template "partials/sb-scripts" .}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   <script src="/js/admin/members/main.js"></script>
 </html>
 {{end}}

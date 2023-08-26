@@ -32,6 +32,8 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("clients/:id/password", clientHandler.ResetPassword)
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm)
 	router.GET("/members", membersHandler.RenderMembersPage)
+	router.POST("/members", membersHandler.Subscribe)
+	router.DELETE("/subscriptions/:subscriptionId", membersHandler.CancelSubscription)
 	router.GET("/memberships", membershipPlanHandler.RenderMembershipPlanPage)
 	router.POST("/memberships", membershipPlanHandler.NewMembershipPlan)
 	router.PUT("/memberships/:id", membershipPlanHandler.UpdatePlan)

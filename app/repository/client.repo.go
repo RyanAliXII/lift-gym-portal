@@ -43,6 +43,20 @@ func (repo * ClientRepository)Get()([]model.Client, error) {
 	selectErr := repo.db.Select(&clients, selectQuery)
 	return clients, selectErr 
 }
+func (repo * ClientRepository)GetUnsubscribed()([]model.Client, error) {
+	clients := make([]model.Client , 0)
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact, client.mobile_number, account.email, account.id as account_id
+	FROM client
+	INNER JOIN account ON client.account_id = account.id
+	WHERE client.id NOT IN (
+		SELECT subscription.client_id
+		FROM subscription
+		WHERE subscription.valid_until >= NOW() AND subscription.cancelled_at IS NULL
+	)
+	ORDER BY client.updated_at DESC;`
+	selectErr := repo.db.Select(&clients, selectQuery)
+	return clients, selectErr 
+}
 func (repo * ClientRepository)UpdatePassword (newPassword string, clientId int )(error){
 	client, getClientErr := repo.GetClientById(clientId)
 	if getClientErr != nil {

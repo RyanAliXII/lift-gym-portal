@@ -17,6 +17,11 @@ type ClientHandler struct {
 }
 func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	csrf := c.Get("csrf")
+	
+	contentType := c.Request().Header.Get("content-type")
+	if contentType == "application/json" {
+		return h.handleJSONContent(c)
+	}
 	clients, _ := h.clientRepo.Get()
 	return c.Render(http.StatusOK, "admin/clients/main", Data{
 		"title": "Clients",
@@ -25,6 +30,32 @@ func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 		"clients": clients,
 	})
 }
+
+func (h * ClientHandler) handleJSONContent( c echo.Context ) error {
+
+	clientType := c.QueryParam("type")
+	if len(clientType) > 0 {
+		if clientType == "unsubscribed"{
+		 clients, _ := h.clientRepo.GetUnsubscribed()
+		 return c.JSON(http.StatusOK, JSONResponse{
+				Status: http.StatusOK,
+				Data: Data{
+					"clients": clients,
+				},
+				Message: "Unsubscibed clients fetched.",
+			})
+		}
+	}
+	clients, _ := h.clientRepo.Get()
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"clients": clients,
+		},
+		Message: "Clients fetched.",
+	})
+}
+
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
 	csrf := c.Get("csrf")
 
