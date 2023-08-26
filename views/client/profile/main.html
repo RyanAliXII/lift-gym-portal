@@ -85,25 +85,45 @@
 
   {{template "partials/sb-scripts"}}
   <script>
+    const isVerified = "{{.profile.IsVerified}}" === "true";
+    const lastEmailVerificationSentExpiry = new Date(
+      "{{.emailVerification.ExpiresAt}}"
+    );
+
+    const datetimeNow = new Date();
     const sendVerificationButton = document.querySelector(
       "#sendVerificationButton"
     );
-    const sendEmailVerificationRequest = async () => {
-      try {
-        const response = await fetch("/clients/profile/verification", {
-          method: "POST",
-          headers: new Headers({
-            "content-type": "application/json",
-            "X-CSRF-Token": "{{.csrf}}",
-          }),
-        });
-      } catch (e) {
-        console.error(e);
-      }
+    const replaceSendVerificationEmailButton = () => {
+      sendVerificationButton.remove();
+      const small = document.createElement("small");
+      small.classList.add("text-primary");
+      small.textContent = "A verification is sent to your email address.";
+      document.querySelector("#emailVerificationCol").append(small);
     };
-    sendVerificationButton.addEventListener("click", (e) => {
-      sendEmailVerificationRequest();
-    });
+    if (!isVerified) {
+      const sendEmailVerificationRequest = async () => {
+        try {
+          const response = await fetch("/clients/profile/verification", {
+            method: "POST",
+            headers: new Headers({
+              "content-type": "application/json",
+              "X-CSRF-Token": "{{.csrf}}",
+            }),
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      sendVerificationButton.addEventListener("click", (e) => {
+        sendEmailVerificationRequest().then(() => {
+          replaceSendVerificationEmailButton();
+        });
+      });
+    }
+    if (datetimeNow < lastEmailVerificationSentExpiry) {
+      replaceSendVerificationEmailButton();
+    }
   </script>
 </html>
 {{end}}

@@ -23,7 +23,7 @@ func (repo *VerificationRepository) CreateEmailVerification(clientId int) (model
 		transaction.Rollback()
 		return verification, transactErr
 	}
-	insertQuery := "INSERT INTO email_verification(public_id, client_id, expires_at)VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))"
+	insertQuery := "INSERT INTO email_verification(public_id, client_id, expires_at)VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))"
 	_, insertErr := transaction.Exec(insertQuery, id, clientId)
 	if insertErr != nil {
 		transaction.Rollback()
@@ -37,6 +37,16 @@ func (repo *VerificationRepository) CreateEmailVerification(clientId int) (model
 	}
 
 	transaction.Commit()
+	return verification, nil
+}
+func (repo *VerificationRepository) GetLatestSentEmailVerification(clientId int) (model.EmailVerification, error) {
+	verification := model.EmailVerification{}
+	selectQuery := "Select public_id, client_id, expires_at, created_at  from email_verification where client_id = ? ORDER BY created_at DESC LIMIT 1"
+	getErr := repo.db.Get(&verification, selectQuery, clientId)
+	if getErr != nil {
+		return verification, getErr
+	}
+
 	return verification, nil
 }
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -37,6 +38,12 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	}
 	
 	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
+	
+	var emailVerification model.EmailVerification
+
+	if !client.IsVerified {
+		emailVerification, _ = h.verificationRepo.GetLatestSentEmailVerification(client.Id)	
+	}
 
 	if getClientErr != nil {
 		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
@@ -50,6 +57,7 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 		"title": "Profile",
 		"module": "Profile",
 		"profile": client,
+		"emailVerification": emailVerification,
 	})
 	return nil
 }

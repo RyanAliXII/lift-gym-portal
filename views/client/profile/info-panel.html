@@ -33,7 +33,10 @@
   <div class="row">
     <div class="col-sm-12 col-md-6 font-weight-bold">Email</div>
     <div class="col-sm-12 col-md-4">{{.profile.Email}}</div>
-    <div class="col-sm-12 col-md-2 d-flex flex-column">
+    <div
+      class="col-sm-12 col-md-2 d-flex flex-column"
+      id="emailVerificationCol"
+    >
       <span class="text-danger">Email not verified.</span>
       <a
         class="small text-decoration-underline"
