@@ -5,7 +5,7 @@
   id="subscribeClientModal"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="ubscribeClientModal"
+  aria-labelledby="subscribeClientModal"
   aria-hidden="true"
 >
   <div class="modal-dialog" role="document">
@@ -25,7 +25,11 @@
         <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="plan" class="col-form-label">Membership Plan</label>
-            <select id="selectPlan" name="plan"></select>
+            <select
+              id="selectPlan"
+              name="plan"
+              ref="planSelectElement"
+            ></select>
             <div
               class="invalid-feedback"
               :class="{'d-block': errors?.membershipPlanId}"
@@ -36,7 +40,11 @@
 
           <div class="form-group">
             <label for="plan" class="col-form-label">Client</label>
-            <select id="selectClient" name="client"></select>
+            <select
+              id="selectClient"
+              name="client"
+              ref="clientSelectElement"
+            ></select>
             <div
               class="invalid-feedback"
               :class="{'d-block': errors?.clientId}"

@@ -23,6 +23,8 @@ const SubscribeValidation = object({
 });
 createApp({
   setup() {
+    const clientSelectElement = ref(null);
+    const planSelectElement = ref(null);
     let clientSelect = null;
     let planSelect = null;
     const {
@@ -31,6 +33,8 @@ createApp({
       errors,
       defineInputBinds,
       values: subscribeForm,
+      setFieldError,
+      setErrors,
     } = useForm({
       initialValues: {
         clientId: 0,
@@ -85,27 +89,48 @@ createApp({
         });
       }
     };
+
+    const initListeners = () => {
+      $("#subscribeClientModal").on("shown.bs.modal", async () => {
+        planSelect.clearStore();
+        clientSelect.clearStore();
+        setErrors({
+          clientId: undefined,
+          membershipPlanId: undefined,
+        });
+        const plans = await fetchMembershipPlans();
+        const clients = await fetchClients();
+        const planOptions = plans.map((p) => ({
+          value: p.id,
+          label: p.description,
+          id: p.id,
+          customProperties: p,
+        }));
+        const clientOptions = clients.map((c) => ({
+          value: c.id,
+          label: `${c.givenName} ${c.surname}`,
+          customProperties: c,
+        }));
+        planSelect.setChoices(planOptions);
+        clientSelect.setChoices(clientOptions);
+      });
+
+      planSelectElement.value.addEventListener("change", () => {
+        if (errors.value.membershipPlanId) {
+          setFieldError("membershipPlanId", undefined);
+        }
+      });
+      clientSelectElement.value.addEventListener("change", () => {
+        if (errors.value.clientId) {
+          setFieldError("clientId", undefined);
+        }
+      });
+    };
     const init = async () => {
-      const plans = await fetchMembershipPlans();
-      const clients = await fetchClients();
       members.value = await fetchMembers();
-      const planOptions = plans.map((p) => ({
-        value: p.id,
-        label: p.description,
-        id: p.id,
-        customProperties: p,
-      }));
-      const clientOptions = clients.map((c) => ({
-        value: c.id,
-        label: `${c.givenName} ${c.surname}`,
-        customProperties: c,
-      }));
-      planSelect = new Choices("#selectPlan", {
-        choices: planOptions,
-      });
-      clientSelect = new Choices("#selectClient", {
-        choices: clientOptions,
-      });
+      planSelect = new Choices(planSelectElement.value, {});
+      clientSelect = new Choices(clientSelectElement.value, {});
+      initListeners();
     };
     defineInputBinds("clientId");
     defineInputBinds("membershipPlanId");
@@ -118,6 +143,8 @@ createApp({
       members,
       formatDate,
       initCancellation,
+      clientSelectElement,
+      planSelectElement,
     };
   },
   compilerOptions: {

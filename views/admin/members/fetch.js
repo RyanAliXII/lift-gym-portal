@@ -12,7 +12,7 @@ export const fetchMembers = async () => {
 };
 export const fetchClients = async () => {
   try {
-    const response = await fetch("/clients", {
+    const response = await fetch("/clients?type=unsubscribed", {
       headers: new Headers({ "content-type": "application/json" }),
     });
     const { data } = await response.json();
