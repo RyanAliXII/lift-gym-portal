@@ -8,24 +8,31 @@ import (
 	"os"
 )
 
-func SendVerifyAccountEmail() {
+
+
+
+func SendEmailVerification(to []string, recieverName string) error {
 	SMTPEmail := os.Getenv("SMTP_EMAIL")
 	SMTPPassword := os.Getenv("SMTP_PASSWORD")
 	SMTPHost := "smtp.gmail.com"
+	AppURL := os.Getenv("APP_URL")
 	t, err := template.ParseFiles("app/pkg/mailer/templates/account-verify.html")
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-	
+	link := fmt.Sprintf("%s/clients/verification", AppURL)
 	var body bytes.Buffer;
-	subject := "Subject: Account Verification\n"
+	subject := "Subject: Email Verification of LIFT Fitness Gym Account\n"
 	headers := "MIME-version: 1.0;\nContent-Type: text/html;"
 	body.Write([]byte(fmt.Sprintf("%s%s\n\n", subject, headers)))
-	t.Execute(&body, nil)
-	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", SMTPEmail, SMTPPassword,  SMTPHost), SMTPEmail, []string{"ryanali456@gmail.com"}, body.Bytes())
+	err = t.Execute(&body, map[string]string{"name": recieverName, "link": link})
 	if err != nil {
-        fmt.Printf("smtp error: %s", err)
-        return
+		return err
+	}
+	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", SMTPEmail, SMTPPassword,  SMTPHost), SMTPEmail, to, body.Bytes())
+	if err != nil {
+        return err
     }
+	return nil
 }
 

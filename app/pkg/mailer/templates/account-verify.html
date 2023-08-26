@@ -216,27 +216,7 @@
                                   font-family: 'Cabin', sans-serif;
                                 "
                                 align="left"
-                              >
-                                <div
-                                  style="
-                                    font-size: 14px;
-                                    color: #afb0c7;
-                                    line-height: 170%;
-                                    text-align: center;
-                                    word-wrap: break-word;
-                                  "
-                                >
-                                  <p style="font-size: 14px; line-height: 170%">
-                                    <span
-                                      style="
-                                        font-size: 14px;
-                                        line-height: 23.8px;
-                                      "
-                                      >View Email in Browser</span
-                                    >
-                                  </p>
-                                </div>
-                              </td>
+                              ></td>
                             </tr>
                           </tbody>
                         </table>
@@ -677,7 +657,7 @@
                                         font-size: 22px;
                                         line-height: 35.2px;
                                       "
-                                      >Hi,
+                                      >Hi, {{.name}}
                                     </span>
                                   </p>
                                   <p style="font-size: 14px; line-height: 160%">
@@ -727,7 +707,7 @@
                                 <div align="center">
                                   <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:46px; v-text-anchor:middle; width:235px;" arcsize="8.5%"  stroke="f" fillcolor="#e7b81e"><w:anchorlock/><center style="color:#FFFFFF;"><![endif]-->
                                   <a
-                                    href=""
+                                    href="{{.link}}"
                                     target="_blank"
                                     class="v-button"
                                     style="
