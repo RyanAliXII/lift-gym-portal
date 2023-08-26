@@ -40,7 +40,13 @@
                 <span>Your Path to a Stronger, Healthier You Begins Her</span>
               </div>
               <div class="divider d-flex align-items-center my-4"></div>
-
+              <div
+                class="alert alert-danger"
+                role="alert"
+                :class="{'d-none': message.length === 0}"
+              >
+                {message}
+              </div>
               <!-- Email input -->
               <div class="form-outline mb-4">
                 <label class="form-label" for="email">Email address</label>

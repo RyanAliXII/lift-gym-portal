@@ -6,7 +6,7 @@ createApp({
       email: "",
       password: "",
     });
-
+    const message = ref("");
     const onSubmit = async () => {
       const response = await fetch("/clients/login", {
         body: JSON.stringify(form.value),
@@ -17,11 +17,18 @@ createApp({
         }),
       });
       const data = await response.json();
-      console.log(data);
+      if (response.status === 200) {
+        location.replace("/clients/dashboard");
+      }
+      message.value = data?.message;
     };
     return {
       form,
+      message,
       onSubmit,
     };
+  },
+  compilerOptions: {
+    delimiters: ["{", "}"],
   },
 }).mount("#ClientLoginPage");
