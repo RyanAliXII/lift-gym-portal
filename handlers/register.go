@@ -10,6 +10,7 @@ func RegisterHandlers(router *echo.Echo) {
 	
 
 	adminRoutes(router.Group("/app"))
+	clientRoutes(router.Group("/clients"))
 }
 
 func adminRoutes (router  * echo.Group){
@@ -43,8 +44,8 @@ func adminRoutes (router  * echo.Group){
 
 
 func clientRoutes(router * echo.Group){
-
-	
+	loginHandler := NewLoginHandler()
+	router.GET("/login", loginHandler.RenderAdminLoginPage)
 
 
 }

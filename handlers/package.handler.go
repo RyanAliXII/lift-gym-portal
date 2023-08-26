@@ -15,7 +15,7 @@ type PackageHandler struct {
 }
 
 func (h *PackageHandler) RenderPackagePage(c echo.Context) error {
-	
+
 	contentType := c.Request().Header.Get("Content-Type")
 	csrf := c.Get("csrf")
 	if contentType == "application/json" {
