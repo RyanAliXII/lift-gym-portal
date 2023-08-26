@@ -11,4 +11,41 @@
 <script src="/js/datatables/jquery.datatables.min.js"></script>
 <script src="/js/swal/swal2.all.min.js"></script>
 <script src="/js/vue/vue.global.prod.js"></script>
+<script>
+  const collapsesInitial = [];
+  const loadCollapses = () => {
+    try {
+      const storageCollapses = localStorage.getItem("shownCollapses");
+      if (!storageCollapses) {
+        localStorage.setItem(
+          "shownCollapses",
+          JSON.stringify(collapsesInitial)
+        );
+        return collapsesInitial;
+      }
+
+      return JSON.parse(storageCollapses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const initializeCollapses = () => {
+    const collapses = loadCollapses();
+    for (const c of collapses) {
+      $(`#${c}`).addClass("show");
+    }
+  };
+  initializeCollapses();
+  window.addEventListener("load", () => {
+    $(".collapse").on("shown.bs.collapse", function (e) {
+      const collapses = loadCollapses();
+      collapses.push(e.currentTarget.id);
+      localStorage.setItem("shownCollapses", JSON.stringify(collapses));
+    });
+    $(".collapse").on("hide.bs.collapse", function (e) {
+      const collapses = loadCollapses().filter((c) => e.currentTarget.id != c);
+      localStorage.setItem("shownCollapses", JSON.stringify(collapses));
+    });
+  });
+</script>
 {{end}}
