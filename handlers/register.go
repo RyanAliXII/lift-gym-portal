@@ -45,7 +45,11 @@ func adminRoutes (router  * echo.Group){
 
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
-	router.GET("/login", loginHandler.RenderAdminLoginPage)
+	dashboardHandler := NewDashboardHandler()
+	router.GET("/login", loginHandler.RenderClientLoginPage)
+	router.POST("/login", loginHandler.LoginClient)
+	router.Use(middlewares.ClientAuthMiddleware)
 
+	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 
 }
