@@ -52,6 +52,9 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	})
 	return nil
 }
+func (h * ClientHandler) CreateEmailVerification(c echo.Context) {
+
+}
 
 func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
