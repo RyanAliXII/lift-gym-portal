@@ -45,7 +45,7 @@ func adminRoutes (router  * echo.Group){
 
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
-	router.GET("/login", loginHandler.RenderAdminLoginPage)
+	router.GET("/login", loginHandler.RenderClientLoginPage)
 
 
 }

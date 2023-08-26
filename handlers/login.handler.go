@@ -25,6 +25,13 @@ func (h *LoginHandler) RenderAdminLoginPage(c echo.Context) error{
 		"csrf": csrf,
 	} )
 }
+func (h * LoginHandler) RenderClientLoginPage(c echo.Context) error{
+	csrf := c.Get("csrf")
+	return c.Render(http.StatusOK, "client/login/main", Data{
+		"title": "Sign In",
+		"csrf": csrf,
+	})
+}
 
 func (h * LoginHandler) Login (c echo.Context) error {
 	user := model.User{}
