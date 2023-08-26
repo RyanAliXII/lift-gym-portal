@@ -84,5 +84,26 @@
   </body>
 
   {{template "partials/sb-scripts"}}
+  <script>
+    const sendVerificationButton = document.querySelector(
+      "#sendVerificationButton"
+    );
+    const sendEmailVerificationRequest = async () => {
+      try {
+        const response = await fetch("/clients/profile/verification", {
+          method: "POST",
+          headers: new Headers({
+            "content-type": "application/json",
+            "X-CSRF-Token": "{{.csrf}}",
+          }),
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    sendVerificationButton.addEventListener("click", (e) => {
+      sendEmailVerificationRequest();
+    });
+  </script>
 </html>
 {{end}}

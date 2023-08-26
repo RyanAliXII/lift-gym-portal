@@ -13,6 +13,7 @@ import (
 
 type ProfileHandler struct {
 	clientRepo repository.ClientRepository
+	verificationRepo  repository.VerificationRepository
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -52,12 +53,42 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	})
 	return nil
 }
-func (h * ClientHandler) CreateEmailVerification(c echo.Context) {
-
+func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
+	s, getSessionErr := session.Get("sid", c)
+	if getSessionErr != nil {
+		logger.Error(getSessionErr.Error(), zap.String("error",  "getSessionErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	sessionData := mysqlsession.SessionData{}
+	decodeErr := mapstructure.Decode(s.Values["data"], &sessionData)
+	if decodeErr != nil {
+		logger.Error(decodeErr.Error(), zap.String("error",  "decodeErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	verification , createErr := h.verificationRepo.CreateEmailVerification(sessionData.User.Id)
+	if createErr != nil {
+		logger.Error(createErr.Error(), zap.String("error",  "createErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	return c.JSON(http.StatusOK, Data{
+		"status": http.StatusOK,
+		"data": verification,
+	   "message": "Email Verification Sent.",
+   })
 }
 
 func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),
+		verificationRepo: repository.NewVerificationRepository() ,
 	}
 }

@@ -12,7 +12,7 @@ type VerificationRepository struct {
 	db *sqlx.DB
 }
 
-func (repo *VerificationRepository) CreateEmailVerification(clientId string) (model.EmailVerification, error) {
+func (repo *VerificationRepository) CreateEmailVerification(clientId int) (model.EmailVerification, error) {
 	verification := model.EmailVerification{}
 	id, newIdErr := gonanoid.New()
 	if newIdErr != nil {

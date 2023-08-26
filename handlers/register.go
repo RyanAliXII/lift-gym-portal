@@ -52,6 +52,6 @@ func clientRoutes(router * echo.Group){
 	router.Use(middlewares.ClientAuthMiddleware)
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 	router.GET("/profile", profileHandler.RenderClientProfilePage)
-	router.GET("/profile/verification", profileHandler.RenderClientProfilePage)
+	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
 
 }
