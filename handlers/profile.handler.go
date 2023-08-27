@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mailer"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ type ProfileHandler struct {
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	csrf := c.Get("csrf")
-	s, getSessionErr := session.Get("sid", c)
+	s, getSessionErr := session.Get("client_sid", c)
 	if getSessionErr != nil {
 		logger.Error(getSessionErr.Error(), zap.String("error",  "getSessionErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
@@ -27,18 +27,16 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 		   "message": "Unknown error occured",
 	   })
 	}
+
 	sessionData := mysqlsession.SessionData{}
-	decodeErr := mapstructure.Decode(s.Values["data"], &sessionData)
-	if decodeErr != nil {
-		logger.Error(decodeErr.Error(), zap.String("error",  "decodeErr"))
+	bindErr := sessionData.Bind(s.Values["data"])
+	if bindErr != nil {
 		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 		   "message": "Unknown error occured",
 	   })
 	}
-	
 	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
-	
 	var emailVerification model.EmailVerification
 
 	if !client.IsVerified {
@@ -62,7 +60,7 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	return nil
 }
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
-	s, getSessionErr := session.Get("sid", c)
+	s, getSessionErr := session.Get("client_sid", c)
 	if getSessionErr != nil {
 		logger.Error(getSessionErr.Error(), zap.String("error",  "getSessionErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
@@ -71,9 +69,9 @@ func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 	   })
 	}
 	sessionData := mysqlsession.SessionData{}
-	decodeErr := mapstructure.Decode(s.Values["data"], &sessionData)
-	if decodeErr != nil {
-		logger.Error(decodeErr.Error(), zap.String("error",  "decodeErr"))
+    bindErr := sessionData.Bind(s.Values["data"])
+	if bindErr != nil {
+		logger.Error(bindErr.Error(), zap.String("error",  "bindErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 		   "message": "Unknown error occured",
@@ -87,6 +85,7 @@ func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 		   "message": "Unknown error occured",
 	   })
 	}
+	go mailer.SendEmailVerification([]string{sessionData.User.Email}, sessionData.User.GivenName, verification.PublicId)
 	return c.JSON(http.StatusOK, Data{
 		"status": http.StatusOK,
 		"data": verification,

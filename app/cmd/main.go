@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/gob"
 	"html/template"
 	"io"
 	"io/fs"
@@ -29,7 +28,7 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 }
 
 func main() {
-	gob.Register(mysqlsession.SessionData{})
+
 	godotenv.Load(".env")
 	store := mysqlsession.GetMySQLStore()
 	db.GetConnection()
