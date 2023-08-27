@@ -51,14 +51,17 @@ func (repo *VerificationRepository) GetLatestSentEmailVerification(clientId int)
 }
 func (repo *VerificationRepository)GetEmailVerificationByPublicId(publicId string) (model.EmailVerification, error) {
 	verification := model.EmailVerification{}
-	selectQuery := "Select public_id, client_id, expires_at, created_at from email_verification where public_id = ? AND expires_at >= NOW() ORDER BY created_at DESC LIMIT 1"
+	selectQuery := "Select public_id, client_id, expires_at, created_at from email_verification where public_id = ? AND expires_at >= NOW() AND completed_at is null ORDER BY created_at DESC LIMIT 1"
 	err := repo.db.Get(&verification, selectQuery, publicId)
 	if err != nil {
 		return verification, err 
 	}
 	return verification, nil
 } 
-
+func (repo *VerificationRepository)MarkAsComplete(id int) error {
+	_, err := repo.db.Exec("UPDATE email_verification SET completed_at = NOW() WHERE id = ?" , id)
+	return err
+} 
 func NewVerificationRepository()VerificationRepository{
 
 	return VerificationRepository{
