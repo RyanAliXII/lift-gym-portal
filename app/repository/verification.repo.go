@@ -41,7 +41,7 @@ func (repo *VerificationRepository) CreateEmailVerification(clientId int) (model
 }
 func (repo *VerificationRepository) GetLatestSentEmailVerification(clientId int) (model.EmailVerification, error) {
 	verification := model.EmailVerification{}
-	selectQuery := "Select public_id, client_id, expires_at, created_at  from email_verification where client_id = ? ORDER BY created_at DESC LIMIT 1"
+	selectQuery := "Select id, public_id, client_id, expires_at, created_at  from email_verification where client_id = ? ORDER BY created_at DESC LIMIT 1"
 	getErr := repo.db.Get(&verification, selectQuery, clientId)
 	if getErr != nil {
 		return verification, getErr
@@ -51,7 +51,7 @@ func (repo *VerificationRepository) GetLatestSentEmailVerification(clientId int)
 }
 func (repo *VerificationRepository)GetEmailVerificationByPublicId(publicId string) (model.EmailVerification, error) {
 	verification := model.EmailVerification{}
-	selectQuery := "Select public_id, client_id, expires_at, created_at from email_verification where public_id = ? AND expires_at >= NOW() AND completed_at is null ORDER BY created_at DESC LIMIT 1"
+	selectQuery := "Select id, public_id, client_id, expires_at, created_at from email_verification where public_id = ? AND expires_at >= NOW() AND completed_at is null ORDER BY created_at DESC LIMIT 1;"
 	err := repo.db.Get(&verification, selectQuery, publicId)
 	if err != nil {
 		return verification, err 

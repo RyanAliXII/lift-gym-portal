@@ -37,6 +37,9 @@
       class="col-sm-12 col-md-2 d-flex flex-column"
       id="emailVerificationCol"
     >
+      {{if .profile.IsVerified}}
+      <span class="text-success">Email Verified.</span>
+      {{else}}
       <span class="text-danger">Email not verified.</span>
       <a
         class="small text-decoration-underline"
@@ -44,6 +47,7 @@
         role="button"
         >Send Verification Email</a
       >
+      {{end}}
     </div>
   </div>
   <hr />
