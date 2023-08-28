@@ -12,7 +12,6 @@ import (
 
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc{
 	return func (c echo.Context) error {
-	
 		s , getSessionErr := session.Get("sid", c)
 		if getSessionErr != nil {
 			s.Options.MaxAge = -1

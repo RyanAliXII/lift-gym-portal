@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
@@ -73,7 +72,7 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		MaxAge:   3600 * 24, // 1 day
 		HttpOnly: true,
 	}
-	s.Values["data"] = mysqlsession.SessionData{
+	sessionData := mysqlsession.SessionData{
 		User: mysqlsession.SessionUser{
 			Id: dbUser.Id,
 			GivenName: dbUser.GivenName,
@@ -82,6 +81,8 @@ func (h * LoginHandler) Login (c echo.Context) error {
 			Email: dbUser.Email,
 		},
 	}
+	bytesSessionData, _ := sessionData.ToBytes()
+	s.Values["data"] = bytesSessionData
 	saveErr := s.Save(c.Request(), c.Response())
 	if saveErr != nil {
 		
@@ -105,8 +106,8 @@ func (h * LoginHandler) LoginClient(c echo.Context) error {
 		})
 	}
 	dbUser, getUserErr  := h.userRepository.GetClientUserByEmail(user.Email)
-	fmt.Println(dbUser)
-	if getUserErr != nil {
+
+	if getUserErr != nil { 
 		logger.Error(getUserErr.Error(), zap.String("error", getUserErr.Error()))
 		return c.JSON(http.StatusBadRequest, Data{
 			"status": http.StatusBadRequest,
@@ -134,7 +135,7 @@ func (h * LoginHandler) LoginClient(c echo.Context) error {
 		MaxAge:   3600 * 24, // 1 day
 		HttpOnly: true,
 	}
-	s.Values["data"] = mysqlsession.SessionData{
+	sessionData := mysqlsession.SessionData{
 		User: mysqlsession.SessionUser{
 			Id: dbUser.Id,
 			GivenName: dbUser.GivenName,
@@ -143,9 +144,11 @@ func (h * LoginHandler) LoginClient(c echo.Context) error {
 			Email: dbUser.Email,
 		},
 	}
+	sessionDataBytes,_ := sessionData.ToBytes()
+	s.Values["data"] = sessionDataBytes
 	saveErr := s.Save(c.Request(), c.Response())
 	if saveErr != nil {
-		
+		logger.Error(saveErr.Error(), zap.String("error", "saveErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 		   "message": "Unknown error occured",

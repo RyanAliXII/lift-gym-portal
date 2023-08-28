@@ -3,52 +3,78 @@
 <h2 class="h4 mb-3 text-gray-800 mt-4">General Information</h2>
 <div class="p-2">
   <div class="row">
-    <div class="col font-weight-bold">Given name</div>
-    <div class="col">{{.profile.GivenName}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Given name</div>
+    <div class="col-sm-12 col-md-6">{{.profile.GivenName}}</div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Middle name/initial</div>
-    <div class="col">{{.profile.MiddleName}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Middle name/initial</div>
+    <div class="col-sm-12 col-md-6">{{.profile.MiddleName}}</div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Surname</div>
-    <div class="col">{{.profile.Surname}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Surname</div>
+    <div class="col-sm-12 col-md-6">{{.profile.Surname}}</div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Date of Birth</div>
-    <div class="col">{{.profile.DateOfBirth}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Date of Birth</div>
+    <div class="col-sm-12 col-md-6">{{.profile.DateOfBirth}}</div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Address</div>
-    <div class="col">{{.profile.Address}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Address</div>
+    <div class="col-sm-12 col-md-6">{{.profile.Address}}</div>
   </div>
 </div>
 <hr />
 <h2 class="h4 mb-3 text-gray-800">Account and Contact Information</h2>
 <div class="p-2">
   <div class="row">
-    <div class="col font-weight-bold">Email</div>
-    <div class="col">{{.profile.Email}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Email</div>
+    <div class="col-sm-12 col-md-4">{{.profile.Email}}</div>
+    <div
+      class="col-sm-12 col-md-2 d-flex flex-column"
+      id="emailVerificationCol"
+    >
+      {{if .profile.IsVerified}}
+      <span class="text-success">Email Verified.</span>
+      {{else}}
+      <span class="text-danger">Email not verified.</span>
+      <a
+        class="small text-decoration-underline"
+        id="sendVerificationButton"
+        role="button"
+        >Send Verification Email</a
+      >
+      {{end}}
+    </div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Mobile number</div>
-    <div class="col">{{.profile.MobileNumber}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">Mobile number</div>
+    <div class="col-sm-12 col-md-6">{{.profile.MobileNumber}}</div>
   </div>
   <hr />
   <div class="row">
-    <div class="col font-weight-bold">Emergency contact number</div>
-    <div class="col">{{.profile.EmergencyContact}}</div>
+    <div class="col-sm-12 col-md-6 font-weight-bold">
+      Emergency contact number
+    </div>
+    <div class="col-sm-12 col-md-6">{{.profile.EmergencyContact}}</div>
   </div>
   <hr />
-  <div class="row">
-    <div class="col font-weight-bold">Account Status</div>
-    <div class="col font-weight-bold text-warning">Not Verified</div>
-  </div>
+  <!-- <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Account Status</div>
+    <div
+      class="col-sm-12 col-md-6 font-weight-bold text-warning d-flex flex-column"
+    >
+      <span>Not Verified</span>
+      <a href="#" class="small text-decoration-underline"
+        >Send Email Verification</a
+      >
+    </div>
+  </div> -->
 </div>
+<div></div>
 
 {{end}}

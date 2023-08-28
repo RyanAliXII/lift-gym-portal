@@ -47,10 +47,13 @@ func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
 	dashboardHandler := NewDashboardHandler()
 	profileHandler := NewProfileHandler()
+	verificationHandler := NewVerificationHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
+	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
 	router.Use(middlewares.ClientAuthMiddleware)
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 	router.GET("/profile", profileHandler.RenderClientProfilePage)
+	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
 
 }
