@@ -18,7 +18,7 @@ createApp({
       validationSchema: object({}),
       validateOnMount: false,
     });
-    const newCoach = async () => {
+    const onSubmit = async () => {
       try {
         const response = await fetch("/app/coaches", {
           headers: new Headers({
@@ -43,10 +43,6 @@ createApp({
       } catch (error) {
         console.error(error);
       }
-    };
-
-    const onSubmit = () => {
-      newCoach();
     };
     const givenName = defineInputBinds("givenName", { validateOnChange: true });
     const middleName = defineInputBinds("middleName", {

@@ -135,6 +135,49 @@ func (h  *CoachHandler)UpdateCoach(c echo.Context) error {
 			Message: "Coach has profile updated.",
 	})
 }
+func (h  *CoachHandler)ResetPassword(c echo.Context) error {
+	id := c.Param("id")
+	coachId, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
+	diceware := &acopw.Diceware{
+		Separator: "-",
+		Length: 2,
+		Capitalize: true,
+	}
+	generatedPassword,generateErr  := diceware.Generate()
+
+	if generateErr != nil {
+		logger.Error(generateErr.Error(), zap.String("error", "generateErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
+	h.coachRepo.UpdatePassword(string(hashedPassword), coachId)
+	if hashingErr != nil {
+		logger.Error(hashingErr.Error(), zap.String("error", "hashingErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",})
+
+	}
+	
+	return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"password": generatedPassword,
+			},
+			Message: "Password has been updated.",
+	})
+}
 
 
 func NewCoachHandler() CoachHandler{

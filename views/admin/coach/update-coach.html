@@ -152,7 +152,16 @@
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-primary">Submit</button>
+                <div class="d-flex" style="gap: 5px">
+                  <button class="btn btn-primary">Submit</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="initializeResetPassword('{{.coach.Id}}')"
+                  >
+                    Reset Password
+                  </button>
+                </div>
               </form>
             </div>
           </div>

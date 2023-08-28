@@ -77,6 +77,18 @@ func (repo  CoachRepository)UpdateCoach(coach model.Coach) error {
 
 	
 }
+func (repo * CoachRepository)UpdatePassword (newPassword string, clientId int )(error){
+	client, err := repo.GetCoachById(clientId)
+	if err!= nil {
+		return err
+	}
+	updateQuery := "UPDATE account SET password = ? WHERE id = ?"
+	_, err = repo.db.Exec(updateQuery, newPassword, client.AccountId)
+	if err != nil {
+		return err
+	}
+	return nil
+} 
 func NewCoachRepository()CoachRepository {
 
 	return CoachRepository{
