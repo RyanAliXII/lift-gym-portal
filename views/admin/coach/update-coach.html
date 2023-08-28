@@ -171,7 +171,18 @@
   {{template "partials/sb-scripts" .}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.coach = {
+      id: "{{.coach.Id}}",
+      givenName: "{{.coach.GivenName}}",
+      middleName: "{{.coach.MiddleName}}",
+      surname: "{{.coach.Surname}}",
+      address: "{{.coach.Address}}",
+      dateOfBirth: "{{.coach.DateOfBirth}}",
+      email: "{{.coach.Email}}",
+      mobileNumber: "{{.coach.MobileNumber}}",
+      emergencyContact: "{{.coach.EmergencyContact}}",
+    };
   </script>
-  <script src="/js/admin/coach/register-coach.js"></script>
+  <script src="/js/admin/coach/update-coach.js"></script>
 </html>
 {{end}}

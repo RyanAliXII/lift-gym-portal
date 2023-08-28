@@ -42,7 +42,9 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/memberships/:id", membershipPlanHandler.UpdatePlan)
 	router.GET("/coaches", coachHandler.RenderCoachPage)
 	router.GET("/coaches/registration", coachHandler.RenderCoachRegistrationPage)
+	router.GET("/coaches/:id", coachHandler.RenderCoachUpdatePage)
 	router.POST("/coaches", coachHandler.NewCoach)
+	
 }
 
 
