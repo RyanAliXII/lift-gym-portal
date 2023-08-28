@@ -34,8 +34,11 @@
                       name="givenName"
                       type="text"
                       v-bind="givenName"
+                      :class="{'is-invalid': errors?.givenName}"
                     />
-                    <div class="invalid-feedback d-block"></div>
+                    <div class="invalid-feedback d-block">
+                      {errors?.givenName}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="middleName" class="col-form-label"
@@ -46,8 +49,11 @@
                       name="middleName"
                       type="text"
                       v-bind="middleName"
+                      :class="{'is-invalid': errors?.middleName}"
                     />
-                    <div class="invalid-feedback d-block"></div>
+                    <div class="invalid-feedback d-block">
+                      {errors?.middleName}
+                    </div>
                   </div>
 
                   <div class="form-group col-sm-12 col-lg-4">
@@ -57,8 +63,11 @@
                       name="surname"
                       type="text"
                       v-bind="surname"
+                      :class="{'is-invalid': errors?.surname}"
                     />
-                    <div class="invalid-feedback d-block"></div>
+                    <div class="invalid-feedback d-block">
+                      {errors?.surname}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="dateOfBirth" class="col-form-label"
@@ -67,17 +76,25 @@
                     <input
                       class="form-control"
                       name="dateOfBirth"
+                      :class="{'is-invalid': errors?.dateOfBirth}"
                       type="date"
                       v-bind="dateOfBirth"
                     />
+                    <div class="invalid-feedback d-block">
+                      {errors?.dateOfBirth}
+                    </div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="dateOfBirth" class="col-form-label"
                     >Address</label
                   >
-                  <textarea class="form-control" v-bind="address"></textarea>
-                  <div class="invalid-feedback d-block"></div>
+                  <textarea
+                    class="form-control"
+                    v-bind="address"
+                    :class="{'is-invalid': errors?.address}"
+                  ></textarea>
+                  <div class="invalid-feedback d-block">{errors?.address}</div>
                 </div>
                 <div
                   class="w-100 bg-gray-300 d-flex align-items-center"
@@ -88,8 +105,13 @@
                 <div class="row">
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="email" class="col-form-label">Email</label>
-                    <input class="form-control" name="email" type="email" />
-                    <div class="invalid-feedback d-block"></div>
+                    <input
+                      class="form-control"
+                      name="email"
+                      type="email"
+                      :class="{'is-invalid': errors?.email}"
+                    />
+                    <div class="invalid-feedback d-block">{errors?.email}</div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="mobile" class="col-form-label"
@@ -100,8 +122,11 @@
                       name="mobileNumber"
                       type="text"
                       v-bind="mobileNumber"
+                      :class="{'is-invalid': errors?.mobileNumber}"
                     />
-                    <div class="invalid-feedback d-block"></div>
+                    <div class="invalid-feedback d-block">
+                      {errors?.mobileNumber}
+                    </div>
                   </div>
                   <div class="form-group col-sm-12 col-lg-4">
                     <label for="emergencyContact" class="col-form-label"
@@ -112,8 +137,11 @@
                       name="emergencyContact"
                       type="text"
                       v-bind="emergencyContact"
+                      :class="{'is-invalid': errors?.emergencyContact}"
                     />
-                    <div class="invalid-feedback d-block"></div>
+                    <div class="invalid-feedback d-block">
+                      {errors?.emergencyContact}
+                    </div>
                   </div>
                 </div>
                 <button class="btn btn-primary">Submit</button>
@@ -133,6 +161,9 @@
     </a>
   </body>
   {{template "partials/sb-scripts" .}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   <script src="/js/admin/coach/main.js"></script>
 </html>
 {{end}}

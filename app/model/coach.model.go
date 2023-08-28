@@ -2,8 +2,10 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/nyaruka/phonenumbers"
 )
 
@@ -29,17 +31,16 @@ func (m Coach) Validate() (error, map[string]string) {
 		validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)),
 		validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
 		validation.Field(&m.Address, validation.Required),
-		// validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email, validation.By(func(value interface{}) error {
-		// 	recordCount := 0
-		// 	query := `SELECT COUNT(1) as record_count from client
-		// 	INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
-		// 	db.Get(&recordCount, query, m.Email)
-		// 	if recordCount > 0 {
-		// 		return fmt.Errorf("email is already registered")
-		// 	}
-		
-		// 	return nil
-		// })),	
+		validation.Field(&m.DateOfBirth, validation.Required, validation.By(func(value interface{}) error {
+			format := "2006-01-02"
+			strDate ,_ := value.(string)
+			_, err := time.Parse(format, strDate)
+			if err != nil {
+				return fmt.Errorf("cannot be blank")
+			}
+			return nil
+		})),
+		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email),	
 	    validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")

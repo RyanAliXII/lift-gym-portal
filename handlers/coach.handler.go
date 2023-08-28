@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"lift-fitness-gym/app/model"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -28,6 +29,17 @@ func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {
 
 
 func (h  *CoachHandler)NewCoach (c echo.Context) error {
+	coach := model.Coach{}
+	c.Bind(&coach)
+	err, fieldErrs := coach.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fieldErrs,
+			},
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: nil,
