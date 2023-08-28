@@ -26,7 +26,7 @@ createApp({
             "content-type": "application/json",
             "X-CSRF-Token": window.csrf,
           }),
-          method: "POST",
+          method: "PUT",
           body: JSON.stringify(values),
         });
 

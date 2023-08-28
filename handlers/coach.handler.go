@@ -110,6 +110,7 @@ func (h  *CoachHandler)NewCoach (c echo.Context) error {
 func (h  *CoachHandler)UpdateCoach(c echo.Context) error {
 	coach := model.Coach{}
 	c.Bind(&coach)
+
 	err, fieldErrs := coach.ValidateUpdate()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -119,9 +120,10 @@ func (h  *CoachHandler)UpdateCoach(c echo.Context) error {
 			},
 		})
 	}
-	err = h.coachRepo.NewCoach(coach)
+	
+	err = h.coachRepo.UpdateCoach(coach)
 	if err != nil {	
-		logger.Error(err.Error(), zap.String("error", "newCoach"))
+		logger.Error(err.Error(), zap.String("error", "updateCoach"))
 		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
 			"message": "Unknown error occured.",})
@@ -130,7 +132,7 @@ func (h  *CoachHandler)UpdateCoach(c echo.Context) error {
 	return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: nil,
-			Message: "Coach has been registered.",
+			Message: "Coach has profile updated.",
 	})
 }
 

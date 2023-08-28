@@ -172,7 +172,7 @@
   <script>
     window.csrf = "{{.csrf}}";
     window.coach = {
-      id: "{{.coach.Id}}",
+      id: parseInt("{{.coach.Id}}"),
       givenName: "{{.coach.GivenName}}",
       middleName: "{{.coach.MiddleName}}",
       surname: "{{.coach.Surname}}",

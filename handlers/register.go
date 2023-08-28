@@ -44,6 +44,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/coaches/registration", coachHandler.RenderCoachRegistrationPage)
 	router.GET("/coaches/:id", coachHandler.RenderCoachUpdatePage)
 	router.POST("/coaches", coachHandler.NewCoach)
+	router.PUT("/coaches/:id", coachHandler.UpdateCoach)
 	
 }
 

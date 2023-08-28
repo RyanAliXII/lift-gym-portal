@@ -50,7 +50,33 @@ func (repo *CoachRepository)GetCoachById (id int ) (model.Coach, error) {
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
 }
+func (repo  CoachRepository)UpdateCoach(coach model.Coach) error {
+	dbCoach, getClientErr := repo.GetCoachById(coach.Id)
+	if getClientErr != nil {
+		return getClientErr
+	}
+	transaction, transactErr := repo.db.Begin()
+	if transactErr != nil {
+		transaction.Rollback()
+		return transactErr
+	}
+	updateCoachQuery := `UPDATE coach SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ? where id = ?`
+	_, updateCoachErr := transaction.Exec(updateCoachQuery, coach.GivenName,coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, coach.Id)
+	if updateCoachErr != nil {
+		transaction.Rollback()
+		return updateCoachErr
+	}
+	updateAccountQuery := `UPDATE account SET email = ? WHERE id = ?`
+	_, updateAccountErr := transaction.Exec(updateAccountQuery, coach.Email, dbCoach.AccountId)
+	if updateAccountErr != nil {
+		transaction.Rollback()
+		return updateAccountErr
+	}
+	transaction.Commit()
+	return nil
 
+	
+}
 func NewCoachRepository()CoachRepository {
 
 	return CoachRepository{
