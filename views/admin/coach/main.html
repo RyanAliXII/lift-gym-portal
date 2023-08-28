@@ -46,7 +46,23 @@
                       </tr>
                     </thead>
 
-                    <tbody></tbody>
+                    <tbody>
+                      {{range .coaches}}
+                      <tr>
+                        <td>{{.GivenName}}</td>
+                        <td>{{.MiddleName}}</td>
+                        <td>{{.Surname}}</td>
+                        <td>
+                          <a
+                            href="/app/coaches/{{.Id}}"
+                            class="btn btn-outline-primary"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </a>
+                        </td>
+                      </tr>
+                      {{end}}
+                    </tbody>
                   </table>
                 </div>
               </div>

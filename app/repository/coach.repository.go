@@ -27,14 +27,21 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 		transaction.Rollback()
 		return lastInsertedIdErr
 	}
-	insertClientQuery := `INSERT INTO coach(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id) VALUES(?, ? ,? , ?, ? , ?, ?, ?)`
-	_, insertClientErr := transaction.Exec(insertClientQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId )
-	if insertClientErr != nil {
+	insertCoachQuery := `INSERT INTO coach(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id) VALUES(?, ? ,? , ?, ? , ?, ?, ?)`
+	_, insertCoachErr := transaction.Exec(insertCoachQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId )
+	if insertCoachErr != nil {
 		transaction.Rollback()
-		return insertClientErr
+		return insertCoachErr
 	}
 	transaction.Commit()
 	return nil
+}
+func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
+	coaches := make([]model.Coach , 0)
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id from coach
+	INNER JOIN account on coach.account_id = account.id ORDER BY coach.updated_at DESC`
+	selectErr := repo.db.Select(&coaches, selectQuery)
+	return coaches, selectErr 
 }
 
 func NewCoachRepository()CoachRepository {

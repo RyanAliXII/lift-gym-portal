@@ -17,10 +17,12 @@ type CoachHandler struct {
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 	csrf := c.Get("csrf")
+	coaches,_ := h.coachRepo.GetCoaches()
 	return c.Render(http.StatusOK, "admin/coach/main", Data{
 		"title": "Coaches",
 		"module": "Coaches",
 		"csrf": csrf,
+		"coaches": coaches,
 	})
 }
 func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {
