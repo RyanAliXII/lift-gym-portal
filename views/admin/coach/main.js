@@ -32,8 +32,8 @@ createApp({
         const { data } = await response.json();
         if (response.status === 200) {
           swal.fire(
-            "Coach Register",
-            "Coach has been registered successfully.",
+            "Coach Registered",
+            `Coach has been registered. <br> The password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
             "success"
           );
         }
