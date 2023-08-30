@@ -62,5 +62,6 @@ func clientRoutes(router * echo.Group){
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 	router.GET("/profile", profileHandler.RenderClientProfilePage)
 	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
+	router.PATCH("/profile/password", profileHandler.ChangePassword)
 
 }

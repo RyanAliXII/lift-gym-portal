@@ -125,5 +125,24 @@
       replaceSendVerificationEmailButton();
     }
   </script>
+
+  <script>
+    const changePasswordForm = document.querySelector("#changePasswordForm");
+
+    changePasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+
+      const response = await fetch("/clients/profile/password", {
+        body: formData,
+        method: "PATCH",
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+    });
+  </script>
 </html>
 {{end}}

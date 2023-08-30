@@ -50,6 +50,13 @@ func (repo * ClientRepository)GetById(id int)(model.Client, error) {
 	getErr := repo.db.Get(&clients, selectQuery , id)
 	return clients, getErr 
 }
+func (repo * ClientRepository)GetByIdWithPassword(id int)(model.Client, error) {
+	clients := model.Client{}
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.password, account.id as account_id, (case when verified_at is null then false else true end ) as is_verified from client
+	INNER JOIN account on client.account_id = account.id where client.id = ? ORDER BY client.updated_at DESC LIMIT 1;`
+	getErr := repo.db.Get(&clients, selectQuery , id)
+	return clients, getErr 
+}
 func (repo * ClientRepository)GetUnsubscribed()([]model.Client, error) {
 	clients := make([]model.Client , 0)
 	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact, client.mobile_number, account.email, account.id as account_id
