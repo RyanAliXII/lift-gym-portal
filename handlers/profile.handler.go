@@ -115,7 +115,21 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 		   "message": "Unknown error occured",
 	   })
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(client.Password), []byte(c.FormValue("oldPassword")))
+	oldPassword := c.FormValue("oldPassword")
+	err = validation.Validate(oldPassword, validation.Required, validation.Length(1, 0))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				 "errors": Data{
+					 "oldPassword": fmt.Sprint(err.Error(), "."),
+				 },
+			},
+			Message: "Invalid old password value.",
+		})
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(client.Password), []byte(oldPassword))
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 		   Status: http.StatusBadRequest,
