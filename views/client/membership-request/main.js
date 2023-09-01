@@ -1,7 +1,7 @@
 import { createApp, onMounted, ref } from "vue";
 import Choices from "choices.js";
-
 import { number } from "yup";
+import swal from "sweetalert2";
 const fetchMembershipPlans = async () => {
   try {
     const response = await fetch("/clients/memberships", {
@@ -15,7 +15,29 @@ const fetchMembershipPlans = async () => {
     return [];
   }
 };
-
+const sendRequest = async (id = 0) => {
+  try {
+    const response = await fetch("/clients/membership-requests", {
+      method: "POST",
+      body: JSON.stringify({
+        membershipPlanId: id,
+      }),
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "X-CSRF-Token": window.csrf,
+      }),
+    });
+    if (response.status === 200) {
+      swal.fire(
+        "Membership Request",
+        "Membership request has been submitted. Please wait for response.",
+        "success"
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 createApp({
   setup() {
     let planSelectElement = ref(null);
@@ -39,7 +61,11 @@ createApp({
       errorMessage.value = undefined;
       const id = planSelect.getValue()?.id;
       try {
-        await number().required().min(1).validate(id, { abortEarly: true });
+        const result = await number()
+          .required()
+          .min(1)
+          .validate(id, { abortEarly: true });
+        sendRequest(result);
       } catch (err) {
         errorMessage.value = "Please select a plan";
       }

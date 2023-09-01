@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/db"
 
@@ -24,6 +26,7 @@ type Client struct {
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
 	Model
 }
+
 func (m Client) Validate() (error, map[string]string) {
 
 	db := db.GetConnection()
@@ -92,4 +95,25 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 				return fmt.Errorf("invalid number")
 			}
 			return nil})))
+}
+
+type ClientJSON struct {
+	Client
+}
+
+func (instance *ClientJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = ClientJSON{}
+		}
+	} else {
+		*instance = ClientJSON{}
+	}
+	return nil
+
+}
+func (copy ClientJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
 }
