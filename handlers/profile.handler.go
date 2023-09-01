@@ -1,15 +1,18 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mailer"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ProfileHandler struct {
@@ -91,6 +94,83 @@ func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 		"data": verification,
 	   "message": "Email Verification Sent.",
    })
+}
+func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
+
+	s, err := session.Get("client_sid", c)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "getSessionErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(s.Values["data"])
+	client, err := h.clientRepo.GetByIdWithPassword(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "GetByIdWithPasswordErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	oldPassword := c.FormValue("oldPassword")
+	err = validation.Validate(oldPassword, validation.Required, validation.Length(1, 0))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				 "errors": Data{
+					 "oldPassword": fmt.Sprint(err.Error(), "."),
+				 },
+			},
+			Message: "Invalid old password value.",
+		})
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(client.Password), []byte(oldPassword))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+		   Status: http.StatusBadRequest,
+		   Data: Data{
+				"errors": Data{
+					"oldPassword": "Old password is incorrect.",
+				},
+		   },
+		   Message: "Old password is incorrect.",
+	   })
+
+	}
+	newPassword := c.FormValue("newPassword")
+	err = validation.Validate(newPassword, validation.Required, validation.Length(10, 30))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				 "errors": Data{
+					 "newPassword": fmt.Sprint(err.Error(), "."),
+				 },
+			},
+			Message: "Invalid new password value.",
+		})
+	}
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "generatePassword"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	
+	h.clientRepo.UpdatePassword(string(hashedNewPassword), client.Id)
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: nil,
+		Message: "Password has been changed.",
+	})
 }
 
 func NewProfileHandler()ProfileHandler {

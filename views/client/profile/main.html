@@ -125,5 +125,67 @@
       replaceSendVerificationEmailButton();
     }
   </script>
+
+  <script>
+    const changePasswordForm = document.querySelector("#changePasswordForm");
+    const oldPasswordGroup = document.querySelector("#oldPasswordGrp");
+    const newPasswordGroup = document.querySelector("#newPasswordGrp");
+
+    const resetChangePasswordErrors = () => {
+      oldPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      oldPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      oldPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+
+      newPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      newPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      newPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+    };
+    changePasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      resetChangePasswordErrors();
+      const formData = new FormData(event.target);
+
+      const response = await fetch("/clients/profile/password", {
+        body: formData,
+        method: "PATCH",
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+      const { data } = await response.json();
+      if (response.status === 200) {
+        Swal.fire(
+          "Change Password",
+          "Your password has been changed.",
+          "success"
+        );
+        oldPasswordGroup.querySelector("input").value = "";
+        newPasswordGroup.querySelector("input").value = "";
+      }
+
+      if (response.status === 400) {
+        if (data?.errors?.oldPassword) {
+          oldPasswordGroup.querySelector("input").classList.add("is-invalid");
+          oldPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          oldPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.oldPassword;
+        }
+        if (data?.errors?.newPassword) {
+          newPasswordGroup.querySelector("input").classList.add("is-invalid");
+          newPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          newPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.newPassword;
+        }
+      }
+    });
+  </script>
 </html>
 {{end}}
