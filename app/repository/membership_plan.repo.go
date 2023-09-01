@@ -26,9 +26,6 @@ func (repo  MembershipPlanRepository)Update(plan model.MembershipPlan)(error) {
 	_, updateErr := repo.db.Exec(`UPDATE membership_plan SET description = ?, price = ?, months = ? WHERE id = ?`, plan.Description, plan.Price, plan.Months, plan.Id )
 	return updateErr
 }
-
-
-
 func NewMembershipPlanRepository() MembershipPlanRepository{
 	return MembershipPlanRepository{
 		db: db.GetConnection(),
