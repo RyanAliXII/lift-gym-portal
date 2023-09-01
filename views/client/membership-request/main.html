@@ -18,7 +18,7 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" id="MembershipRequest">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
               <button
@@ -53,16 +53,14 @@
                     </thead>
 
                     <tbody>
-                      <template v-for="member of members">
+                      <template>
                         <tr>
                           <td>
-                            <a :href="`/app/clients/${member.id}`"
-                              >{member.givenName} {member.surname}</a
-                            >
+                            <a></a>
                           </td>
-                          <td>{member.membershipPlan.description}</td>
-                          <td>{formatDate(member.subscriptionStartDate)}</td>
-                          <td>{formatDate(member.validUntil)}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                           <td>
                             <button
                               type="button"
@@ -70,7 +68,6 @@
                               data-toggle="tooltip"
                               data-placement="top"
                               title="Cancel subscription"
-                              @click="initCancellation(member)"
                             >
                               <i class="fas fa-trash"></i>
                             </button>
@@ -99,5 +96,6 @@
   </body>
 
   {{template "partials/sb-scripts"}}
+  <script src="/js/client/membership-request/main.js"></script>
 </html>
 {{end}}
