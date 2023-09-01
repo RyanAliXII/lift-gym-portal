@@ -17,9 +17,9 @@ func(repo *MembershipRequestRepository)NewRequest(request model.MembershipReques
 
 func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId int) ([]model.MembershipRequest, error) {
 	requests := make([]model.MembershipRequest, 0)
-	repo.db.Select(&requests, `
+	err := repo.db.Select(&requests,`
 	SELECT 
-	mbr.id, mbr.client_id, mbr.membership_plan_id,mbr.status_id, mbrs.description as status,
+	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan
 	FROM membership_request as mbr 
@@ -28,7 +28,7 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
 	WHERE mbr.client_id = ? ORDER BY mbr.updated_at
 	`, clientId)
-	return requests, nil
+	return requests, err
 }
 func NewMembershipRequestRepository() MembershipRequestRepository{
 	return MembershipRequestRepository {

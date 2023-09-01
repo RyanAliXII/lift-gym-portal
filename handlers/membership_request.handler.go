@@ -18,13 +18,42 @@ type MembershipRequestHandler struct {
 }
 
 func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context) error{
+	s, err := session.Get("client_sid", c)
 
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, JSONResponse{
+			Status: http.StatusUnauthorized,
+			Data: nil,
+			Message: "Unauthorized.",
+		})
+	}
+	session := mysqlsession.SessionData{}
+	session.Bind(s.Values["data"])
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		requests, err := h.membershipRequestRepo.GetMembershipRequestsByClientId(session.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "getMembershipRequestsByClientIdErr"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"membershipRequests" : requests,
+			},
+			Message: "Membership requests has been fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "client/membership-request/main", Data{
 		"csrf" :  c.Get("csrf"),
 		"title": "Client | Membership Requests",
 		"module": "Membership Requests",
 	})
 }
+
 
 func (h * MembershipRequestHandler)GetUnrequestedMembershipPlans(c echo.Context) error{
 	s, err := session.Get("client_sid", c)
@@ -102,31 +131,17 @@ func (h * MembershipRequestHandler) NewRequest(c echo.Context) error {
 	})
 }
 
-func (h *MembershipRequestHandler)GetMembershipRequestsByClientId(c echo.Context) error {
+// func (h *MembershipRequestHandler)GetMembershipRequestsByClientId(c echo.Context) error {
 
-	s, err := session.Get("client_sid", c)
 
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, JSONResponse{
-			Status: http.StatusUnauthorized,
-			Data: nil,
-			Message: "Unauthorized.",
-		})
-	}
-	session := mysqlsession.SessionData{}
-	session.Bind(s.Values["data"])
-	requests, err := h.membershipRequestRepo.GetMembershipRequestsByClientId(session.User.Id)
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "getMembershipRequestsByClientIdErr"))
-	}
-	return c.JSON(http.StatusOK, JSONResponse{
-		Status: http.StatusOK,
-		Data: Data{
-			"membershipRequests": requests,
-		},
-		Message: "Membership requests fetched.",
-	})
-}
+// 	return c.JSON(http.StatusOK, JSONResponse{
+// 		Status: http.StatusOK,
+// 		Data: Data{
+// 			"membershipRequests": requests,
+// 		},
+// 		Message: "Membership requests fetched.",
+// 	})
+// }
 
 func NewMembershipRequestHandler() MembershipRequestHandler {
 	return MembershipRequestHandler{

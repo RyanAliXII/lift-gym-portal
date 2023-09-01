@@ -3,13 +3,13 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation"
 
 type MembershipRequest struct {
-	Id               int    `json:"id"`
-	ClientId         int    `json:"clientId"`
-	MembershipPlanId int    `json:"membershipPlanId"`
-	StatusId         int    `json:"statusId"`
-	Status           string `json:"status"`
-	Client			 ClientJSON	 `json:"client"`
-	MembershipPlan 	 MembershipPlanJSON `json:"membershipPlan"`
+	Id               int    `json:"id" db:"id"`
+	ClientId         int    `json:"clientId" db:"client_id"`
+	MembershipPlanId int    `json:"membershipPlanId" db:"membership_plan_id"`
+	StatusId         int    `json:"statusId" db:"status_id"`
+	Status           string `json:"status" db:"status"`
+	Client			 ClientJSON	 `json:"client" db:"client"`
+	MembershipPlan 	 MembershipPlanJSON `json:"membershipPlan" db:"membership_plan"`
 	Model
 }
 
