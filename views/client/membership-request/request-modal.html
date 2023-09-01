@@ -22,7 +22,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="plan" class="col-form-label">Membership Plan</label>
             <select
@@ -30,7 +30,9 @@
               name="plan"
               ref="planSelectElement"
             ></select>
-            <div class="invalid-feedback"></div>
+            <div class="invalid-feedback" :class="{'d-block': errorMessage}">
+              {errorMessage}
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Send Request</button>
         </form>

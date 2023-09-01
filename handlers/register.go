@@ -65,4 +65,5 @@ func clientRoutes(router * echo.Group){
 	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
 	router.PATCH("/profile/password", profileHandler.ChangePassword)
 	router.GET("/membership-requests", membershipRequestHandler.RenderClientMembershipRequest)
+	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
 }

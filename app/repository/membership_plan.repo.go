@@ -26,9 +26,9 @@ func (repo  *MembershipPlanRepository)Update(plan model.MembershipPlan)(error) {
 	_, updateErr := repo.db.Exec(`UPDATE membership_plan SET description = ?, price = ?, months = ? WHERE id = ?`, plan.Description, plan.Price, plan.Months, plan.Id )
 	return updateErr
 }
-func (repo * MembershipPlanRepository)GetUnrequestedPlansOfClient(clientId int)([]model.MembershipPlan, error	){
+func (repo * MembershipPlanRepository)GetUnrequestedPlansOfClient(clientId int)([]model.MembershipPlan, error){
 	plans := make([]model.MembershipPlan, 0)
-	err := repo.db.Select(&plans, `SELECT  id, description, price, months FROM membership_plan as mp where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ?)`)
+	err := repo.db.Select(&plans, `SELECT  id, description, price, months FROM membership_plan as mp where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ?)`, clientId)
 	return plans, err
 }
 func NewMembershipPlanRepository() MembershipPlanRepository{
