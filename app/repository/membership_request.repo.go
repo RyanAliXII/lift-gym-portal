@@ -3,6 +3,7 @@ package repository
 import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/status"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -29,6 +30,13 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	WHERE mbr.client_id = ? ORDER BY mbr.updated_at
 	`, clientId)
 	return requests, err
+}
+
+func(repo * MembershipRequestRepository) CancelMembershipRequest( id int, remarks string) error {
+	_, err := repo.db.Exec(
+		"UPDATE membership_request SET status_id = ?, remarks = ? where id = ? AND status_id != ?", 
+		status.MembershipRequestStatusCancelled, remarks,  id, status.MembershipRequestStatusReceived)
+	return err
 }
 func NewMembershipRequestRepository() MembershipRequestRepository{
 	return MembershipRequestRepository {

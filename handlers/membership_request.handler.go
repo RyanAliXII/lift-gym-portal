@@ -6,6 +6,7 @@ import (
 	"lift-fitness-gym/app/pkg/status"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -130,18 +131,42 @@ func (h * MembershipRequestHandler) NewRequest(c echo.Context) error {
 		Message: "Request has been added.",
 	})
 }
-
-// func (h *MembershipRequestHandler)GetMembershipRequestsByClientId(c echo.Context) error {
-
-
-// 	return c.JSON(http.StatusOK, JSONResponse{
-// 		Status: http.StatusOK,
-// 		Data: Data{
-// 			"membershipRequests": requests,
-// 		},
-// 		Message: "Membership requests fetched.",
-// 	})
-// }
+func (h  *  MembershipRequestHandler) UpdateMembershipRequestStatus(c echo.Context) error {
+	id,err := strconv.Atoi( c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "idConvertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	statusId, err :=  strconv.Atoi(c.QueryParam("statusId"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "statusIdConvertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	if statusId == status.MembershipRequestStatusCancelled {
+		err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by user.")
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured.",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Message: "Membership request cancelled.",
+		})
+	}
+	return c.JSON(http.StatusBadRequest, JSONResponse{
+		Status: http.StatusBadRequest,
+		Message: "Unknown action.",
+	})
+}
 
 func NewMembershipRequestHandler() MembershipRequestHandler {
 	return MembershipRequestHandler{
