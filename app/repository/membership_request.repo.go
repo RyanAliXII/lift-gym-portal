@@ -31,6 +31,21 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	`, clientId)
 	return requests, err
 }
+func (repo MembershipRequestRepository)GetMembershipRequests() ([]model.MembershipRequest, error) {
+	requests := make([]model.MembershipRequest, 0)
+	err := repo.db.Select(&requests,`
+	SELECT 
+	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status,
+	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan
+	FROM membership_request as mbr 
+	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+	INNER JOIN client on mbr.client_id = client.id
+	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
+	ORDER BY mbr.updated_at
+	`)
+	return requests, err
+}
 
 func(repo * MembershipRequestRepository) CancelMembershipRequest( id int, remarks string) error {
 	_, err := repo.db.Exec(

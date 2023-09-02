@@ -21,6 +21,7 @@ func adminRoutes (router  * echo.Group){
 	membershipPlanHandler := NewMembershipPlanHandler()
 	loginHandler := NewLoginHandler()
 	coachHandler := NewCoachHandler()
+	membershipRequestHandler := NewMembershipRequestHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.Use(middlewares.AuthMiddleware)
@@ -46,7 +47,7 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/coaches", coachHandler.NewCoach)
 	router.PUT("/coaches/:id", coachHandler.UpdateCoach)
 	router.PATCH("/coaches/:id/password", coachHandler.ResetPassword)
-	
+	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest)
 }
 
 

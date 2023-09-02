@@ -56,6 +56,34 @@ func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context)
 }
 
 
+func (h *MembershipRequestHandler) RenderAdminMembershipRequest(c echo.Context) error{
+	
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		requests, err := h.membershipRequestRepo.GetMembershipRequests()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "getMembershipRequestsByClientIdErr"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"membershipRequests" : requests,
+			},
+			Message: "Membership requests has been fetched.",
+		})
+	}
+	return c.Render(http.StatusOK, "admin/membership-request/main", Data{
+		"csrf" :  c.Get("csrf"),
+		"title": "Client | Membership Requests",
+		"module": "Membership Requests",
+	})
+}
+
+
 func (h * MembershipRequestHandler)GetUnrequestedMembershipPlans(c echo.Context) error{
 	s, err := session.Get("client_sid", c)
 
