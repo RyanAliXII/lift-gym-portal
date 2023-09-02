@@ -7,10 +7,9 @@ import (
 )
 
 func RegisterHandlers(router *echo.Echo) {
-	
-
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
+	coachRoutes(router.Group("/coaches"))
 }
 
 func adminRoutes (router  * echo.Group){
@@ -24,7 +23,7 @@ func adminRoutes (router  * echo.Group){
 	membershipRequestHandler := NewMembershipRequestHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
-	router.Use(middlewares.AuthMiddleware)
+	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage)
 	router.POST("/packages", packageHandler.NewPackage)
@@ -61,7 +60,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
-	router.Use(middlewares.ClientAuthMiddleware)
+	router.Use(middlewares.AuthMiddleware("client_sid", "/clients/login"))
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 	router.GET("/profile", profileHandler.RenderClientProfilePage)
 	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
@@ -70,7 +69,13 @@ func clientRoutes(router * echo.Group){
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
 	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
+}
 
-
-
+func coachRoutes(router * echo.Group) {
+	loginHandler := NewLoginHandler()
+	dashboardHandler := NewDashboardHandler()
+	router.GET("/login", loginHandler.RenderCoachLoginPage)
+	router.POST("/login", loginHandler.LoginCoach)
+	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
+	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 }
