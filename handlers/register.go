@@ -11,6 +11,7 @@ func RegisterHandlers(router *echo.Echo) {
 
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
+	coachRoutes(router.Group("/coaches"))
 }
 
 func adminRoutes (router  * echo.Group){
@@ -70,7 +71,10 @@ func clientRoutes(router * echo.Group){
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
 	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
+}
 
-
-
+func coachRoutes(router * echo.Group) {
+	loginHandler := NewLoginHandler()
+	router.GET("/login", loginHandler.RenderCoachLoginPage)
+	router.POST("/login", loginHandler.LoginCoach)
 }

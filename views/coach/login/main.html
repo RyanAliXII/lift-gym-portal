@@ -83,7 +83,7 @@
         const onSubmit = async () => {
           try {
             message.value = "";
-            const response = await fetch("/app/login", {
+            const response = await fetch("/coaches/login", {
               body: JSON.stringify(loginForm.value),
               method: "POST",
               headers: new Headers({
@@ -93,7 +93,7 @@
             });
             const data = await response.json();
             if (response.status === 200) {
-              location.replace("/app/dashboard");
+              //location.replace("/app/dashboard");
             } else {
               message.value = data?.message ?? "";
             }

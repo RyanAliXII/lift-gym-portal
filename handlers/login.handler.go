@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
@@ -16,9 +17,6 @@ import (
 type LoginHandler struct {
 	userRepository  repository.UserRepository
 }
-
-
-
 func (h *LoginHandler) RenderAdminLoginPage(c echo.Context) error{
 	csrf := c.Get("csrf")
 	return c.Render(http.StatusOK, "admin/login/main", Data{
@@ -33,7 +31,11 @@ func (h * LoginHandler) RenderClientLoginPage(c echo.Context) error{
 		"csrf": csrf,
 	})
 }
-
+func (h * LoginHandler) RenderCoachLoginPage(c echo.Context) error {
+	return c.Render(http.StatusOK, "coach/login/main", Data{
+		"csrf": c.Get("csrf"),
+	})
+}
 func (h * LoginHandler) Login (c echo.Context) error {
 	user := model.User{}
 	bindErr := c.Bind(&user)
@@ -106,7 +108,6 @@ func (h * LoginHandler) LoginClient(c echo.Context) error {
 		})
 	}
 	dbUser, getUserErr  := h.userRepository.GetClientUserByEmail(user.Email)
-
 	if getUserErr != nil { 
 		logger.Error(getUserErr.Error(), zap.String("error", getUserErr.Error()))
 		return c.JSON(http.StatusBadRequest, Data{
@@ -159,7 +160,29 @@ func (h * LoginHandler) LoginClient(c echo.Context) error {
 	   "message": "Success.",
    })
 }
-
+func (h * LoginHandler) LoginCoach(c echo.Context)error{
+	user := model.User{}
+	err := c.Bind(&user)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindError"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	coach, err := h.userRepository.GetCoachUserByEmail(user.Email)
+	fmt.Println(coach)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Invalid username or password.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Success.",
+	})
+}
 func NewLoginHandler() LoginHandler{
 	return LoginHandler{
 		userRepository:  repository.NewUserRepository(),
