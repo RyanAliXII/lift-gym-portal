@@ -8,8 +8,6 @@ import (
 type SessionData struct {
 	User SessionUser `json:"user"`
 }
-
-
 type SessionUser struct {
 	Id         int    `json:"id" db:"id"`
 	GivenName  string `json:"givenName" db:"given_name"`
@@ -29,5 +27,6 @@ func(s * SessionData )Bind(v interface{}) error {
 	err := json.Unmarshal(bytes, s)
 	return err
 }
+
 
 

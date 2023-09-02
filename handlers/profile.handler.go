@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -23,17 +22,8 @@ type ProfileHandler struct {
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	csrf := c.Get("csrf")
-	s, getSessionErr := session.Get("client_sid", c)
-	if getSessionErr != nil {
-		logger.Error(getSessionErr.Error(), zap.String("error",  "getSessionErr"))
-		return c.JSON(http.StatusInternalServerError, Data{
-			"status": http.StatusInternalServerError,
-		   "message": "Unknown error occured",
-	   })
-	}
-
 	sessionData := mysqlsession.SessionData{}
-	bindErr := sessionData.Bind(s.Values["data"])
+	bindErr := sessionData.Bind(c.Get("sessionData"))
 	if bindErr != nil {
 		return c.JSON(http.StatusInternalServerError, Data{
 			"status": http.StatusInternalServerError,
@@ -71,16 +61,8 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	return nil
 }
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
-	s, getSessionErr := session.Get("client_sid", c)
-	if getSessionErr != nil {
-		logger.Error(getSessionErr.Error(), zap.String("error",  "getSessionErr"))
-		return c.JSON(http.StatusInternalServerError, Data{
-			"status": http.StatusInternalServerError,
-		   "message": "Unknown error occured",
-	   })
-	}
 	sessionData := mysqlsession.SessionData{}
-    bindErr := sessionData.Bind(s.Values["data"])
+    bindErr := sessionData.Bind(c.Get("sessionData"))
 	if bindErr != nil {
 		logger.Error(bindErr.Error(), zap.String("error",  "bindErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
@@ -104,17 +86,8 @@ func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
    })
 }
 func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
-
-	s, err := session.Get("client_sid", c)
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error",  "getSessionErr"))
-		return c.JSON(http.StatusInternalServerError, Data{
-			"status": http.StatusInternalServerError,
-		   "message": "Unknown error occured",
-	   })
-	}
 	sessionData := mysqlsession.SessionData{}
-	sessionData.Bind(s.Values["data"])
+	sessionData.Bind(c.Get("sessionData"))
 	client, err := h.clientRepo.GetByIdWithPassword(sessionData.User.Id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error",  "GetByIdWithPasswordErr"))
