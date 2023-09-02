@@ -75,6 +75,8 @@ func clientRoutes(router * echo.Group){
 
 func coachRoutes(router * echo.Group) {
 	loginHandler := NewLoginHandler()
+	dashboardHandler := NewDashboardHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
+	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 }
