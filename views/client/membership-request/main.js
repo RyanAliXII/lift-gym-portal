@@ -105,6 +105,44 @@ createApp({
         $("#requestModal").modal("hide");
       }
     };
+    const initCancellation = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, cancel it.",
+        title: "Cancel Membership Request",
+        text: "Are you sure you want to cancel the membership request?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to cancel the request.",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        cancelMembershipRequest(id);
+      }
+    };
+    const cancelMembershipRequest = async (id) => {
+      try {
+        const response = await fetch(
+          `/clients/membership-requests/${id}/status?statusId=${Status.Cancelled}`,
+          {
+            method: "PATCH",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          swal.fire(
+            "Membership Request Cancellation",
+            "Membership request has been cancelled.",
+            "success"
+          );
+          membershipRequests.value = await fetchMembershipRequests();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     onMounted(() => {
       init();
@@ -115,6 +153,7 @@ createApp({
       errorMessage,
       membershipRequests,
       Status,
+      initCancellation,
     };
   },
   compilerOptions: {

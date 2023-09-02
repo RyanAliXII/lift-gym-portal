@@ -3,6 +3,7 @@ package repository
 import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/status"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -28,7 +29,9 @@ func (repo  *MembershipPlanRepository)Update(plan model.MembershipPlan)(error) {
 }
 func (repo * MembershipPlanRepository)GetUnrequestedPlansOfClient(clientId int)([]model.MembershipPlan, error){
 	plans := make([]model.MembershipPlan, 0)
-	err := repo.db.Select(&plans, `SELECT  id, description, price, months FROM membership_plan as mp where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ?)`, clientId)
+	err := repo.db.Select(&plans, `SELECT  id, description, price, months FROM membership_plan as mp 
+	where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ? AND (membership_request.status_id = ? OR membership_request.status_id = ?));`, 
+	clientId, status.MembershipRequestStatusPending, status.MembershipRequestStatusApproved)
 	return plans, err
 }
 func NewMembershipPlanRepository() MembershipPlanRepository{

@@ -60,7 +60,10 @@
                           <td>{request.membershipPlan.price}</td>
                           <td
                             class="font-weight-bold"
-                            :class="{'text-warning': request.statusId === Status.Pending, 'text-primary': request.statusId === Status.Approved, 'text-success': request.statusId === Status.Received}"
+                            :class="{'text-warning': request.statusId === Status.Pending, 
+                            'text-primary': request.statusId === Status.Approved,
+                             'text-success': request.statusId === Status.Received, 
+                             'text-danger': request.statusId === Status.Cancelled}"
                           >
                             <div>{request.status}</div>
 
@@ -84,6 +87,7 @@
                               data-toggle="tooltip"
                               data-placement="top"
                               title="Cancel Membership Request"
+                              @click="initCancellation(request.id)"
                             >
                               <i class="fas fa-trash"></i>
                             </button>
