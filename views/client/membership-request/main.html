@@ -47,27 +47,31 @@
                     <thead>
                       <tr>
                         <th>Description</th>
-                        <th>Membership Plan</th>
+                        <th>Price</th>
                         <th>Status</th>
+                        <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <template>
+                      <template v-for="request of membershipRequests">
                         <tr>
-                          <td>
-                            <a></a>
+                          <td>{request.membershipPlan.description}</td>
+                          <td>{request.membershipPlan.price}</td>
+                          <td
+                            class="font-weight-bold"
+                            :class="{'text-warning': request.statusId === 1}"
+                          >
+                            <div>{request.status}</div>
+                            <small>Waiting for approval.</small>
                           </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
                           <td>
                             <button
                               type="button"
                               class="btn btn-outline-danger"
                               data-toggle="tooltip"
                               data-placement="top"
-                              title="Cancel subscription"
+                              title="Cancel Membership Request"
                             >
                               <i class="fas fa-trash"></i>
                             </button>

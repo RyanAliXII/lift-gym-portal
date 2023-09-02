@@ -15,7 +15,7 @@ const fetchMembershipPlans = async () => {
     return [];
   }
 };
-const sendRequest = async (id = 0) => {
+const sendRequest = async (id = 0, onSuccess = () => {}) => {
   try {
     const response = await fetch("/clients/membership-requests", {
       method: "POST",
@@ -28,21 +28,31 @@ const sendRequest = async (id = 0) => {
       }),
     });
     if (response.status === 200) {
-      swal.fire(
-        "Membership Request",
-        "Membership request has been submitted. Please wait for response.",
-        "success"
-      );
+      onSuccess();
     }
   } catch (error) {
     console.error(error);
   }
 };
+const fetchMembershipRequests = async () => {
+  try {
+    const response = await fetch("/clients/membership-requests", {
+      method: "GET",
+      headers: new Headers({ "Content-Type": "application/json" }),
+    });
+    const { data } = await response.json();
+    return data?.membershipRequests ?? [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
 createApp({
   setup() {
-    let planSelectElement = ref(null);
+    const planSelectElement = ref(null);
     let planSelect = null;
-    let errorMessage = ref(undefined);
+    const errorMessage = ref(undefined);
+    const membershipRequests = ref([]);
 
     const init = async () => {
       const plans = await fetchMembershipPlans();
@@ -55,6 +65,8 @@ createApp({
       planSelect = new Choices(planSelectElement.value, {
         choices: planOptions,
       });
+      membershipRequests.value = await fetchMembershipRequests();
+      console.log(membershipRequests.value);
     };
 
     const onSubmit = async () => {
@@ -65,7 +77,14 @@ createApp({
           .required()
           .min(1)
           .validate(id, { abortEarly: true });
-        sendRequest(result);
+        sendRequest(result, async () => {
+          swal.fire(
+            "Membership Request",
+            "Membership request has been submitted. Please wait for response.",
+            "success"
+          );
+          membershipRequests.value = await fetchMembershipRequests();
+        });
       } catch (err) {
         errorMessage.value = "Please select a plan";
       }
@@ -77,6 +96,7 @@ createApp({
       planSelectElement,
       onSubmit,
       errorMessage,
+      membershipRequests,
     };
   },
   compilerOptions: {
