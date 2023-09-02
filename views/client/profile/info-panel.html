@@ -63,18 +63,29 @@
     <div class="col-sm-12 col-md-6">{{.profile.EmergencyContact}}</div>
   </div>
   <hr />
-  <!-- <div class="row">
-    <div class="col-sm-12 col-md-6 font-weight-bold">Account Status</div>
-    <div
-      class="col-sm-12 col-md-6 font-weight-bold text-warning d-flex flex-column"
-    >
-      <span>Not Verified</span>
-      <a href="#" class="small text-decoration-underline"
-        >Send Email Verification</a
-      >
-    </div>
-  </div> -->
 </div>
-<div></div>
-
-{{end}}
+<h2 class="h4 mb-3 text-gray-800">Membership Status</h2>
+{{ if .isMember}}
+<div class="p-2">
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Membership Plan</div>
+    <div class="col-sm-12 col-md-6">{{.member.MembershipPlan.Description}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Valid Until</div>
+    <div class="col-sm-12 col-md-6">{{.member.ValidUntil}}</div>
+  </div>
+  <hr />
+</div>
+{{else}}
+<div class="w-100 text-center bg-gray-100 p-5">
+  <div class="d-flex flex-column" style="gap: 5px">
+    <i class="far fa-frown display-4"></i>
+    <div>You are currently not a member.</div>
+    <a href="/clients/membership-requests" class="small nav-underline"
+      >Subscribe for membership here</a
+    >
+  </div>
+</div>
+{{end}} {{end}}
