@@ -13,7 +13,7 @@ import (
 func AuthMiddleware ( sessionCookieName string, redirectHereOnFail string) echo.MiddlewareFunc{
 	return func(next echo.HandlerFunc) echo.HandlerFunc{
 		return func (c echo.Context) error {
-			s , getSessionErr := session.Get("sid", c)
+			s , getSessionErr := session.Get(sessionCookieName, c)
 			if getSessionErr != nil {
 				s.Options.MaxAge = -1
 				s.Save(c.Request(), c.Response())
