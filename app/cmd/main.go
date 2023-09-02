@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"html/template"
 	"io"
 	"io/fs"
@@ -45,6 +46,7 @@ func main() {
 	}
 	handlers.RegisterHandlers(e)
 	e.Logger.Fatal(	e.Start(":5000"))
+	defer e.Shutdown(context.Background())
 	
 }
 func loadTemplates(path string) * template.Template{

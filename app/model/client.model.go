@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/db"
 
@@ -14,16 +16,17 @@ type Client struct {
 	GivenName        string `json:"givenName" db:"given_name"`
 	MiddleName       string `json:"middleName" db:"middle_name"`
 	Surname          string `json:"surname" db:"surname"`
-	Email            string `json:"email" db:"email"`
-	Password         string `json:"password" db:"password"`
-	Address          string `json:"address" db:"address"`
-	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
-	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
-	AccountId 		 string `json:"accountId" db:"account_id"`
-	IsVerified		 bool `json:"isVerified" db:"is_verified"`
-	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
+	Email            string `json:"email,omitempty" db:"email"`
+	Password         string `json:"password,omitempty" db:"password"`
+	Address          string `json:"address,omitempty" db:"address"`
+	MobileNumber     string `json:"mobileNumber,omitempty" db:"mobile_number"`
+	DateOfBirth      string `json:"dateOfBirth,omitempty" db:"date_of_birth"`
+	AccountId 		 string `json:"accountId,omitempty" db:"account_id"`
+	IsVerified		 bool 	`json:"isVerified,omitempty" db:"is_verified"`
+	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
 	Model
 }
+
 func (m Client) Validate() (error, map[string]string) {
 
 	db := db.GetConnection()
@@ -92,4 +95,25 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 				return fmt.Errorf("invalid number")
 			}
 			return nil})))
+}
+
+type ClientJSON struct {
+	Client
+}
+
+func (instance *ClientJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = ClientJSON{}
+		}
+	} else {
+		*instance = ClientJSON{}
+	}
+	return nil
+
+}
+func (copy ClientJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
 }
