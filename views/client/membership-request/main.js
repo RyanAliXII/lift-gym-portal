@@ -67,9 +67,12 @@ createApp({
         id: p.id,
         customProperties: p,
       }));
-      planSelect = new Choices(planSelectElement.value, {
-        choices: planOptions,
-      });
+      if (planSelectElement.value) {
+        planSelect = new Choices(planSelectElement.value, {
+          choices: planOptions,
+        });
+      }
+
       membershipRequests.value = await fetchMembershipRequests();
       $("#requestModal").on("shown.bs.modal", async () => {
         const plans = await fetchMembershipPlans();

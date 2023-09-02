@@ -22,7 +22,6 @@ type MembershipRequestHandler struct {
 
 func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context) error{
 	s, err := session.Get("client_sid", c)
-
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, JSONResponse{
 			Status: http.StatusUnauthorized,
@@ -30,9 +29,14 @@ func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context)
 			Message: "Unauthorized.",
 		})
 	}
+	var isMember bool = false
 	session := mysqlsession.SessionData{}
 	session.Bind(s.Values["data"])
 	contentType := c.Request().Header.Get("Content-Type")
+    member, _ := h.memberRepo.GetMemberById(session.User.Id)
+    if member.Id > 0 {
+		isMember = true
+	}
 	if contentType == "application/json" {
 		requests, err := h.membershipRequestRepo.GetMembershipRequestsByClientId(session.User.Id)
 		if err != nil {
@@ -54,6 +58,7 @@ func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context)
 		"csrf" :  c.Get("csrf"),
 		"title": "Client | Membership Requests",
 		"module": "Membership Requests",
+		"isMember": isMember,
 	})
 }
 
