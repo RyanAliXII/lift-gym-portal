@@ -20,7 +20,7 @@
 
   <!-- Nav Item - Dashboard -->
   <li class="nav-item active">
-    <a class="nav-link" href="/dashboard">
+    <a class="nav-link" href="/app/dashboard">
       <i class="fas fa-fw fa-tachometer-alt"></i>
       <span>Dashboard</span></a
     >
@@ -42,7 +42,7 @@
       aria-expanded="false"
       aria-controls="collapseOffers"
     >
-      <i class="fas fa-fw fa-cog"></i>
+      <i class="fas fa-dumbbell"></i>
       <span>Offers</span>
     </a>
     <div
@@ -69,7 +69,7 @@
       aria-expanded="false"
       aria-controls="collapseClients"
     >
-      <i class="fas fa-fw fa-wrench"></i>
+      <i class="fas fa-user"></i>
       <span>Clients</span>
     </a>
     <div
@@ -80,8 +80,57 @@
     >
       <div class="bg-white py-2 collapse-inner rounded">
         <a class="collapse-item" href="/app/clients">Clients</a>
+        <a class="collapse-item" href="/app/clients/registration">New Client</a>
+      </div>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="#"
+      data-toggle="collapse"
+      data-target="#collapseMembers"
+      aria-expanded="false"
+      aria-controls="collapseMembers"
+    >
+      <i class="fas fa-users"></i>
+      <span>Members</span>
+    </a>
+    <div
+      id="collapseMembers"
+      class="collapse"
+      aria-labelledby="collapseMembers"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
         <a class="collapse-item" href="/app/members">Members</a>
-        <a class="collapse-item" href="/app/subscriptions">Subscriptions</a>
+        <a class="collapse-item" href="/app/membership-requests"
+          >Members Requests</a
+        >
+      </div>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="#"
+      data-toggle="collapse"
+      data-target="#collapseCoaches"
+      aria-expanded="false"
+      aria-controls="collapseCoaches"
+    >
+      <i class="fas fa-chalkboard"></i>
+      <span>Coaches</span>
+    </a>
+    <div
+      id="collapseCoaches"
+      class="collapse"
+      aria-labelledby="collapseCoaches"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <a class="collapse-item" href="/app/coaches">Coaches</a>
+        <a class="collapse-item" href="/app/coaches/registration">New Coach</a>
       </div>
     </div>
   </li>
