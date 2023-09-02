@@ -7,4 +7,5 @@ CREATE TABLE IF NOT EXISTS membership_request_status (
 INSERT INTO membership_request_status(id, description) VALUES
 (1, 'Pending'),
 (2, "Approved"),
-(3, "Received");
+(3, "Received"),
+(4, "Cancelled");

@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS membership_request(
     client_id INT NOT NULL,
     membership_plan_id INT NOT NULL,
     status_id INT NOT NULL,
+    remarks TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES client(id),
