@@ -48,6 +48,7 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/coaches/:id", coachHandler.UpdateCoach)
 	router.PATCH("/coaches/:id/password", coachHandler.ResetPassword)
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest)
+	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus)
 }
 
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/status"
@@ -214,8 +215,37 @@ func (h  *  MembershipRequestHandler) UpdateMembershipRequestStatus(c echo.Conte
 			Message: "Unknown error occured.",
 		})
 	}
-	if statusId == status.MembershipRequestStatusCancelled {
-		err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by user.")
+    fmt.Println(statusId)
+	switch statusId {
+		case status.MembershipRequestStatusApproved:
+			return h.handleRequestApproval(c, id)
+		case status.MembershipRequestStatusCancelled:
+			return h.handleRequestCancellation(c, id)
+		default:
+			return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown action.",
+		})
+
+	}
+}
+func (h * MembershipRequestHandler)handleRequestApproval(c echo.Context, id int) error {
+	err := h.membershipRequestRepo.ApproveMembershipRequest(id, "")
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Membership request approved.",
+	})
+}
+func(h * MembershipRequestHandler) handleRequestCancellation (c echo.Context, id int) error{
+
+	err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by user.")
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -227,12 +257,8 @@ func (h  *  MembershipRequestHandler) UpdateMembershipRequestStatus(c echo.Conte
 			Status: http.StatusOK,
 			Message: "Membership request cancelled.",
 		})
-	}
-	return c.JSON(http.StatusBadRequest, JSONResponse{
-		Status: http.StatusBadRequest,
-		Message: "Unknown action.",
-	})
 }
+
 
 func NewMembershipRequestHandler() MembershipRequestHandler {
 	return MembershipRequestHandler{
