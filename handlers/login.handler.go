@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
@@ -171,12 +170,50 @@ func (h * LoginHandler) LoginCoach(c echo.Context)error{
 		})
 	}
 	coach, err := h.userRepository.GetCoachUserByEmail(user.Email)
-	fmt.Println(coach)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
 			Message: "Invalid username or password.",
 		})
+	}
+	comparePassErr := bcrypt.CompareHashAndPassword([]byte(coach.Password), []byte(user.Password))
+	if comparePassErr != nil {
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+		   "message": "Invalid email or password.",
+	   })
+	}
+	s , err := session.Get("coach_sid", c)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "getSessionErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	s.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   3600 * 24, // 1 day
+		HttpOnly: true,
+	}
+	sessionData := mysqlsession.SessionData{
+		User: mysqlsession.SessionUser{
+			Id: coach.Id,
+			GivenName: coach.GivenName,
+			MiddleName: coach.MiddleName,
+			Surname: coach.Surname,
+			Email: coach.Email,
+		},
+	}
+	sessionDataBytes,_ := sessionData.ToBytes()
+	s.Values["data"] = sessionDataBytes
+	err = s.Save(c.Request(), c.Response())
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "saveErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
