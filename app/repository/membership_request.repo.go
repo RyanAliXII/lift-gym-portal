@@ -53,6 +53,12 @@ func(repo * MembershipRequestRepository) CancelMembershipRequest( id int, remark
 		status.MembershipRequestStatusCancelled, remarks,  id, status.MembershipRequestStatusReceived)
 	return err
 }
+func(repo * MembershipRequestRepository) ApproveMembershipRequest( id int, remarks string) error {
+	_, err := repo.db.Exec(
+		"UPDATE membership_request SET status_id = ?, remarks = ? where id = ? AND status_id == ?", 
+		status.MembershipRequestStatusCancelled, remarks,  id, status.MembershipRequestStatusPending)
+	return err
+}
 func NewMembershipRequestRepository() MembershipRequestRepository{
 	return MembershipRequestRepository {
 		db: db.GetConnection(),

@@ -24,7 +24,9 @@
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Your Requests</h6>
+                <h6 class="m-0 font-weight-bold text-primary">
+                  List of Requests
+                </h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -36,6 +38,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Client</th>
                         <th>Description</th>
                         <th>Price</th>
                         <th>Status</th>
@@ -46,6 +49,9 @@
                     <tbody>
                       <template v-for="request of membershipRequests">
                         <tr>
+                          <td>
+                            {request.client.givenName} {request.client.surname}
+                          </td>
                           <td>{request.membershipPlan.description}</td>
                           <td>{request.membershipPlan.price}</td>
                           <td
@@ -70,17 +76,29 @@
                             >
                           </td>
                           <td>
-                            <button
-                              v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
-                              type="button"
-                              class="btn btn-outline-danger"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Cancel Membership Request"
-                              @click="initCancellation(request.id)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
+                            <div class="d-flex" style="gap: 5px">
+                              <button
+                                v-if="request.statusId === Status.Pending"
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Approve Request"
+                                @click="initApproval(request.id)"
+                              >
+                                <i class="fas fa-thumbs-up"></i>
+                              </button>
+                              <button
+                                v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
+                                type="button"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Cancel Membership Request"
+                                @click="initCancellation(request.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       </template>
@@ -108,6 +126,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <!-- <script src="/js/client/membership-request/main.js"></script> -->
+  <script src="/js/admin/membership-request/main.js"></script>
 </html>
 {{end}}
