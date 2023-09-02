@@ -71,17 +71,26 @@ createApp({
         choices: planOptions,
       });
       membershipRequests.value = await fetchMembershipRequests();
-      console.log(membershipRequests.value);
+      $("#requestModal").on("shown.bs.modal", async () => {
+        const plans = await fetchMembershipPlans();
+        const planOptions = plans.map((p) => ({
+          value: p.id,
+          label: p.description,
+          customProperties: p,
+        }));
+        planSelect.clearStore();
+        planSelect.setChoices(planOptions);
+      });
     };
 
     const onSubmit = async () => {
       errorMessage.value = undefined;
-      const id = planSelect.getValue()?.id;
+      const plan = planSelect.getValue();
       try {
         const result = await number()
           .required()
           .min(1)
-          .validate(id, { abortEarly: true });
+          .validate(plan?.value ?? 0, { abortEarly: true });
         sendRequest(result, async () => {
           swal.fire(
             "Membership Request",
@@ -92,8 +101,11 @@ createApp({
         });
       } catch (err) {
         errorMessage.value = "Please select a plan";
+      } finally {
+        $("#requestModal").modal("hide");
       }
     };
+
     onMounted(() => {
       init();
     });
