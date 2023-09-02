@@ -78,5 +78,6 @@ func coachRoutes(router * echo.Group) {
 	dashboardHandler := NewDashboardHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
+	router.Use(middlewares.CoachAuthMiddleware)
 	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 }
