@@ -7,14 +7,14 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      {{template "partials/client/sidebar" .}}
+      {{template "partials/sidebar" .}}
       <!-- End of Sidebar -->
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
         <div id="content">
           <!-- Topbar -->
-          {{template "partials/client/dashboard-topbar"}}
+          {{template "partials/dashboard-topbar"}}
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
@@ -42,6 +42,7 @@
                         <th>Description</th>
                         <th>Price</th>
                         <th>Status</th>
+                        <th>Remarks</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -67,13 +68,17 @@
                               >Waiting for approval.</small
                             >
                             <small v-if="request.statusId === Status.Approved"
-                              >Membership has been approved.Waiting for
+                              >Membership has been approved. Waiting for
                               payment.</small
                             >
+
                             <small v-if="request.statusId === Status.Received"
-                              >You are now a member of the a member of the
-                              gym.</small
+                              >Membership has been received by client.</small
                             >
+                          </td>
+                          <td>
+                            {request.remarks.length === 0 ? "No Remarks":
+                            request.remarks }
                           </td>
                           <td>
                             <div class="d-flex" style="gap: 5px">
@@ -86,6 +91,16 @@
                                 @click="initApproval(request.id)"
                               >
                                 <i class="fas fa-thumbs-up"></i>
+                              </button>
+                              <button
+                                v-if="request.statusId === Status.Approved"
+                                class="btn btn-outline-success"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Mark as Received: Mark this if payment has been made."
+                                @click="initMarkAsReceived(request.id)"
+                              >
+                                <i class="fas fa-check"></i>
                               </button>
                               <button
                                 v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"

@@ -9,6 +9,7 @@ type MembershipRequest struct {
 	StatusId         int    `json:"statusId" db:"status_id"`
 	Status           string `json:"status" db:"status"`
 	Client			 ClientJSON	 `json:"client" db:"client"`
+	Remarks          string `json:"remarks" db:"remarks"`
 	MembershipPlan 	 MembershipPlanJSON `json:"membershipPlan" db:"membership_plan"`
 	Model
 }

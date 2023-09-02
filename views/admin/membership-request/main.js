@@ -1,5 +1,6 @@
 import { createApp, ref, onMounted } from "vue";
 import swal from "sweetalert2";
+
 const fetchMembershipRequests = async () => {
   try {
     const response = await fetch("/app/membership-requests", {
@@ -10,6 +11,31 @@ const fetchMembershipRequests = async () => {
     return data.membershipRequests ?? [];
   } catch (error) {
     return [];
+    console.error(error);
+  }
+};
+
+const updateStatus = async (
+  id,
+  status = 0,
+  onSuccess = () => {},
+  data = new FormData()
+) => {
+  try {
+    const response = await fetch(
+      `/app/membership-requests/${id}/status?statusId=${status}`,
+      {
+        method: "PATCH",
+        body: data,
+        headers: new Headers({
+          "X-CSRF-Token": window.csrf,
+        }),
+      }
+    );
+    if (response.status === 200) {
+      onSuccess();
+    }
+  } catch (error) {
     console.error(error);
   }
 };
@@ -33,34 +59,71 @@ createApp({
         icon: "question",
       });
       if (result.isConfirmed) {
-        approve(id);
-      }
-    };
-
-    const approve = async (id) => {
-      try {
-        const response = await fetch(
-          `/app/membership-requests/${id}/status?statusId=${Status.Approved}`,
-          {
-            method: "PATCH",
-            headers: new Headers({
-              "Content-Type": "application/json",
-              "X-CSRF-Token": window.csrf,
-            }),
-          }
-        );
-        if (response.status === 200) {
+        updateStatus(id, Status.Approved, async () => {
           swal.fire(
             "Membership Request Approved",
             "Membership request has been approved.",
             "success"
           );
           membershipRequests.value = await fetchMembershipRequests();
-        }
-      } catch (error) {
-        console.error(error);
+        });
       }
     };
+    const initCancellation = async (id) => {
+      const { value: text, isConfirmed } = await swal.fire({
+        input: "textarea",
+        title: "Cancel Membership Request",
+        inputLabel: "Cancellation Remarks",
+        confirmButtonText: "Proceed to cancellation",
+        cancelButtonText: "I don't want to cancel the request.",
+        confirmButtonColor: "#d9534f",
+        inputPlaceholder:
+          "Enter cancellation reason eg. duplicate request etc.",
+        inputAttributes: {
+          "aria-label": "Type your message here",
+        },
+        showCancelButton: true,
+      });
+      if (isConfirmed) {
+        const formData = new FormData();
+        formData.append("remarks", text);
+        updateStatus(
+          id,
+          Status.Cancelled,
+          async () => {
+            swal.fire(
+              "Membership Request Cancellation",
+              "Membership request has been cancelled.",
+              "success"
+            );
+            membershipRequests.value = await fetchMembershipRequests();
+          },
+          formData
+        );
+      }
+    };
+    const initMarkAsReceived = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, mark it as received.",
+        title: "Recieve Membership Request",
+        text: "Are you sure you want to mark request as received?",
+        confirmButtonColor: "#295ad6",
+        cancelButtonText: "I don't want to mark the request.",
+        icon: "question",
+      });
+      if (result.isConfirmed) {
+        updateStatus(id, Status.Received, async () => {
+          swal.fire(
+            "Membership Request Receiving",
+            "Membership has been received by client.",
+            "success"
+          );
+          membershipRequests.value = await fetchMembershipRequests();
+        });
+      }
+    };
+
     const init = async () => {
       membershipRequests.value = await fetchMembershipRequests();
     };
@@ -71,6 +134,8 @@ createApp({
       membershipRequests,
       Status,
       initApproval,
+      initMarkAsReceived,
+      initCancellation,
     };
   },
   compilerOptions: { delimiters: ["{", "}"] },

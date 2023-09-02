@@ -17,6 +17,7 @@ import (
 type MembershipRequestHandler struct {
 	membershipPlanRepo repository.MembershipPlanRepository
 	membershipRequestRepo repository.MembershipRequestRepository
+	memberRepo repository.MemberRepository
 }
 
 func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context) error{
@@ -178,7 +179,7 @@ func (h  *  MembershipRequestHandler) CancelMembershipRequestStatus(c echo.Conte
 		})
 	}
 	if statusId == status.MembershipRequestStatusCancelled {
-		err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by user.")
+		err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by client.")
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -219,6 +220,8 @@ func (h  *  MembershipRequestHandler) UpdateMembershipRequestStatus(c echo.Conte
 	switch statusId {
 		case status.MembershipRequestStatusApproved:
 			return h.handleRequestApproval(c, id)
+		case status.MembershipRequestStatusReceived:
+			return h.handleMarkAsReceive(c, id)
 		case status.MembershipRequestStatusCancelled:
 			return h.handleRequestCancellation(c, id)
 		default:
@@ -232,7 +235,7 @@ func (h  *  MembershipRequestHandler) UpdateMembershipRequestStatus(c echo.Conte
 func (h * MembershipRequestHandler)handleRequestApproval(c echo.Context, id int) error {
 	err := h.membershipRequestRepo.ApproveMembershipRequest(id, "")
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
+		logger.Error(err.Error(), zap.String("error", "ApproveMembershipRequestErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",
@@ -244,25 +247,59 @@ func (h * MembershipRequestHandler)handleRequestApproval(c echo.Context, id int)
 	})
 }
 func(h * MembershipRequestHandler) handleRequestCancellation (c echo.Context, id int) error{
+    remarks := c.FormValue("remarks")
+	err := h.membershipRequestRepo.CancelMembershipRequest(id, remarks)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "CancelMembershipRequestErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Message: "Membership request cancelled.",
+	})
+}
+func (h * MembershipRequestHandler)handleMarkAsReceive(c echo.Context, id int) error {
 
-	err := h.membershipRequestRepo.CancelMembershipRequest(id, "Cancelled by user.")
-		if err != nil {
-			logger.Error(err.Error(), zap.String("error", "cancelMembershipRequestErr"))
+	err := h.membershipRequestRepo.MarkAsReceived(id, "")
+	if err != nil {
+			logger.Error(err.Error(), zap.String("error", "MarkAsReceivedErr"))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
 				Status: http.StatusInternalServerError,
 				Message: "Unknown error occured.",
 			})
-		}
-		return c.JSON(http.StatusOK, JSONResponse{
-			Status: http.StatusOK,
-			Message: "Membership request cancelled.",
+	}
+	request, err := h.membershipRequestRepo.GetMembershipRequestById(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetMembershipRequestByIdErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
 		})
+    }
+	err = h.memberRepo.Subscribe(model.Subscribe{
+		ClientId: request.ClientId,
+		MembershipPlanId: request.MembershipPlanId,
+	})
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "SubscribeErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+    }
+	return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Message: "Membership request mark as received.",
+	})
 }
-
 
 func NewMembershipRequestHandler() MembershipRequestHandler {
 	return MembershipRequestHandler{
 		 membershipPlanRepo: repository.NewMembershipPlanRepository(),
 		membershipRequestRepo: repository.NewMembershipRequestRepository(),
+		memberRepo: repository.NewMemberRepository() ,
 	}
 }
