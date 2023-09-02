@@ -93,7 +93,7 @@
             });
             const data = await response.json();
             if (response.status === 200) {
-              //location.replace("/app/dashboard");
+              location.replace("/coaches/dashboard");
             } else {
               message.value = data?.message ?? "";
             }
