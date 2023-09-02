@@ -60,13 +60,25 @@
                           <td>{request.membershipPlan.price}</td>
                           <td
                             class="font-weight-bold"
-                            :class="{'text-warning': request.statusId === 1}"
+                            :class="{'text-warning': request.statusId === Status.Pending, 'text-primary': request.statusId === Status.Approved, 'text-success': request.statusId === Status.Received}"
                           >
                             <div>{request.status}</div>
-                            <small>Waiting for approval.</small>
+
+                            <small v-if="request.statusId === Status.Pending"
+                              >Waiting for approval.</small
+                            >
+                            <small v-if="request.statusId === Status.Approved"
+                              >Your request has been approved. You can now pay
+                              the membership fee in the gym.</small
+                            >
+                            <small v-if="request.statusId === Status.Received"
+                              >You are now a member of the a member of the
+                              gym.</small
+                            >
                           </td>
                           <td>
                             <button
+                              v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
                               type="button"
                               class="btn btn-outline-danger"
                               data-toggle="tooltip"

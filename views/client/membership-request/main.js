@@ -53,7 +53,12 @@ createApp({
     let planSelect = null;
     const errorMessage = ref(undefined);
     const membershipRequests = ref([]);
-
+    const Status = {
+      Pending: 1,
+      Approved: 2,
+      Received: 3,
+      Cancelled: 4,
+    };
     const init = async () => {
       const plans = await fetchMembershipPlans();
       const planOptions = plans.map((p) => ({
@@ -97,6 +102,7 @@ createApp({
       onSubmit,
       errorMessage,
       membershipRequests,
+      Status,
     };
   },
   compilerOptions: {
