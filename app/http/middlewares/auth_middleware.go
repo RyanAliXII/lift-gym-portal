@@ -23,6 +23,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc{
 			s.Save(c.Request(), c.Response())
 			return handleResponse(c)
 		}
+		c.Set("sessionData", s.Values["data"])
 		return next(c)
 	}
 }
@@ -41,6 +42,7 @@ func ClientAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			s.Save(c.Request(), c.Response())
 			return handleResponseClient(c)
 		}
+		c.Set("sessionData", s.Values["data"])
 		return next(c)
 	}
 }
