@@ -18,6 +18,7 @@ import (
 type ProfileHandler struct {
 	clientRepo repository.ClientRepository
 	verificationRepo  repository.VerificationRepository
+	memberRepo repository.MemberRepository
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -40,6 +41,11 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	   })
 	}
 	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
+	member , _ := h.memberRepo.GetMemberById(sessionData.User.Id)
+	isMember := false
+	if member.Id > 0 {
+		isMember = true
+	}
 	var emailVerification model.EmailVerification
 
 	if !client.IsVerified {
@@ -59,6 +65,8 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 		"module": "Profile",
 		"profile": client,
 		"emailVerification": emailVerification,
+		"isMember": isMember,
+		"member": member,
 	})
 	return nil
 }
@@ -177,5 +185,6 @@ func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),
 		verificationRepo: repository.NewVerificationRepository() ,
+		memberRepo: repository.NewMemberRepository(),
 	}
 }
