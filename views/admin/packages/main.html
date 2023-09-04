@@ -135,6 +135,9 @@
           $("#editPackageModal").modal("show");
         };
         const onSubmitNewPackage = async () => {
+          if (typeof addPackageForm.value.price === "string") {
+            addPackageForm.value.price = 0;
+          }
           try {
             errors.value = { ...initialErrors.value };
             const response = await fetch("/app/packages", {
@@ -163,8 +166,10 @@
           }
         };
         const onSubmitUpdatePackage = async () => {
+          if (typeof editPackageForm.value.price === "string") {
+            editPackageForm.value.price = 0;
+          }
           try {
-            $("#editPackageModal").modal("hide");
             const response = await fetch(
               `/app/packages/${editPackageForm?.value.id}`,
               {
@@ -176,13 +181,18 @@
                 body: JSON.stringify(editPackageForm.value),
               }
             );
+            const { data } = await response.json();
             if (response.status === 200) {
               fetchPackages();
+              $("#editPackageModal").modal("hide");
               Swal.fire(
                 "Update Package",
                 "Package has been successfully updated.",
                 "success"
               );
+            }
+            if (response.status === 400 && data?.errors) {
+              errors.value = data?.errors;
             }
           } catch {
             console.error(err);
@@ -194,6 +204,9 @@
           $("#addPackageModal").on("hidden.bs.modal", () => {
             errors.value = { ...initialErrors };
             addPackageForm.value = { ...initialAddFormValues };
+          });
+          $("#editPackageModal").on("hidden.bs.modal", () => {
+            errors.value = { ...initialErrors };
           });
         });
         return {

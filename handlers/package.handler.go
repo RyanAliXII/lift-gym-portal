@@ -97,6 +97,15 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 
 		})
 	}
+	err, fields := pkg.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"data": Data{
+				"errors": fields,
+			},
+		})
+	}
 	updatePackageErr := h.packageRepo.UpdatePackage(pkg)
 	if updatePackageErr != nil {
 		logger.Error(updatePackageErr.Error(), zap.String("error", "updatePackageErr"))
