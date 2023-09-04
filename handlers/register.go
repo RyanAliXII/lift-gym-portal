@@ -57,6 +57,7 @@ func clientRoutes(router * echo.Group){
 	profileHandler := NewProfileHandler()
 	verificationHandler := NewVerificationHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
+	pkgRequestHandler := NewPackageRequestHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -69,6 +70,7 @@ func clientRoutes(router * echo.Group){
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
 	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
+	router.GET("/package-requests", pkgRequestHandler.RenderClientPackageRequestPage)
 }
 
 func coachRoutes(router * echo.Group) {
