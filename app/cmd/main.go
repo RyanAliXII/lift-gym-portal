@@ -29,7 +29,7 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 }
 
 func main() {
-
+	
 	godotenv.Load(".env")
 	store := mysqlsession.GetMySQLStore()
 	db.GetConnection()
