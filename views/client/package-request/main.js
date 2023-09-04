@@ -8,7 +8,12 @@ createApp({
     let packageSelect = null;
     const packageRequests = ref([]);
     const errorMessage = ref(undefined);
-
+    const Status = {
+      Pending: 1,
+      Approved: 2,
+      Received: 3,
+      Cancelled: 4,
+    };
     const fetchPackages = async () => {
       try {
         const response = await fetch("/clients/packages", {
@@ -65,7 +70,47 @@ createApp({
             "Package request has been submitted. Please wait for response.",
             "success"
           );
+          fetchPackageRequests();
           $("#requestModal").modal("hide");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const initCancellation = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, cancel it.",
+        title: "Cancel Package Request",
+        text: "Are you sure you want to cancel the package request?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to cancel the request.",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        cancelPackageRequest(id);
+      }
+    };
+
+    const cancelPackageRequest = async (id) => {
+      try {
+        const response = await fetch(
+          `/clients/package-requests/${id}/status?statusId=${Status.Cancelled}`,
+          {
+            method: "PATCH",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          swal.fire(
+            "Package Request Cancellation",
+            "Package request has been cancelled.",
+            "success"
+          );
+          fetchPackageRequests();
         }
       } catch (error) {
         console.error(error);
@@ -104,6 +149,8 @@ createApp({
       errorMessage,
       onSubmit,
       packageRequests,
+      Status,
+      initCancellation,
     };
   },
   compilerOptions: {

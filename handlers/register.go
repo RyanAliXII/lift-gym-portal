@@ -73,6 +73,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/package-requests", pkgRequestHandler.RenderClientPackageRequestPage)
 	router.GET("/packages", pkgRequestHandler.GetUnrequestedPackages)
 	router.POST("/package-requests", pkgRequestHandler.NewPackageRequest)
+	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
 }
 
 func coachRoutes(router * echo.Group) {

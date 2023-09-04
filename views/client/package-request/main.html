@@ -59,16 +59,35 @@
                         <tr>
                           <td>{request.package.description}</td>
                           <td>{request.package.price}</td>
-                          <td class="font-weight-bold">
+                          <td
+                            class="font-weight-bold"
+                            :class="{'text-warning': request.statusId === Status.Pending, 
+                            'text-primary': request.statusId === Status.Approved,
+                             'text-success': request.statusId === Status.Received, 
+                             'text-danger': request.statusId === Status.Cancelled}"
+                          >
                             <div>{request.status}</div>
+
+                            <small v-if="request.statusId === Status.Pending"
+                              >Waiting for approval.</small
+                            >
+                            <small v-if="request.statusId === Status.Approved"
+                              >Your request has been approved. You can now pay
+                              the package fee in the gym.</small
+                            >
+                            <small v-if="request.statusId === Status.Received"
+                              >You have received the package.</small
+                            >
                           </td>
                           <td>
                             <button
+                              v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
                               type="button"
                               class="btn btn-outline-danger"
                               data-toggle="tooltip"
                               data-placement="top"
                               title="Cancel Membership Request"
+                              @click="initCancellation(request.id)"
                             >
                               <i class="fas fa-trash"></i>
                             </button>

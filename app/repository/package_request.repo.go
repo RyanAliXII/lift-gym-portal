@@ -3,6 +3,7 @@ package repository
 import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/status"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -31,7 +32,11 @@ func (repo *PackageRequestRepository) GetPackageRequestsByClientId (clientId int
 	err := repo.db.Select(&pkgRequests, query, clientId)
 	return pkgRequests, err
 }
-
+func (repo * PackageRequestRepository)CancelPackageRequest(id int, statusId int) error {
+	query := `UPDATE package_request set status_id = ? where id = ? and status_id != ?`
+	_, err := repo.db.Exec(query, statusId, id, status.PackageRequestStatusReceived)
+	return err
+}
 
 func NewPackageRequestRepository() PackageRequestRepository{
 	return PackageRequestRepository{

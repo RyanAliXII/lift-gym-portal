@@ -7,6 +7,7 @@ import (
 	"lift-fitness-gym/app/pkg/status"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -90,6 +91,38 @@ func(h * PackageRequestHandler)NewPackageRequest(c echo.Context) error {
 		Status: http.StatusOK,
 		Message: "Package request submitted.",
 	})
+}
+func (h *PackageRequestHandler) UpdatePackageRequestStatus(c echo.Context)error {
+	id,err := strconv.Atoi( c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "idConvertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	statusId, err :=  strconv.Atoi(c.QueryParam("statusId"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "statusIdConvertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	switch(statusId){
+	case status.PackageRequestStatusCancelled:
+		h.packageRequestRepo.CancelPackageRequest(id, statusId)
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Message: "Package status updated.",
+		})
+	default:
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown action.",
+		})
+	}
+	
 }
 func NewPackageRequestHandler() PackageRequestHandler {
 	return PackageRequestHandler{
