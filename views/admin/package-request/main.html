@@ -77,6 +77,10 @@
                             >
                           </td>
                           <td>
+                            {request.remarks.length === 0 ? "No remarks" :
+                            request.remarks}
+                          </td>
+                          <td>
                             <div class="d-flex" style="gap: 5px">
                               <button
                                 v-if="request.statusId === Status.Pending"
