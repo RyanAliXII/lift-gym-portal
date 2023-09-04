@@ -20,6 +20,7 @@ func adminRoutes (router  * echo.Group){
 	membershipPlanHandler := NewMembershipPlanHandler()
 	loginHandler := NewLoginHandler()
 	coachHandler := NewCoachHandler()
+	pkgRequestHandler := NewPackageRequestHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
@@ -48,6 +49,8 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/coaches/:id/password", coachHandler.ResetPassword)
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest)
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus)
+	router.GET("/package-requests", pkgRequestHandler.RenderAdminPackageRequestPage)
+	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
 }
 
 
@@ -57,6 +60,7 @@ func clientRoutes(router * echo.Group){
 	profileHandler := NewProfileHandler()
 	verificationHandler := NewVerificationHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
+	pkgRequestHandler := NewPackageRequestHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -69,6 +73,10 @@ func clientRoutes(router * echo.Group){
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
 	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
+	router.GET("/package-requests", pkgRequestHandler.RenderClientPackageRequestPage)
+	router.GET("/packages", pkgRequestHandler.GetUnrequestedPackages)
+	router.POST("/package-requests", pkgRequestHandler.NewPackageRequest)
+	router.PATCH("/package-requests/:id/status", pkgRequestHandler.CancelPackageRequest)
 }
 
 func coachRoutes(router * echo.Group) {
