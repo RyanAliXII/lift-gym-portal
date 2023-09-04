@@ -28,20 +28,20 @@ type Coach struct {
 func (m Coach) Validate() (error, map[string]string) {
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
-		validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
-		validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)),
-		validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
-		validation.Field(&m.Address, validation.Required),
-		validation.Field(&m.DateOfBirth, validation.Required, validation.By(func(value interface{}) error {
+		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
+		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
+		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			format := "2006-01-02"
 			strDate ,_ := value.(string)
 			_, err := time.Parse(format, strDate)
 			if err != nil {
-				return fmt.Errorf("cannot be blank")
+				return fmt.Errorf("Date of birth is required.")
 			}
 			return nil
 		})),
-		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email, validation.By(func(value interface{}) error {
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
+		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from coach
 			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
@@ -51,7 +51,7 @@ func (m Coach) Validate() (error, map[string]string) {
 			}
 			return nil
 		})),	
-	    validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
+	    validation.Field(&m.MobileNumber, validation.Required.Error("Mobile number is required."), validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
 			if !isValid {
@@ -59,7 +59,7 @@ func (m Coach) Validate() (error, map[string]string) {
 			}
 			return nil
 		 })), 
-		validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
+		validation.Field(&m.EmergencyContact, validation.Required.Error("Emergency contact number is required."), validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
 			if !isValid {
@@ -70,20 +70,20 @@ func (m Coach) Validate() (error, map[string]string) {
 func (m Coach) ValidateUpdate() (error, map[string]string) {
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
-		validation.Field(&m.GivenName, validation.Required, validation.Length(1, 255)), 
-		validation.Field(&m.MiddleName, validation.Required, validation.Length(1, 255)),
-		validation.Field(&m.Surname, validation.Required, validation.Length(1, 255)),
-		validation.Field(&m.DateOfBirth, validation.Required, validation.By(func(value interface{}) error {
+		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
+		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
+		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			format := "2006-01-02"
 			strDate ,_ := value.(string)
 			_, err := time.Parse(format, strDate)
 			if err != nil {
-				return fmt.Errorf("cannot be blank")
+				return fmt.Errorf("Date of birth is required.")
 			}
 			return nil
 		})),
-		validation.Field(&m.Address, validation.Required),
-		validation.Field(&m.Email, validation.Required, validation.Length(1, 255), is.Email, validation.By(func(value interface{}) error {
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
+		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email."), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from coach
 			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) and coach.id != ? LIMIT 1;`
@@ -93,7 +93,7 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 			}		
 			return nil
 		})),	
-	    validation.Field(&m.MobileNumber, validation.Required, validation.By(func(value interface{}) error {
+		validation.Field(&m.MobileNumber, validation.Required.Error("Mobile number is required."), validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
 			if !isValid {
@@ -101,7 +101,7 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil
 		 })), 
-		validation.Field(&m.EmergencyContact, validation.Required, validation.By(func(value interface{}) error {
+		validation.Field(&m.EmergencyContact, validation.Required.Error("Emergency contact number is required."), validation.By(func(value interface{}) error {
 			p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
 			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
 			if !isValid {

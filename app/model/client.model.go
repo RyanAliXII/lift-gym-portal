@@ -44,7 +44,7 @@ func (m Client) Validate() (error, map[string]string) {
 			}
 			return nil
 		})),
-		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address")),
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
@@ -89,7 +89,7 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil
 		})),
-		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address")),
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
