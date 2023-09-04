@@ -45,6 +45,12 @@ func (h *PackageRequestHandler) RenderClientPackageRequestPage(c echo.Context) e
 		"csrf": c.Get("csrf"),
 	})
 }
+func (h * PackageRequestHandler) RenderAdminPackageRequestPage(c echo.Context) error {
+
+	return c.Render(http.StatusOK, "admin/package-request/main", Data{
+		"csrf": c.Get("csrf"), 
+	})
+}
 func (h * PackageRequestHandler)GetUnrequestedPackages(c echo.Context) error{
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))

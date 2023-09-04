@@ -20,6 +20,7 @@ func adminRoutes (router  * echo.Group){
 	membershipPlanHandler := NewMembershipPlanHandler()
 	loginHandler := NewLoginHandler()
 	coachHandler := NewCoachHandler()
+	pkgRequestHandler := NewPackageRequestHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
@@ -48,6 +49,7 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/coaches/:id/password", coachHandler.ResetPassword)
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest)
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus)
+	router.GET("/package-requests", pkgRequestHandler.RenderAdminPackageRequestPage)
 }
 
 
