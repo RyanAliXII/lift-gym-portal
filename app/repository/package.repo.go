@@ -3,6 +3,7 @@ package repository
 import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/status"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -29,6 +30,13 @@ func (repo * PackageRepository)GetPackages()([]model.Package, error){
 	query := `SELECT id, description, price from package ORDER by updated_at DESC`
 	selectErr := repo.db.Select(&pkgs, query)
 	return pkgs, selectErr
+}
+func (repo * PackageRepository)GetUnrequestedPackageOfClient(clientId int)([]model.Package, error){
+	pkgs := make([]model.Package, 0)
+	err := repo.db.Select(&pkgs, `SELECT id, description, price FROM package 
+	where package.id NOT IN(SELECT package_request.package_id FROM package_request where package_request.client_id = ? AND (package_request.status_id = ? OR package_request.status_id = ?));`, 
+	clientId, status.PackageRequestStatusPending, status.PackageRequestStatusApproved)
+	return pkgs, err
 }
 
 func NewPackageRepository () PackageRepository {
