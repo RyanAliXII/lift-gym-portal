@@ -41,6 +41,8 @@ func (h *PackageRequestHandler) RenderClientPackageRequestPage(c echo.Context) e
 	}
 	return c.Render(http.StatusOK, "client/package-request/main", Data{
 		"csrf": c.Get("csrf"),
+		"title": "Client | Package Request",
+		"module": "Package Requests",
 	})
 }
 func (h * PackageRequestHandler) RenderAdminPackageRequestPage(c echo.Context) error {
@@ -64,6 +66,8 @@ func (h * PackageRequestHandler) RenderAdminPackageRequestPage(c echo.Context) e
 	}
 	return c.Render(http.StatusOK, "admin/package-request/main", Data{
 		"csrf": c.Get("csrf"), 
+		"title": "Admin | Package Request",
+		"module": "Package Requests",
 	})
 }
 func (h * PackageRequestHandler)GetUnrequestedPackages(c echo.Context) error{
@@ -164,23 +168,18 @@ func (h *PackageRequestHandler) UpdatePackageRequestStatus(c echo.Context)error 
 		})
 	}
 	switch(statusId){
-	case status.PackageRequestStatusApproved:
-		return h.handleApproval(c, id)
-	case status.PackageRequestStatusReceived:
-		return h.handleMarkAsReceived(c, id)
-	case status.PackageRequestStatusCancelled:
-		h.packageRequestRepo.CancelPackageRequest(id, "Cancelled by client.")
-		return c.JSON(http.StatusOK, JSONResponse{
-			Status: http.StatusOK,
-			Message: "Package status updated.",
-		})
-	default:
-		return c.JSON(http.StatusBadRequest, JSONResponse{
-			Status: http.StatusBadRequest,
-			Message: "Unknown action.",
-		})
-	}
-	
+		case status.PackageRequestStatusApproved:
+			return h.handleApproval(c, id)
+		case status.PackageRequestStatusReceived:
+			return h.handleMarkAsReceived(c, id)
+		case status.PackageRequestStatusCancelled:
+			return h.handleRequestCancellation(c, id)
+		default:
+			return c.JSON(http.StatusBadRequest, JSONResponse{
+				Status: http.StatusBadRequest,
+				Message: "Unknown action.",
+			})
+		}
 }
 
 func(h * PackageRequestHandler) handleApproval (c echo.Context, id int) error{
@@ -209,6 +208,22 @@ func(h * PackageRequestHandler) handleMarkAsReceived (c echo.Context, id int) er
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Package request has been mark as received.",
+	})
+}
+
+func (h  PackageRequestHandler) handleRequestCancellation(c echo.Context, id int) error {
+	remarks := c.FormValue("remarks")
+	err := h.packageRequestRepo.CancelPackageRequest(id, remarks)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "receive error"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Package request has been cancelled.",
 	})
 }
 func NewPackageRequestHandler() PackageRequestHandler {

@@ -48,21 +48,6 @@ createApp({
       }
     };
 
-    const initCancellation = async (id) => {
-      const result = await swal.fire({
-        showCancelButton: true,
-        confirmButtonText: "Yes, cancel it.",
-        title: "Cancel Package Request",
-        text: "Are you sure you want to cancel the package request?",
-        confirmButtonColor: "#d9534f",
-        cancelButtonText: "I don't want to cancel the request.",
-        icon: "warning",
-      });
-      if (result.isConfirmed) {
-        cancelPackageRequest(id);
-      }
-    };
-
     const initApproval = async (id) => {
       const result = await swal.fire({
         showCancelButton: true,
@@ -84,29 +69,59 @@ createApp({
         });
       }
     };
-
-    const cancelPackageRequest = async (id) => {
-      try {
-        const response = await fetch(
-          `/clients/package-requests/${id}/status?statusId=${Status.Cancelled}`,
-          {
-            method: "PATCH",
-            headers: new Headers({
-              "Content-Type": "application/json",
-              "X-CSRF-Token": window.csrf,
-            }),
-          }
-        );
-        if (response.status === 200) {
+    const initMarkAsReceived = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, mark it as received.",
+        title: "Recieve Package Request",
+        text: "Are you sure you want to mark request as received?",
+        confirmButtonColor: "#295ad6",
+        cancelButtonText: "I don't want to mark the request.",
+        icon: "question",
+      });
+      if (result.isConfirmed) {
+        updateStatus(id, Status.Received, async () => {
           swal.fire(
-            "Package Request Cancellation",
-            "Package request has been cancelled.",
+            "Package Request Receiving",
+            "Package has been received by client.",
             "success"
           );
           fetchPackageRequests();
-        }
-      } catch (error) {
-        console.error(error);
+        });
+      }
+    };
+
+    const initCancellation = async (id) => {
+      const { value: text, isConfirmed } = await swal.fire({
+        input: "textarea",
+        title: "Cancel Package Request",
+        inputLabel: "Cancellation Remarks",
+        confirmButtonText: "Proceed to cancellation",
+        cancelButtonText: "I don't want to cancel the request.",
+        confirmButtonColor: "#d9534f",
+        inputPlaceholder:
+          "Enter cancellation reason eg. duplicate request, out of stock etc.",
+        inputAttributes: {
+          "aria-label": "Type your message here",
+        },
+        showCancelButton: true,
+      });
+      if (isConfirmed) {
+        const formData = new FormData();
+        formData.append("remarks", text);
+        updateStatus(
+          id,
+          Status.Cancelled,
+          async () => {
+            swal.fire(
+              "Package Request Cancellation",
+              "Package request has been cancelled.",
+              "success"
+            );
+            fetchPackageRequests();
+          },
+          formData
+        );
       }
     };
     const init = async () => {
@@ -121,6 +136,7 @@ createApp({
       Status,
       initCancellation,
       initApproval,
+      initMarkAsReceived,
     };
   },
   compilerOptions: {
