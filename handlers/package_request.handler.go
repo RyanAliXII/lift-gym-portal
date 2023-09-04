@@ -65,7 +65,7 @@ func(h * PackageRequestHandler)NewPackageRequest(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
-		Message: "Package has been successfully requested.",
+		Message: "Package request submitted.",
 	})
 }
 func NewPackageRequestHandler() PackageRequestHandler {
