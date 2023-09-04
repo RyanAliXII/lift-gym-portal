@@ -94,14 +94,23 @@
     createApp({
       setup() {
         const packages = ref([]);
-        const addPackageForm = ref({
+        const initialAddFormValues = {
           price: 0,
           description: "",
-        });
+        };
+        const addPackageForm = ref({ ...initialAddFormValues });
         const editPackageForm = ref({
           id: 0,
           price: 0,
           description: "",
+        });
+        const initialErrors = {
+          price: undefined,
+          description: undefined,
+        };
+        const errors = ref({
+          price: undefined,
+          description: undefined,
         });
 
         const fetchPackages = async () => {
@@ -126,8 +135,11 @@
           $("#editPackageModal").modal("show");
         };
         const onSubmitNewPackage = async () => {
+          if (typeof addPackageForm.value.price === "string") {
+            addPackageForm.value.price = 0;
+          }
           try {
-            $("#addPackageModal").modal("hide");
+            errors.value = { ...initialErrors.value };
             const response = await fetch("/app/packages", {
               headers: new Headers({
                 "content-type": "application/json",
@@ -136,7 +148,9 @@
               method: "POST",
               body: JSON.stringify(addPackageForm.value),
             });
+            const { data } = await response.json();
             if (response.status === 200) {
+              $("#addPackageModal").modal("hide");
               fetchPackages();
               Swal.fire(
                 "New Package",
@@ -144,13 +158,18 @@
                 "success"
               );
             }
+            if (response.status === 400 && data?.errors) {
+              errors.value = data?.errors;
+            }
           } catch {
             console.error(err);
           }
         };
         const onSubmitUpdatePackage = async () => {
+          if (typeof editPackageForm.value.price === "string") {
+            editPackageForm.value.price = 0;
+          }
           try {
-            $("#editPackageModal").modal("hide");
             const response = await fetch(
               `/app/packages/${editPackageForm?.value.id}`,
               {
@@ -162,13 +181,18 @@
                 body: JSON.stringify(editPackageForm.value),
               }
             );
+            const { data } = await response.json();
             if (response.status === 200) {
               fetchPackages();
+              $("#editPackageModal").modal("hide");
               Swal.fire(
                 "Update Package",
                 "Package has been successfully updated.",
                 "success"
               );
+            }
+            if (response.status === 400 && data?.errors) {
+              errors.value = data?.errors;
             }
           } catch {
             console.error(err);
@@ -177,6 +201,13 @@
 
         onMounted(() => {
           fetchPackages();
+          $("#addPackageModal").on("hidden.bs.modal", () => {
+            errors.value = { ...initialErrors };
+            addPackageForm.value = { ...initialAddFormValues };
+          });
+          $("#editPackageModal").on("hidden.bs.modal", () => {
+            errors.value = { ...initialErrors };
+          });
         });
         return {
           packages,
@@ -185,6 +216,7 @@
           onSubmitUpdatePackage,
           onSubmitNewPackage,
           initializeEditForm,
+          errors,
         };
       },
       compilerOptions: {

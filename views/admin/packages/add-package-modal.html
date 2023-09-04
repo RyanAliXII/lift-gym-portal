@@ -28,8 +28,12 @@
             <textarea
               class="form-control"
               name="description"
+              :class="{'is-invalid': errors?.description}"
               v-model="addPackageForm.description"
             ></textarea>
+            <div class="invalid-feedback" v-show="errors?.description">
+              {errors?.description}
+            </div>
           </div>
           <div class="form-group">
             <label for="price" class="col-form-label">Price</label>
@@ -38,8 +42,12 @@
               class="form-control"
               name="price"
               step=".01"
+              :class="{'is-invalid': errors?.price}"
               v-model="addPackageForm.price"
             />
+            <div class="invalid-feedback" v-show="errors?.price">
+              {errors?.price}
+            </div>
           </div>
 
           <div class="d-flex" style="gap: 5px">

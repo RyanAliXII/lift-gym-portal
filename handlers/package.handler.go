@@ -49,6 +49,16 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 
 		})
 	}
+	err, fields := pkg.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"data": Data{
+				"errors": fields,
+			},
+
+		})
+	}
 	newPackageErr := h.packageRepo.NewPackage(pkg)
 	if newPackageErr != nil {
 		logger.Error(newPackageErr.Error(), zap.String("error", "newPackageErr"))
@@ -67,7 +77,6 @@ func (h * PackageHandler) NewPackage (c echo.Context) error {
 
 func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 
-	
 	id, convErr :=  strconv.Atoi(c.Param("id"))
 	pkg := model.Package{}
 	bindErr := c.Bind(&pkg)
@@ -87,6 +96,15 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 
 		})
 	}
+	err, fields := pkg.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"data": Data{
+				"errors": fields,
+			},
+		})
+	}
 	updatePackageErr := h.packageRepo.UpdatePackage(pkg)
 	if updatePackageErr != nil {
 		logger.Error(updatePackageErr.Error(), zap.String("error", "updatePackageErr"))
@@ -99,7 +117,6 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 	return c.JSON(http.StatusOK, Data{
 		"status": http.StatusOK,
 		"message": "Package updated.",
-
 	})
 
 }
