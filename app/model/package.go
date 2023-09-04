@@ -1,6 +1,11 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	"database/sql/driver"
+	"encoding/json"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+)
 
 type Package struct {
 	Id          int     `db:"id" json:"id"`
@@ -16,3 +21,23 @@ func (p Package) Validate()(error, map[string]string) {
 }
 
 
+type PackageJSON struct {
+	Package
+}
+
+func (instance *PackageJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = PackageJSON{}
+		}
+	} else {
+		*instance = PackageJSON{}
+	}
+	return nil
+
+}
+func (copy PackageJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
+}

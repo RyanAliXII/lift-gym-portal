@@ -6,16 +6,31 @@ createApp({
   setup() {
     const packageSelectElement = ref(null);
     let packageSelect = null;
-
+    const packageRequests = ref([]);
     const errorMessage = ref(undefined);
 
     const fetchPackages = async () => {
       try {
-        const response = await fetch("/clients/packages");
+        const response = await fetch("/clients/packages", {
+          headers: new Headers({ "content-type": "application/json" }),
+        });
         const { data } = await response.json();
         return data?.packages ?? [];
       } catch {
         return [];
+      }
+    };
+
+    const fetchPackageRequests = async () => {
+      try {
+        const response = await fetch("/clients/package-requests", {
+          headers: new Headers({ "content-type": "application/json" }),
+        });
+        const { data } = await response.json();
+        packageRequests.value = data?.packageRequests ?? [];
+      } catch (error) {
+        console.error(error);
+        packageRequests.value = [];
       }
     };
     const onSubmit = async () => {
@@ -66,6 +81,7 @@ createApp({
         customProperties: p,
       }));
       packageSelect.setChoices(packageOptions);
+      fetchPackageRequests();
     };
     onMounted(() => {
       init();
@@ -87,6 +103,7 @@ createApp({
       packageSelectElement,
       errorMessage,
       onSubmit,
+      packageRequests,
     };
   },
   compilerOptions: {

@@ -55,10 +55,10 @@
                     </thead>
 
                     <tbody>
-                      <template v-for="request of membershipRequests">
+                      <template v-for="request of packageRequests">
                         <tr>
-                          <td>{request.membershipPlan.description}</td>
-                          <td>{request.membershipPlan.price}</td>
+                          <td>{request.package.description}</td>
+                          <td>{request.package.price}</td>
                           <td class="font-weight-bold">
                             <div>{request.status}</div>
                           </td>
