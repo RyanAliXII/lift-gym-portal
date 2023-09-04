@@ -94,19 +94,24 @@
     createApp({
       setup() {
         const packages = ref([]);
-        const addPackageForm = ref({
+        const initialAddFormValues = {
           price: 0,
           description: "",
-        });
+        };
+        const addPackageForm = ref({ ...initialAddFormValues });
         const editPackageForm = ref({
           id: 0,
           price: 0,
           description: "",
         });
-        const errors = {
+        const initialErrors = {
           price: undefined,
           description: undefined,
         };
+        const errors = ref({
+          price: undefined,
+          description: undefined,
+        });
 
         const fetchPackages = async () => {
           try {
@@ -131,7 +136,7 @@
         };
         const onSubmitNewPackage = async () => {
           try {
-            $("#addPackageModal").modal("hide");
+            errors.value = { ...initialErrors.value };
             const response = await fetch("/app/packages", {
               headers: new Headers({
                 "content-type": "application/json",
@@ -140,13 +145,18 @@
               method: "POST",
               body: JSON.stringify(addPackageForm.value),
             });
+            const { data } = await response.json();
             if (response.status === 200) {
+              $("#addPackageModal").modal("hide");
               fetchPackages();
               Swal.fire(
                 "New Package",
                 "Package has been successfully created.",
                 "success"
               );
+            }
+            if (response.status === 400 && data?.errors) {
+              errors.value = data?.errors;
             }
           } catch {
             console.error(err);
@@ -181,6 +191,10 @@
 
         onMounted(() => {
           fetchPackages();
+          $("#addPackageModal").on("hidden.bs.modal", () => {
+            errors.value = { ...initialErrors };
+            addPackageForm.value = { ...initialAddFormValues };
+          });
         });
         return {
           packages,
@@ -189,6 +203,7 @@
           onSubmitUpdatePackage,
           onSubmitNewPackage,
           initializeEditForm,
+          errors,
         };
       },
       compilerOptions: {
