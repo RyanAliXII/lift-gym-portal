@@ -11,6 +11,7 @@ type MembershipRequest struct {
 	Client			 ClientJSON	 `json:"client" db:"client"`
 	Remarks          string `json:"remarks" db:"remarks"`
 	MembershipPlan 	 MembershipPlanJSON `json:"membershipPlan" db:"membership_plan"`
+	CreatedAt 		 string `json:"createdAt" db:"created_at"`
 	Model
 }
 

@@ -22,7 +22,7 @@ func (repo *PackageRequestRepository) GetPackageRequestsByClientId (clientId int
 	query := `SELECT 
 		pkgr.id, pkgr.client_id, pkgr.package_id, pkgr.status_id, pkgrs.description as status, pkgr.remarks,
 		JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-		JSON_OBJECT('id', pkg.id, 'description', pkg.description, 'price', pkg.price) as package
+		JSON_OBJECT('id', pkg.id, 'description', pkg.description, 'price', pkg.price) as package, pkgr.created_at
 		FROM package_request as pkgr
 		INNER JOIN package_request_status as pkgrs on pkgr.status_id = pkgrs.id
 		INNER JOIN client on pkgr.client_id = client.id
@@ -37,7 +37,7 @@ func (repo *PackageRequestRepository) GetPackageRequests()([]model.PackageReques
 	query := `SELECT 
 		pkgr.id, pkgr.client_id, pkgr.package_id, pkgr.status_id, pkgrs.description as status, pkgr.remarks,
 		JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-		JSON_OBJECT('id', pkg.id, 'description', pkg.description, 'price', pkg.price) as package
+		JSON_OBJECT('id', pkg.id, 'description', pkg.description, 'price', pkg.price) as package, pkgr.created_at
 		FROM package_request as pkgr
 		INNER JOIN package_request_status as pkgrs on pkgr.status_id = pkgrs.id
 		INNER JOIN client on pkgr.client_id = client.id

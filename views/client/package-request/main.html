@@ -47,6 +47,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Created At</th>
                         <th>Description</th>
                         <th>Price</th>
                         <th>Status</th>
@@ -57,6 +58,7 @@
                     <tbody>
                       <template v-for="request of packageRequests">
                         <tr>
+                          <td>{formatDate(request.createdAt)}</td>
                           <td>{request.package.description}</td>
                           <td>{request.package.price}</td>
                           <td

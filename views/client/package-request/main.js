@@ -143,7 +143,12 @@ createApp({
         packageSelect.setChoices(packageOptions);
       });
     });
-
+    const formatDate = (d) => {
+      const date = new Date(d).toLocaleString({
+        hourCycle: "h12",
+      });
+      return date;
+    };
     return {
       packageSelectElement,
       errorMessage,
@@ -151,6 +156,7 @@ createApp({
       packageRequests,
       Status,
       initCancellation,
+      formatDate,
     };
   },
   compilerOptions: {

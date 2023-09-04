@@ -59,6 +59,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Created At</th>
                         <th>Description</th>
                         <th>Price</th>
                         <th>Status</th>
@@ -69,6 +70,7 @@
                     <tbody>
                       <template v-for="request of membershipRequests">
                         <tr>
+                          <td>{formatDate(request.createdAt)}</td>
                           <td>{request.membershipPlan.description}</td>
                           <td>{request.membershipPlan.price}</td>
                           <td

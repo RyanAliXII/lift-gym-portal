@@ -47,7 +47,12 @@ createApp({
         packageRequests.value = [];
       }
     };
-
+    const formatDate = (d) => {
+      const date = new Date(d).toLocaleString({
+        hourCycle: "h12",
+      });
+      return date;
+    };
     const initApproval = async (id) => {
       const result = await swal.fire({
         showCancelButton: true,
@@ -137,6 +142,7 @@ createApp({
       initCancellation,
       initApproval,
       initMarkAsReceived,
+      formatDate,
     };
   },
   compilerOptions: {

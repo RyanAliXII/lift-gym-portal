@@ -215,7 +215,7 @@ func (h  PackageRequestHandler) handleRequestCancellation(c echo.Context, id int
 	remarks := c.FormValue("remarks")
 	err := h.packageRequestRepo.CancelPackageRequest(id, remarks)
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "receive error"))
+		logger.Error(err.Error(), zap.String("error", "cancellation error"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",

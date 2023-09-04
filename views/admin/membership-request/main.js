@@ -127,6 +127,12 @@ createApp({
     const init = async () => {
       membershipRequests.value = await fetchMembershipRequests();
     };
+    const formatDate = (d) => {
+      const date = new Date(d).toLocaleString({
+        hourCycle: "h12",
+      });
+      return date;
+    };
     onMounted(() => {
       init();
     });
@@ -136,6 +142,7 @@ createApp({
       initApproval,
       initMarkAsReceived,
       initCancellation,
+      formatDate,
     };
   },
   compilerOptions: { delimiters: ["{", "}"] },

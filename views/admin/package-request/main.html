@@ -7,7 +7,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      {{template "partials/client/sidebar" .}}
+      {{template "partials/sidebar" .}}
       <!-- End of Sidebar -->
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
@@ -38,6 +38,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Created At</th>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>
@@ -50,6 +51,7 @@
                     <tbody>
                       <template v-for="request of packageRequests">
                         <tr>
+                          <td>{formatDate(request.createdAt)}</td>
                           <td>
                             {request.client.givenName} {request.client.surname}
                           </td>

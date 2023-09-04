@@ -146,7 +146,12 @@ createApp({
         console.error(error);
       }
     };
-
+    const formatDate = (d) => {
+      const date = new Date(d).toLocaleString({
+        hourCycle: "h12",
+      });
+      return date;
+    };
     onMounted(() => {
       init();
     });
@@ -157,6 +162,7 @@ createApp({
       membershipRequests,
       Status,
       initCancellation,
+      formatDate,
     };
   },
   compilerOptions: {
