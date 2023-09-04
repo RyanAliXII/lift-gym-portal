@@ -1,7 +1,31 @@
 import { createApp, onMounted, ref } from "vue";
-import Choices from "choices.js";
-import { number } from "yup";
 import swal from "sweetalert2";
+
+const updateStatus = async (
+  id,
+  status = 0,
+  onSuccess = () => {},
+  data = new FormData()
+) => {
+  try {
+    const response = await fetch(
+      `/app/package-requests/${id}/status?statusId=${status}`,
+      {
+        method: "PATCH",
+        body: data,
+        headers: new Headers({
+          "X-CSRF-Token": window.csrf,
+        }),
+      }
+    );
+    if (response.status === 200) {
+      onSuccess();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 createApp({
   setup() {
     const packageRequests = ref([]);
@@ -36,6 +60,28 @@ createApp({
       });
       if (result.isConfirmed) {
         cancelPackageRequest(id);
+      }
+    };
+
+    const initApproval = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, approve it.",
+        title: "Approve Package Request",
+        text: "Are you sure you want to approve the package request?",
+        confirmButtonColor: "#295ad6",
+        cancelButtonText: "I don't want to approve the request.",
+        icon: "question",
+      });
+      if (result.isConfirmed) {
+        updateStatus(id, Status.Approved, async () => {
+          swal.fire(
+            "Package Request Approval",
+            "Package request has been approved.",
+            "success"
+          );
+          fetchPackageRequests();
+        });
       }
     };
 
@@ -74,6 +120,7 @@ createApp({
       packageRequests,
       Status,
       initCancellation,
+      initApproval,
     };
   },
   compilerOptions: {

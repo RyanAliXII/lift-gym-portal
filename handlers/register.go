@@ -50,6 +50,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest)
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus)
 	router.GET("/package-requests", pkgRequestHandler.RenderAdminPackageRequestPage)
+	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
 }
 
 
@@ -75,7 +76,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/package-requests", pkgRequestHandler.RenderClientPackageRequestPage)
 	router.GET("/packages", pkgRequestHandler.GetUnrequestedPackages)
 	router.POST("/package-requests", pkgRequestHandler.NewPackageRequest)
-	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
+	router.PATCH("/package-requests/:id/status", pkgRequestHandler.CancelPackageRequest)
 }
 
 func coachRoutes(router * echo.Group) {

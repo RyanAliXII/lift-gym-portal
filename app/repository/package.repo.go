@@ -14,7 +14,6 @@ type PackageRepository struct {
 
 
 func (repo * PackageRepository) NewPackage (pkg model.Package) error{
-	
 	query := `INSERT INTO package(description, price)VALUES(?, ?)`
 	_, insertErr := repo.db.Exec(query, pkg.Description, pkg.Price)
 

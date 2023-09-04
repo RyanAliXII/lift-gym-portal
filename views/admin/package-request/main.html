@@ -49,6 +49,9 @@
                     <tbody>
                       <template v-for="request of packageRequests">
                         <tr>
+                          <td>
+                            {request.client.givenName} {request.client.surname}
+                          </td>
                           <td>{request.package.description}</td>
                           <td>{request.package.price}</td>
                           <td
@@ -61,28 +64,50 @@
                             <div>{request.status}</div>
 
                             <small v-if="request.statusId === Status.Pending"
-                              >Waiting for approval.</small
+                              >Waiting for your approval.</small
                             >
                             <small v-if="request.statusId === Status.Approved"
-                              >Your request has been approved. You can now pay
-                              the package fee in the gym.</small
+                              >Request has been approved. Waiting for
+                              payment.</small
                             >
                             <small v-if="request.statusId === Status.Received"
                               >You have received the package.</small
                             >
                           </td>
                           <td>
-                            <button
-                              v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
-                              type="button"
-                              class="btn btn-outline-danger"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Cancel Membership Request"
-                              @click="initCancellation(request.id)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
+                            <div class="d-flex" style="gap: 5px">
+                              <button
+                                v-if="request.statusId === Status.Pending"
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Approve Request"
+                                @click="initApproval(request.id)"
+                              >
+                                <i class="fas fa-thumbs-up"></i>
+                              </button>
+                              <button
+                                v-if="request.statusId === Status.Approved"
+                                class="btn btn-outline-success"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Mark as Received: Mark this if payment has been made and package is received by client."
+                                @click="initMarkAsReceived(request.id)"
+                              >
+                                <i class="fas fa-check"></i>
+                              </button>
+                              <button
+                                v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
+                                type="button"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Cancel Membership Request"
+                                @click="initCancellation(request.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       </template>
