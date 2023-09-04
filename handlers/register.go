@@ -72,6 +72,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/memberships", membershipRequestHandler.GetUnrequestedMembershipPlans)
 	router.GET("/package-requests", pkgRequestHandler.RenderClientPackageRequestPage)
 	router.GET("/packages", pkgRequestHandler.GetUnrequestedPackages)
+	router.POST("/package-requests", pkgRequestHandler.NewPackageRequest)
 }
 
 func coachRoutes(router * echo.Group) {
