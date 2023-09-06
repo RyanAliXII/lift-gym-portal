@@ -27,7 +27,7 @@ func (m Staff) Validate() (error, map[string]string) {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from user
 			INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
-			db.Get(&recordCount, query, m.Email, m.Id)
+			db.Get(&recordCount, query, m.Email)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered.")
 			}		
