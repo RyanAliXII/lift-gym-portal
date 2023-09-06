@@ -16,6 +16,16 @@ type StaffHandler struct {
 }
 
 func (h *StaffHandler) RenderStaffPage(c echo.Context)error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		staffs, _ := h.staffRepo.GetStaffs()
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"staffs": staffs, 
+			},
+		})
+	}
 	return c.Render(http.StatusOK, "admin/staff/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Staffs",

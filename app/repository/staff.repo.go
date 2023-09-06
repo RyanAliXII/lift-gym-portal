@@ -37,6 +37,17 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 	transaction.Commit()
 	return nil	
 }
+
+func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
+	staffs := make([]model.Staff, 0)
+	query := `SELECT user.id, given_name, middle_name, surname, email, password FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false`
+	err := repo.db.Select(&staffs, query)
+	if err != nil {
+		 return staffs, err
+	}
+	return staffs, nil
+
+}
 func NewStaffRepository()StaffRepository{
 	return StaffRepository{
 		db: db.GetConnection(),
