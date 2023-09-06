@@ -23,8 +23,8 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 		transaction.Rollback()
 		return err
 	}
-	accountId, lastInsertedIdErr := result.LastInsertId()
-	if lastInsertedIdErr != nil {
+	accountId, err:= result.LastInsertId()
+	if err  != nil {
 		transaction.Rollback()
 		return err
 	}
