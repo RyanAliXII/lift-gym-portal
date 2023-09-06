@@ -82,6 +82,7 @@ createApp({
         console.error(error);
       }
     };
+
     const onSubmitUpdate = async () => {
       try {
         const response = await fetch(`/app/staffs/${form.id}`, {
@@ -101,6 +102,26 @@ createApp({
         if (response.status === 400 && data?.errors) {
           setErrors(data.errors);
         }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const initResetPassword = async () => {
+      const result = await swal.fire({
+        title: "Reset Password",
+        text: "Are you sure you want to reset this account password?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#3085d6",
+        confirmButtonColor: "#d33",
+        confirmButtonText: "Yes, reset it",
+        cancelButtonText: "I don't want to reset the password",
+      });
+      if (result.isConfirmed) {
+      }
+    };
+    const resetPassword = () => {
+      try {
       } catch (error) {
         console.error(error);
       }
@@ -130,6 +151,7 @@ createApp({
       staffs,
       initEdit,
       onSubmitUpdate,
+      initResetPassword,
     };
   },
   compilerOptions: {
