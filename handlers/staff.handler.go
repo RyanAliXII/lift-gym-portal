@@ -16,7 +16,13 @@ func (h *StaffHandler) RenderStaffPage(c echo.Context)error {
 		"module": "Staffs",
 	})
 }
+func (h *StaffHandler)NewStaff (c echo.Context) error {
 
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "New staff added.",
+	})
+}
 
 func NewStaffHandler() StaffHandler{
 	return StaffHandler{}

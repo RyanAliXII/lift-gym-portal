@@ -51,7 +51,7 @@
                     </thead>
 
                     <tbody>
-                      <template v-for="member of members">
+                      <!-- <template v-for="member of members">
                         <tr>
                           <td>
                             <a :href="`/app/clients/${member.id}`"
@@ -74,7 +74,7 @@
                             </button>
                           </td>
                         </tr>
-                      </template>
+                      </template> -->
                     </tbody>
                   </table>
                 </div>
@@ -98,5 +98,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
+  <script src="/js/admin/staff/main.js"></script>
 </html>
 {{end}}
