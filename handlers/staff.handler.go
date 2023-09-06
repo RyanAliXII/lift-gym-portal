@@ -46,7 +46,7 @@ func (h *StaffHandler)NewStaff (c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
-			Message: "Unknown error occured.",
+			Message: "Validation error.",
 			Data: Data{
 				"errors": fieldErrors,
 			},
@@ -87,6 +87,41 @@ func (h *StaffHandler)NewStaff (c echo.Context) error {
 		},
 	})
 }
+func (h *StaffHandler)UpdateStaff (c echo.Context) error {
+	staff := model.Staff{}
+	err := c.Bind(&staff)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fieldErrors := staff.ValidateUpdate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Validation error.",
+			Data: Data{
+				"errors": fieldErrors,
+			},
+		})
+	}
+	err = h.staffRepo.UpdateStaff(staff)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "UpdateStaffErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Staff updated.",
+	})
+}
+
 
 func NewStaffHandler() StaffHandler{
 	return StaffHandler{

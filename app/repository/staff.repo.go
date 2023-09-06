@@ -38,6 +38,35 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 	return nil	
 }
 
+func (repo * StaffRepository) UpdateStaff(staff model.Staff) error{
+	transaction, err := repo.db.Beginx()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	dbStaff := model.Staff{}
+	getQuery := `SELECT account_id FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false where user.id = ? LIMIT 1`
+	err = transaction.Get(&dbStaff, getQuery, staff.Id)	
+	if err  != nil {
+		transaction.Rollback()
+		return err
+	}
+	updateAccountQuery := `UPDATE account set email = ? where id = ?`
+	_, err = transaction.Exec(updateAccountQuery, staff.Email, dbStaff.AccountId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	updateUserQuery := `UPDATE user set given_name = ?, middle_name = ?, surname = ? where id = ?`
+	_, err = transaction.Exec(updateUserQuery, staff.GivenName, staff.MiddleName, staff.Surname, staff.Id)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
+	return nil	
+}
+
 func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	staffs := make([]model.Staff, 0)
 	query := `SELECT user.id, given_name, middle_name, surname, email FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false ORDER BY user.updated_at DESC`

@@ -54,6 +54,7 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
 	router.GET("/staffs",  staffHandler.RenderStaffPage)
 	router.POST("/staffs",staffHandler.NewStaff)
+	router.PUT("/staffs/:id",staffHandler.UpdateStaff)
 }
 
 

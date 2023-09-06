@@ -85,10 +85,22 @@ createApp({
     const onSubmitUpdate = async () => {
       try {
         const response = await fetch(`/app/staffs/${form.id}`, {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          method: "PUT",
+          body: JSON.stringify(form),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
         });
         const { data } = await response.json();
-        staffs.value = data?.staffs ?? [];
+        if (response.status === 200) {
+          swal.fire("Staff Update", "Staff has been updated.", "success");
+          $("#editStaffModal").modal("hide");
+          fetchStaffs();
+        }
+        if (response.status === 400 && data?.errors) {
+          setErrors(data.errors);
+        }
       } catch (error) {
         console.error(error);
       }

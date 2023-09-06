@@ -13,6 +13,7 @@ type Staff struct {
 	GivenName  string `json:"givenName" db:"given_name"`
 	MiddleName string `json:"middleName" db:"middle_name"`
 	Surname    string `json:"surname" db:"surname"`
+	AccountId string `json:"accountId,omitempty" db:"account_id"`
 	Email      string `json:"email" db:"email"`
 	Password   string `json:"password,omitempty" db:"password"`
 	Model
