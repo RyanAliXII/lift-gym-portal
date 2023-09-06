@@ -22,6 +22,7 @@ func adminRoutes (router  * echo.Group){
 	coachHandler := NewCoachHandler()
 	pkgRequestHandler := NewPackageRequestHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
+	staffHandler := NewStaffHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
@@ -51,6 +52,7 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus)
 	router.GET("/package-requests", pkgRequestHandler.RenderAdminPackageRequestPage)
 	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus)
+	router.GET("/staffs",  staffHandler.RenderStaffPage)
 }
 
 
