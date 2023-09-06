@@ -52,7 +52,7 @@ createApp({
         if (response.status === 200) {
           swal.fire(
             "New Staff",
-            "Staff has been succcessfully added.",
+            `Staff has been succcessfully added. <br> The password for the staff account is <strong>${data?.password} </strong>`,
             "success"
           );
         }
