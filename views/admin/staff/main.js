@@ -1,6 +1,7 @@
 import { useForm } from "vee-validate";
 import { createApp } from "vue";
 import swal from "sweetalert2";
+import { object } from "yup";
 createApp({
   setup() {
     const {
@@ -15,6 +16,7 @@ createApp({
         surname: "",
         email: "",
       },
+      validationSchema: object(),
     });
 
     const givenName = defineInputBinds("givenName", {
@@ -32,6 +34,12 @@ createApp({
 
     const onSubmitNewStaff = async () => {
       try {
+        setErrors({
+          givenName: "",
+          middleName: "",
+          surname: "",
+          email: "",
+        });
         const response = await fetch("/app/staffs", {
           method: "POST",
           body: JSON.stringify(form),
@@ -64,5 +72,8 @@ createApp({
       errors,
       onSubmitNewStaff,
     };
+  },
+  compilerOptions: {
+    delimiters: ["{", "}"],
   },
 }).mount("#StaffPage");
