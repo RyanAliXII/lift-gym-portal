@@ -40,7 +40,7 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 
 func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	staffs := make([]model.Staff, 0)
-	query := `SELECT user.id, given_name, middle_name, surname, email, password FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false`
+	query := `SELECT user.id, given_name, middle_name, surname, email FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false ORDER BY user.updated_at DESC`
 	err := repo.db.Select(&staffs, query)
 	if err != nil {
 		 return staffs, err

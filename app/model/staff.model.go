@@ -14,7 +14,7 @@ type Staff struct {
 	MiddleName string `json:"middleName" db:"middle_name"`
 	Surname    string `json:"surname" db:"surname"`
 	Email      string `json:"email" db:"email"`
-	Password   string `json:"password" db:"password"`
+	Password   string `json:"password,omitempty" db:"password"`
 	Model
 }
 func (m Staff) Validate() (error, map[string]string) {

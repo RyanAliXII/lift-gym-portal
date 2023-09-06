@@ -18,7 +18,7 @@ const initialForm = {
 };
 createApp({
   setup() {
-    const staff = ref([]);
+    const staffs = ref([]);
     const {
       defineInputBinds,
       values: form,
@@ -42,7 +42,17 @@ createApp({
     const email = defineInputBinds("email", {
       validateOnChange: true,
     });
-    const fetchStaffs = async () => {};
+    const fetchStaffs = async () => {
+      try {
+        const response = await fetch("/app/staffs", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        staffs.value = data?.staffs ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const onSubmitNewStaff = async () => {
       try {
         setErrors({ ...initalErrors });
@@ -62,6 +72,7 @@ createApp({
             "success"
           );
           $("#newStaffModal").modal("hide");
+          fetchStaffs();
         }
         if (response.status === 400 && data?.errors) {
           setErrors(data.errors);
@@ -71,6 +82,7 @@ createApp({
       }
     };
     onMounted(() => {
+      fetchStaffs();
       $("#newStaffModal").on("hidden.bs.modal", () => {
         setErrors({ ...initalErrors });
         setValues({ ...initialForm });
@@ -83,6 +95,7 @@ createApp({
       email,
       errors,
       onSubmitNewStaff,
+      staffs,
     };
   },
   compilerOptions: {

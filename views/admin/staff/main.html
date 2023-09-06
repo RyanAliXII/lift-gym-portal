@@ -44,37 +44,34 @@
                   >
                     <thead>
                       <tr>
-                        <th>Name</th>
-
+                        <th>Given name</th>
+                        <th>Middle name</th>
+                        <th>Surname</th>
+                        <th>Email</th>
                         <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <!-- <template v-for="member of members">
+                      <template v-for="staff of staffs">
                         <tr>
-                          <td>
-                            <a :href="`/app/clients/${member.id}`"
-                              >{member.givenName} {member.surname}</a
-                            >
-                          </td>
-                          <td>{member.membershipPlan.description}</td>
-                          <td>{formatDate(member.subscriptionStartDate)}</td>
-                          <td>{formatDate(member.validUntil)}</td>
+                          <td>{staff.givenName}</td>
+                          <td>{staff.middleName}</td>
+                          <td>{staff.surname}</td>
+                          <td>{staff.email}</td>
                           <td>
                             <button
                               type="button"
-                              class="btn btn-outline-danger"
+                              class="btn btn-outline-primary"
                               data-toggle="tooltip"
                               data-placement="top"
-                              title="Cancel subscription"
-                              @click="initCancellation(member)"
+                              title="Edit"
                             >
-                              <i class="fas fa-trash"></i>
+                              <i class="fas fa-edit"></i>
                             </button>
                           </td>
                         </tr>
-                      </template> -->
+                      </template>
                     </tbody>
                   </table>
                 </div>
