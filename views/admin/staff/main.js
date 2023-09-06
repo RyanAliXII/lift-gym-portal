@@ -11,6 +11,7 @@ const initalErrors = {
 };
 
 const initialForm = {
+  id: 0,
   givenName: "",
   middleName: "",
   surname: "",
@@ -81,9 +82,28 @@ createApp({
         console.error(error);
       }
     };
+    const onSubmitUpdate = async () => {
+      try {
+        const response = await fetch(`/app/staffs/${form.id}`, {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        staffs.value = data?.staffs ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const initEdit = (staff) => {
+      setValues({ ...staff });
+      $("#editStaffModal").modal("show");
+    };
     onMounted(() => {
       fetchStaffs();
       $("#newStaffModal").on("hidden.bs.modal", () => {
+        setErrors({ ...initalErrors });
+        setValues({ ...initialForm });
+      });
+      $("#editStaffModal").on("hidden.bs.modal", () => {
         setErrors({ ...initalErrors });
         setValues({ ...initialForm });
       });
@@ -96,6 +116,8 @@ createApp({
       errors,
       onSubmitNewStaff,
       staffs,
+      initEdit,
+      onSubmitUpdate,
     };
   },
   compilerOptions: {

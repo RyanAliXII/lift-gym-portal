@@ -66,6 +66,7 @@
                               data-toggle="tooltip"
                               data-placement="top"
                               title="Edit"
+                              @click="initEdit(staff)"
                             >
                               <i class="fas fa-edit"></i>
                             </button>
@@ -78,7 +79,8 @@
               </div>
             </div>
           </div>
-          {{template "admin/staff/new-staff-modal" .}}
+          {{template "admin/staff/new-staff-modal" .}} {{template
+          "admin/staff/edit-staff-modal" .}}
         </div>
         <!-- End of Main Content -->
       </div>
