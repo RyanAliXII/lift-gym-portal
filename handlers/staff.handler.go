@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"git.sr.ht/~jamesponddotco/acopw-go"
 	"github.com/labstack/echo/v4"
@@ -121,6 +122,40 @@ func (h *StaffHandler)UpdateStaff (c echo.Context) error {
 		Message: "Staff updated.",
 	})
 }
+func (h *StaffHandler)ResetPassword(c echo.Context) error {
+	accountId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	diceware := &acopw.Diceware{
+		Separator: "-",
+		Length: 2,
+		Capitalize: true,
+	}
+	generatedPassword, err := diceware.Generate()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "generateErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	hashedPassword, err:= bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
+	h.staffRepo.UpdatePassword(string(hashedPassword), accountId )
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Staff password has been reset.",
+		Data: Data{
+			"password": generatedPassword,
+		},
+	})
+}
+
 
 
 func NewStaffHandler() StaffHandler{

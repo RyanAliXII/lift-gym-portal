@@ -77,6 +77,28 @@ func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	return staffs, nil
 
 }
+func (repo * StaffRepository) UpdatePassword(newPassword string, userId int) error{
+	transaction, err := repo.db.Beginx()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	dbStaff := model.Staff{}
+	getQuery := `SELECT account_id FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false where user.id = ? LIMIT 1`
+	err = transaction.Get(&dbStaff, getQuery, userId)	
+	if err  != nil {
+		transaction.Rollback()
+		return err
+	}
+	updateAccountQuery := `UPDATE account set password = ? where id = ?`
+	_, err = transaction.Exec(updateAccountQuery, newPassword, dbStaff.AccountId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
+	return nil	
+}
 func NewStaffRepository()StaffRepository{
 	return StaffRepository{
 		db: db.GetConnection(),

@@ -118,10 +118,24 @@ createApp({
         cancelButtonText: "I don't want to reset the password",
       });
       if (result.isConfirmed) {
+        resetPassword();
       }
     };
-    const resetPassword = () => {
+    const resetPassword = async () => {
       try {
+        const response = await fetch(`/app/staffs/${form.id}/password`, {
+          method: "PATCH",
+          headers: new Headers({ "X-CSRF-Token": window.csrf }),
+        });
+        const { data } = await response.json();
+        if (response.status === 200) {
+          swal.fire(
+            "Password Reset",
+            `Password reset successful. The password for the staff account is <strong>${data?.password} </strong>`,
+            "success"
+          );
+          fetchStaffs();
+        }
       } catch (error) {
         console.error(error);
       }
