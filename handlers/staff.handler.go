@@ -59,6 +59,16 @@ func (h *StaffHandler)NewStaff (c echo.Context) error {
 	}
 	hashedPassword, err:= bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
 	staff.Password = string(hashedPassword)
+
+	err = h.staffRepo.NewStaff(staff)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewStaffErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "New staff added.",

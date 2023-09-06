@@ -17,7 +17,7 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 		transaction.Rollback()
 		return err
 	}
-	insertAccountQuery := `INSERT INTO account(email, password) VALUES(?, ?, ?)`
+	insertAccountQuery := `INSERT INTO account(email, password) VALUES(?, ?)`
 	result, err := transaction.Exec(insertAccountQuery, staff.Email, staff.Password)
 	if err != nil {
 		transaction.Rollback()
@@ -34,6 +34,7 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 		transaction.Rollback()
 		return err
 	}
+	transaction.Commit()
 	return nil	
 }
 func NewStaffRepository()StaffRepository{

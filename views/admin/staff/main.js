@@ -1,21 +1,32 @@
 import { useForm } from "vee-validate";
-import { createApp } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
 import { object } from "yup";
+
+const initalErrors = {
+  givenName: "",
+  middleName: "",
+  surname: "",
+  email: "",
+};
+
+const initialForm = {
+  givenName: "",
+  middleName: "",
+  surname: "",
+  email: "",
+};
 createApp({
   setup() {
+    const staff = ref([]);
     const {
       defineInputBinds,
       values: form,
       errors,
+      setValues,
       setErrors,
     } = useForm({
-      initialValues: {
-        givenName: "",
-        middleName: "",
-        surname: "",
-        email: "",
-      },
+      initialValues: initialForm,
       validationSchema: object(),
     });
 
@@ -31,15 +42,10 @@ createApp({
     const email = defineInputBinds("email", {
       validateOnChange: true,
     });
-
+    const fetchStaffs = async () => {};
     const onSubmitNewStaff = async () => {
       try {
-        setErrors({
-          givenName: "",
-          middleName: "",
-          surname: "",
-          email: "",
-        });
+        setErrors({ ...initalErrors });
         const response = await fetch("/app/staffs", {
           method: "POST",
           body: JSON.stringify(form),
@@ -55,8 +61,8 @@ createApp({
             `Staff has been succcessfully added. <br> The password for the staff account is <strong>${data?.password} </strong>`,
             "success"
           );
+          $("#newStaffModal").modal("hide");
         }
-
         if (response.status === 400 && data?.errors) {
           setErrors(data.errors);
         }
@@ -64,6 +70,12 @@ createApp({
         console.error(error);
       }
     };
+    onMounted(() => {
+      $("#newStaffModal").on("hidden.bs.modal", () => {
+        setErrors({ ...initalErrors });
+        setValues({ ...initialForm });
+      });
+    });
     return {
       givenName,
       middleName,
