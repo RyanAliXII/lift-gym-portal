@@ -7,6 +7,7 @@ createApp({
       defineInputBinds,
       values: form,
       errors,
+      setErrors,
     } = useForm({
       initialValues: {
         givenName: "",
@@ -39,12 +40,17 @@ createApp({
             "X-CSRF-Token": window.csrf,
           }),
         });
+        const { data } = await response.json();
         if (response.status === 200) {
           swal.fire(
             "New Staff",
             "Staff has been succcessfully added.",
             "success"
           );
+        }
+
+        if (response.status === 400 && data?.errors) {
+          setErrors(data.errors);
         }
       } catch (error) {
         console.error(error);
