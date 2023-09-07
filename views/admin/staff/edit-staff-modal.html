@@ -1,0 +1,104 @@
+{{define "admin/staff/edit-staff-modal"}}
+<div
+  class="modal fade"
+  id="editStaffModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editStaffModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Staff</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitUpdate">
+          <div class="form-group">
+            <label for="givenName" class="col-form-label">Given name</label>
+            <input
+              type="text"
+              class="form-control"
+              name="givenName"
+              v-bind="givenName"
+              :class="{'is-invalid':errors.givenName}"
+            />
+            <div class="invalid-feedback" :class="{'d-block':errors.givenName}">
+              {errors?.givenName}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="middleName" class="col-form-label">Middle name</label>
+            <input
+              type="text"
+              class="form-control"
+              name="middleName"
+              :class="{'is-invalid':errors.middleName}"
+              v-bind="middleName"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block':errors.middleName}"
+            >
+              {errors?.middleName}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="surname" class="col-form-label">Surname</label>
+            <input
+              type="text"
+              class="form-control"
+              name="surname"
+              :class="{'is-invalid':errors.surname}"
+              v-bind="surname"
+            />
+            <div class="invalid-feedback" :class="{'d-block':errors.surname}">
+              {errors?.surname}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="surname" class="col-form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              name="email"
+              :class="{'is-invalid':errors.email}"
+              v-bind="email"
+            />
+            <div class="invalid-feedback" :class="{'d-block':errors.email}">
+              {errors?.email}
+            </div>
+          </div>
+
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              @click="initResetPassword"
+            >
+              <i class="fas fa-undo"></i>
+              Reset Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
