@@ -60,6 +60,10 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	})
 	return nil
 }
+func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
+
+	return c.Render(http.StatusOK, "coach/profile/main", Data{})
+}
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
     bindErr := sessionData.Bind(c.Get("sessionData"))

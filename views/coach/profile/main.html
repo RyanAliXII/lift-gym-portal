@@ -1,0 +1,151 @@
+{{define "coach/profile/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/client/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          {{template "partials/client/dashboard-topbar"}}
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="card shadow mb-4 p-5">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    id="information-tab"
+                    data-toggle="tab"
+                    href="#information-panel"
+                    role="tab"
+                    aria-controls="information"
+                    aria-selected="true"
+                    >Information</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="password-tab"
+                    data-toggle="tab"
+                    href="#password-panel"
+                    role="tab"
+                    aria-controls="password"
+                    aria-selected="false"
+                    >Change Password</a
+                  >
+                </li>
+              </ul>
+              <div class="tab-content" id="profileTabContent">
+                <div
+                  class="tab-pane fade show active"
+                  id="information-panel"
+                  role="tabpanel"
+                  aria-labelledby="info-tab"
+                >
+                  {{ template "coach/profile/info-panel" .}}
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="password-panel"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  {{template "coach/profile/password-panel" .}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+
+  {{template "partials/sb-scripts"}}
+  <script></script>
+
+  <script>
+    const changePasswordForm = document.querySelector("#changePasswordForm");
+    const oldPasswordGroup = document.querySelector("#oldPasswordGrp");
+    const newPasswordGroup = document.querySelector("#newPasswordGrp");
+
+    const resetChangePasswordErrors = () => {
+      oldPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      oldPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      oldPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+
+      newPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      newPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      newPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+    };
+    changePasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      resetChangePasswordErrors();
+      const formData = new FormData(event.target);
+
+      const response = await fetch("/clients/profile/password", {
+        body: formData,
+        method: "PATCH",
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+      const { data } = await response.json();
+      if (response.status === 200) {
+        Swal.fire(
+          "Change Password",
+          "Your password has been changed.",
+          "success"
+        );
+        oldPasswordGroup.querySelector("input").value = "";
+        newPasswordGroup.querySelector("input").value = "";
+      }
+
+      if (response.status === 400) {
+        if (data?.errors?.oldPassword) {
+          oldPasswordGroup.querySelector("input").classList.add("is-invalid");
+          oldPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          oldPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.oldPassword;
+        }
+        if (data?.errors?.newPassword) {
+          newPasswordGroup.querySelector("input").classList.add("is-invalid");
+          newPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          newPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.newPassword;
+        }
+      }
+    });
+  </script>
+</html>
+{{end}}
