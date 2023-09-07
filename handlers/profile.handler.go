@@ -18,6 +18,7 @@ type ProfileHandler struct {
 	clientRepo repository.ClientRepository
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
+	coachRepo repository.CoachRepository
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -61,8 +62,12 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	return nil
 }
 func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
-
-	return c.Render(http.StatusOK, "coach/profile/main", Data{})
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	coach, _ := h.coachRepo.GetCoachById(sessionData.User.Id)
+	return c.Render(http.StatusOK, "coach/profile/main", Data{
+		"profile": coach,
+	})
 }
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
@@ -163,5 +168,6 @@ func NewProfileHandler()ProfileHandler {
 		clientRepo: repository.NewClientRepository(),
 		verificationRepo: repository.NewVerificationRepository() ,
 		memberRepo: repository.NewMemberRepository(),
+		coachRepo: repository.NewCoachRepository(),
 	}
 }
