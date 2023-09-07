@@ -67,6 +67,7 @@ func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
 	coach, _ := h.coachRepo.GetCoachById(sessionData.User.Id)
 	return c.Render(http.StatusOK, "coach/profile/main", Data{
 		"profile": coach,
+		"csrf": c.Get("csrf"),
 	})
 }
 func (h * ProfileHandler)ChangeCoachPassword( c echo.Context) error {
@@ -80,7 +81,7 @@ func (h * ProfileHandler)ChangeCoachPassword( c echo.Context) error {
 	}
 	coach, _ := h.coachRepo.GetCoachByIdWithPassword(sessionData.User.Id)
 	oldPassword := c.FormValue("oldPassword")
-	err = validation.Validate(oldPassword, validation.Required.Error("Password is required."), validation.Length(1, 0).Error("Password is required."))
+	err = validation.Validate(oldPassword, validation.Required.Error("Old password is required."), validation.Length(1, 0).Error("Old password is required."))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
