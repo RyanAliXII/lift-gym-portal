@@ -38,6 +38,18 @@
                 <li class="nav-item">
                   <a
                     class="nav-link"
+                    id="public-profile-tab"
+                    data-toggle="tab"
+                    href="#public-profile-panel"
+                    role="tab"
+                    aria-controls="public-profile"
+                    aria-selected="false"
+                    >Public Profile</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
                     id="password-tab"
                     data-toggle="tab"
                     href="#password-panel"
@@ -56,6 +68,14 @@
                   aria-labelledby="info-tab"
                 >
                   {{ template "coach/profile/info-panel" .}}
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="public-profile-panel"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  {{template "coach/profile/public-profile-panel" .}}
                 </div>
                 <div
                   class="tab-pane fade"
@@ -84,7 +104,9 @@
   </body>
 
   {{template "partials/sb-scripts"}}
-  <script></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 
   <script>
     const changePasswordForm = document.querySelector("#changePasswordForm");
@@ -146,6 +168,27 @@
         }
       }
     });
+  </script>
+
+  <script>
+    ClassicEditor.create(document.querySelector("#editor"), {
+      removePlugins: [
+        "CKFinderUploadAdapter",
+        "CKFinder",
+        "EasyImage",
+        "Image",
+        "ImageCaption",
+        "ImageStyle",
+        "ImageToolbar",
+      ],
+    }).catch((error) => {
+      console.error(error);
+    });
+  </script>
+
+  <script>
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+    const filePond = FilePond.create(document.querySelector("#profileImages"));
   </script>
 </html>
 {{end}}

@@ -1,0 +1,28 @@
+{{define "coach/profile/public-profile-panel"}}
+<div class="mt-4 p-3">
+  <div class="alert alert-info">
+    <span>
+      This profile is visible to potential gym clients who are considering
+      hiring you as their coach. Please provide detailed information about your
+      experiences, training methodologies, and any other relevant details to
+      help clients make an informed decision.
+    </span>
+  </div>
+
+  <div>
+    <label>Your Images</label>
+    <input type="file" multiple id="profileImages" />
+  </div>
+  <div>
+    <label>Description</label>
+    <div id="editor"></div>
+  </div>
+  <div class="mt-4">
+    <button type="button" id="publicProfilePreviewBtn" class="btn btn-info">
+      <i class="fas fa-eye"></i>
+      Show Public Profile Preview
+    </button>
+    <button type="button" class="btn btn-primary">Submit</button>
+  </div>
+</div>
+{{end}}
