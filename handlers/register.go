@@ -93,4 +93,5 @@ func coachRoutes(router * echo.Group) {
 	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
 	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 	router.GET("/profile", profileHandler.RenderCoachProfile)
+	router.PATCH("/profile/password", profileHandler.ChangeCoachPassword)
 }

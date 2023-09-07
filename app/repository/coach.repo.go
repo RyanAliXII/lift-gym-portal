@@ -50,6 +50,13 @@ func (repo *CoachRepository)GetCoachById (id int ) (model.Coach, error) {
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
 }
+func (repo *CoachRepository)GetCoachByIdWithPassword (id int ) (model.Coach, error) {
+	coach := model.Coach{}
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.password, account.id as account_id from coach
+	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
+	err := repo.db.Get(&coach, selectQuery, id)
+	return coach, err
+}
 func (repo  CoachRepository)UpdateCoach(coach model.Coach) error {
 	dbCoach, getClientErr := repo.GetCoachById(coach.Id)
 	if getClientErr != nil {
@@ -77,13 +84,13 @@ func (repo  CoachRepository)UpdateCoach(coach model.Coach) error {
 
 	
 }
-func (repo * CoachRepository)UpdatePassword (newPassword string, clientId int )(error){
-	client, err := repo.GetCoachById(clientId)
+func (repo * CoachRepository)UpdatePassword (newPassword string, coachId int )(error){
+	coach, err := repo.GetCoachById(coachId)
 	if err!= nil {
 		return err
 	}
 	updateQuery := "UPDATE account SET password = ? WHERE id = ?"
-	_, err = repo.db.Exec(updateQuery, newPassword, client.AccountId)
+	_, err = repo.db.Exec(updateQuery, newPassword, coach.AccountId)
 	if err != nil {
 		return err
 	}

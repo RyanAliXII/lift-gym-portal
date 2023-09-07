@@ -69,6 +69,77 @@ func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
 		"profile": coach,
 	})
 }
+func (h * ProfileHandler)ChangeCoachPassword( c echo.Context) error {
+	sessionData := mysqlsession.SessionData{}
+	err := sessionData.Bind(c.Get("sessionData"))
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, JSONResponse{
+			Status: http.StatusUnauthorized,
+			Message: "Unauthorized.",
+		})
+	}
+	coach, _ := h.coachRepo.GetCoachByIdWithPassword(sessionData.User.Id)
+	oldPassword := c.FormValue("oldPassword")
+	err = validation.Validate(oldPassword, validation.Required.Error("Password is required."), validation.Length(1, 0).Error("Password is required."))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				 "errors": Data{
+					 "oldPassword": err.Error(),
+				 },
+			},
+			Message: "Invalid old password value.",
+		})
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(coach.Password), []byte(oldPassword))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+		   Status: http.StatusBadRequest,
+		   Data: Data{
+				"errors": Data{
+					"oldPassword": "Old password is incorrect.",
+				},
+		   },
+		   Message: "Old password is incorrect.",
+	   })
+
+	}
+
+	newPassword := c.FormValue("newPassword")
+	err = validation.Validate(newPassword, validation.Required.Error("New password is required."), validation.Length(10, 30).Error("New password must be 10 to 30 characters."))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				 "errors": Data{
+					 "newPassword": err.Error(),
+				 },
+			},
+			Message: "Invalid new password value.",
+		})
+	}
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "generatePassword"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	err = h.coachRepo.UpdatePassword(string(hashedNewPassword), coach.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error",  "UpdatePasswordErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Password has been changed.",
+	})
+}
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
     bindErr := sessionData.Bind(c.Get("sessionData"))

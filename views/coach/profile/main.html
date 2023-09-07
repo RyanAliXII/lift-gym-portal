@@ -109,7 +109,7 @@
       resetChangePasswordErrors();
       const formData = new FormData(event.target);
 
-      const response = await fetch("/clients/profile/password", {
+      const response = await fetch("/coaches/profile/password", {
         body: formData,
         method: "PATCH",
         headers: new Headers({
