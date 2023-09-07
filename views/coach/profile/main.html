@@ -87,6 +87,7 @@
                 </div>
               </div>
             </div>
+            {{template "coach/profile/public-profile-preview" .}}
           </div>
         </div>
         <!-- /.container-fluid -->
@@ -102,11 +103,14 @@
       <i class="fas fa-angle-up"></i>
     </a>
   </body>
-
+  <template class="slide">
+    <img />
+  </template>
   {{template "partials/sb-scripts"}}
   <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
   <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
   <script>
     const changePasswordForm = document.querySelector("#changePasswordForm");
@@ -171,6 +175,7 @@
   </script>
 
   <script>
+    let editor;
     ClassicEditor.create(document.querySelector("#editor"), {
       removePlugins: [
         "CKFinderUploadAdapter",
@@ -181,14 +186,32 @@
         "ImageStyle",
         "ImageToolbar",
       ],
-    }).catch((error) => {
-      console.error(error);
-    });
+    })
+      .then((e) => {
+        editor = e;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   </script>
 
   <script>
     FilePond.registerPlugin(FilePondPluginImagePreview);
     const filePond = FilePond.create(document.querySelector("#profileImages"));
+  </script>
+
+  <script>
+    const previewDesc = document.querySelector("#previewDescription");
+    document
+      .querySelector("#publicProfilePreviewBtn")
+      .addEventListener("click", () => {
+        $("#publicProfilePreviewModal").modal("show");
+        let content = editor.getData();
+        content = content.replace("<script>", "");
+        content = content.replace("<script/>", "");
+        previewDesc.innerHTML = content;
+        const files = filePond.getFiles();
+      });
   </script>
 </html>
 {{end}}
