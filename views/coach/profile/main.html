@@ -103,8 +103,15 @@
       <i class="fas fa-angle-up"></i>
     </a>
   </body>
-  <template class="slide">
-    <img />
+  <template id="slideTemplate">
+    <div class="swiper-slide w-100 d-flex justify-content-center">
+      <img
+        class="object-fit-cover"
+        width="400px"
+        height="330px"
+        style="aspect-ratio: 1/1"
+      />
+    </div>
   </template>
   {{template "partials/sb-scripts"}}
   <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
@@ -198,10 +205,27 @@
   <script>
     FilePond.registerPlugin(FilePondPluginImagePreview);
     const filePond = FilePond.create(document.querySelector("#profileImages"));
+    const swiper = new Swiper(".swiper", {
+      // Optional parameters
+      direction: "horizontal",
+      loop: true,
+
+      // If we need pagination
+      pagination: {
+        el: ".swiper-pagination",
+      },
+
+      // Navigation arrows
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
   </script>
 
   <script>
     const previewDesc = document.querySelector("#previewDescription");
+    const slideTemplate = document.querySelector("#slideTemplate");
     document
       .querySelector("#publicProfilePreviewBtn")
       .addEventListener("click", () => {
@@ -211,6 +235,13 @@
         content = content.replace("<script/>", "");
         previewDesc.innerHTML = content;
         const files = filePond.getFiles();
+        swiper.removeAllSlides();
+        files.forEach((p) => {
+          const slide = slideTemplate.content.cloneNode(true);
+          const url = URL.createObjectURL(p.file);
+          slide.querySelector("img").src = url;
+          swiper.appendSlide(slide);
+        });
       });
   </script>
 </html>
