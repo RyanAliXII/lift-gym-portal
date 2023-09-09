@@ -264,7 +264,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 	sessionData.Bind(c.Get("sessionData"))
 
 	//get the list of coach images from database
-	alreadyUploadedImages, err := h.coachImage.GetImagesPathByCoachId(sessionData.User.Id)
+	alreadyUploadedImagesPath, err := h.coachImage.GetImagesPathByCoachId(sessionData.User.Id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetImagesPathByCoachId"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -273,8 +273,9 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 		})
 	}
 	imagesToBeStoredInDB := make([]model.CoachImage, 0)
+	imagesToBeDeletedInDB := make([]model.CoachImage, 0)
 	folderName := fmt.Sprintf("/coaches/images/%d/", sessionData.User.Id)
-
+	uploadedImagesMap := map[string]string{}
 	// loop through files of form data
 	for _, fileHeader := range files {
 		multiPartFile, err := fileHeader.Open()
@@ -299,7 +300,8 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 		//check if images is already been uploaded, if uploaded, just skip it.
 		uploadedFilename:= fileHeader.Filename
 		uploadedFileFullPath := fmt.Sprint(folderName, uploadedFilename)
-		if slices.Contains(alreadyUploadedImages, uploadedFileFullPath){
+		uploadedImagesMap[uploadedFileFullPath] = fileHeader.Filename
+		if slices.Contains(alreadyUploadedImagesPath, uploadedFileFullPath){
 			continue
 		}
 		
@@ -314,17 +316,49 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 				Status: http.StatusInternalServerError,
 			})
 		}
-		//on success upload from cloudinary, append the file details in the slice, that will be inserted in the db later.
+		//on success upload from cloudinary, append the file details in the slice that will be inserted in the db later.
 		imagesToBeStoredInDB = append(imagesToBeStoredInDB, model.CoachImage{
 			Path: fullpath,
 			CoachId: sessionData.User.Id,
 		})
 			
 	}
+
+	// check if the already uploaded images is still uploaded from the form data. if not uploaded, append to slice that will be deleted from db later.
+	for _, alreadyUploadedImagesPath := range alreadyUploadedImagesPath {
+		filename := uploadedImagesMap[alreadyUploadedImagesPath]
+		if filename != ""{
+			continue
+		}
+		err := h.objStorage.Remove(alreadyUploadedImagesPath)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "Remove"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured.",
+			})
+		}
+		
+		imagesToBeDeletedInDB = append(imagesToBeDeletedInDB, model.CoachImage{
+			Path: alreadyUploadedImagesPath,
+			CoachId: sessionData.User.Id,
+		})
+		
+	} 
+	
+	
 	//insert uploaded images detail in the database.
 	err = h.coachImage.NewCoachImages(imagesToBeStoredInDB)
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "new coach image err"))
+		logger.Error(err.Error(), zap.String("error", "NewCoachImages"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.coachImage.DeleteCoachImagesByCoach(imagesToBeDeletedInDB)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteCoachImages") )
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",

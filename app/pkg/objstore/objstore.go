@@ -21,9 +21,15 @@ func (s *ObjectStorage) Upload(file multipart.File, folderName string,  filename
 	})
 	return err
 }
-
+func (s *ObjectStorage)Remove(filename string) error {
+	_, err := s.cld.Upload.Destroy(context.Background(), uploader.DestroyParams{
+		PublicID: filename,
+	})
+	return err
+}
 type ObjectStorer interface {
 	Upload(file multipart.File, folderName string,  filename string ) (error)
+	Remove(filename string) error
 }
 var PublicURL string;
 var objecStorage * ObjectStorage;
