@@ -5,10 +5,13 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mailer"
 	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"path/filepath"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -19,6 +22,7 @@ type ProfileHandler struct {
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
 	coachRepo repository.CoachRepository
+	objStorage objstore.ObjectStorer
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -236,18 +240,51 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 }
 func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 	
-	// form, err := c.MultipartForm()
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, JSONResponse{
-	// 		Message: "Unknown error occured",
-	// 		Status: http.StatusBadRequest,
-	// 	})
-	// }
-	// files := form.File["images"]
-	// for _, file := range files {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Message: "Unknown error occured",
+			Status: http.StatusBadRequest,
+		})
+	}
+	files := form.File["images"]
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	
+	for _, fileHeader := range files {
+		multiPartFile, err := fileHeader.Open()
+		defer multiPartFile.Close()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "file open error."))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Message: "Unknown error occured.",
+				Status: http.StatusInternalServerError,
+			})
+		}
+		id, err := uuid.NewUUID()
+		
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "uuid err"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknwon error occured",
+			})
 
-
-	// }
+		}
+	
+		folderName := fmt.Sprintf("/coaches/images/%d", sessionData.User.Id)
+		fileExtension := filepath.Ext(fileHeader.Filename)
+		fileName := fmt.Sprint(id.String(), fileExtension)
+		err = h.objStorage.Upload(multiPartFile, folderName, fileName)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "upload error."))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Message: "Unknown error occured.",
+				Status: http.StatusInternalServerError,
+			})
+		}
+			
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Public profile updated.",
@@ -255,10 +292,12 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 
 }
 func NewProfileHandler()ProfileHandler {
+	objectStorage, _ := objstore.GetObjectStorage()
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),
 		verificationRepo: repository.NewVerificationRepository() ,
 		memberRepo: repository.NewMemberRepository(),
 		coachRepo: repository.NewCoachRepository(),
+		objStorage: objectStorage ,
 	}
 }
