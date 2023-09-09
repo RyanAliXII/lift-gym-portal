@@ -87,12 +87,12 @@ func clientRoutes(router * echo.Group){
 func coachRoutes(router * echo.Group) {
 	loginHandler := NewLoginHandler()
 	dashboardHandler := NewDashboardHandler()
-	profileHandler := NewProfileHandler()
+	coachProfileHandler :=  NewCoachProfileHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
 	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
-	router.GET("/profile", profileHandler.RenderCoachProfile)
-	router.PATCH("/profile/password", profileHandler.ChangeCoachPassword)
-	router.POST("/public-profile", profileHandler.UpdatePublicProfile)
+	router.GET("/profile", coachProfileHandler.RenderProfilePage)
+	router.PATCH("/profile/password", coachProfileHandler.ChangePassword)
+	router.POST("/public-profile", coachProfileHandler.UpdatePublicProfile)
 }
