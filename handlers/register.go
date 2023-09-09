@@ -94,4 +94,5 @@ func coachRoutes(router * echo.Group) {
 	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 	router.GET("/profile", profileHandler.RenderCoachProfile)
 	router.PATCH("/profile/password", profileHandler.ChangeCoachPassword)
+	router.POST("/public-profile", profileHandler.UpdatePublicProfile)
 }

@@ -234,7 +234,26 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 		Message: "Password has been changed.",
 	})
 }
+func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
+	
+	// form, err := c.MultipartForm()
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, JSONResponse{
+	// 		Message: "Unknown error occured",
+	// 		Status: http.StatusBadRequest,
+	// 	})
+	// }
+	// files := form.File["images"]
+	// for _, file := range files {
 
+
+	// }
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Public profile updated.",
+	})
+
+}
 func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),

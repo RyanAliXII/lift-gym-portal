@@ -233,9 +233,17 @@
         let content = editor.getData();
         content = content.replace("<script>", "");
         content = content.replace("<script/>", "");
-        previewDesc.innerHTML = content;
+
         const files = filePond.getFiles();
         swiper.removeAllSlides();
+
+        if (content.length === 0) {
+          previewDesc.innerHTML =
+            "<div class='text-center d-flex align-items-center justify-content-center' style='height:300px; width: 100%'><span>There is no description</span></div>";
+        } else {
+          previewDesc.innerHTML = content;
+        }
+
         files.forEach((p) => {
           const slide = slideTemplate.content.cloneNode(true);
           const url = URL.createObjectURL(p.file);
@@ -243,6 +251,25 @@
           swiper.appendSlide(slide);
         });
       });
+  </script>
+  <script>
+    const publicProfileForm = document.querySelector("#publicProfileForm");
+
+    publicProfileForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const imageUploadFormData = new FormData();
+      const filePondFiles = filePond.getFiles();
+      filePondFiles.forEach((fpFile) => {
+        imageUploadFormData.append("images", fpFile.file);
+      });
+      const uploadResponse = await fetch("/coaches/public-profile", {
+        method: "POST",
+        body: imageUploadFormData,
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+    });
   </script>
 </html>
 {{end}}

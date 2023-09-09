@@ -8,21 +8,22 @@
       help clients make an informed decision.
     </span>
   </div>
-
-  <div>
-    <label>Your Images</label>
-    <input type="file" multiple id="profileImages" />
-  </div>
-  <div>
-    <label>Description</label>
-    <div id="editor"></div>
-  </div>
-  <div class="mt-4">
-    <button type="button" id="publicProfilePreviewBtn" class="btn btn-info">
-      <i class="fas fa-eye"></i>
-      Show Public Profile Preview
-    </button>
-    <button type="button" class="btn btn-primary">Submit</button>
-  </div>
+  <form id="publicProfileForm">
+    <div>
+      <label>Your Images</label>
+      <input type="file" multiple id="profileImages" />
+    </div>
+    <div>
+      <label>Description</label>
+      <div id="editor"></div>
+    </div>
+    <div class="mt-4">
+      <button type="button" id="publicProfilePreviewBtn" class="btn btn-info">
+        <i class="fas fa-eye"></i>
+        Show Public Profile Preview
+      </button>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
 </div>
 {{end}}

@@ -21,9 +21,13 @@ require (
 require (
 	git.sr.ht/~jamesponddotco/xstd-go v0.0.0-20230506171649-ea779401c9ea // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+	github.com/cloudinary/cloudinary-go/v2 v2.4.0 // indirect
+	github.com/creasty/defaults v1.5.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
