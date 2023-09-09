@@ -22,6 +22,7 @@ type ProfileHandler struct {
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
 	coachRepo repository.CoachRepository
+	coachImage repository.CoachImageRepository
 	objStorage objstore.ObjectStorer
 }
 
@@ -250,7 +251,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 	files := form.File["images"]
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
-	
+	images := make([]model.CoachImage, 0)
 	for _, fileHeader := range files {
 		multiPartFile, err := fileHeader.Open()
 		defer multiPartFile.Close()
@@ -275,7 +276,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 		folderName := fmt.Sprintf("/coaches/images/%d", sessionData.User.Id)
 		fileExtension := filepath.Ext(fileHeader.Filename)
 		fileName := fmt.Sprint(id.String(), fileExtension)
-		err = h.objStorage.Upload(multiPartFile, folderName, fileName)
+		err = h.objStorage.Upload(multiPartFile, folderName,  id.String())
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "upload error."))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -283,7 +284,19 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 				Status: http.StatusInternalServerError,
 			})
 		}
+		images = append(images, model.CoachImage{
+			Path: fmt.Sprint(folderName,fileName),
+			CoachId: sessionData.User.Id,
+		})
 			
+	}
+	err = h.coachImage.NewCoachImages(images)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "new coach image err"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
@@ -299,5 +312,6 @@ func NewProfileHandler()ProfileHandler {
 		memberRepo: repository.NewMemberRepository(),
 		coachRepo: repository.NewCoachRepository(),
 		objStorage: objectStorage ,
+		coachImage: repository.NewCoachImageRepository(),
 	}
 }
