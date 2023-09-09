@@ -77,7 +77,7 @@ func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
 	}
 	imageURLS := []string{}
 	for _, coachImage := range coachImages {
-		url := fmt.Sprint(objstore.PublicURL,coachImage.Path)
+		url := fmt.Sprint(objstore.PublicURL,"/",coachImage.Path)
 		imageURLS = append(imageURLS, url)
 	}
 	imageBytes, _ := json.Marshal(imageURLS)
@@ -274,7 +274,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 	}
 	imagesToBeStoredInDB := make([]model.CoachImage, 0)
 	imagesToBeDeletedInDB := make([]model.CoachImage, 0)
-	folderName := fmt.Sprintf("/coaches/images/%d/", sessionData.User.Id)
+	folderName := fmt.Sprintf("coaches/images/%d/", sessionData.User.Id)
 	uploadedImagesMap := map[string]string{}
 	// loop through files of form data
 	for _, fileHeader := range files {
@@ -308,7 +308,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 		fileName := id.String()
 		fullpath := fmt.Sprint(folderName,fileName)
 		
-		err = h.objStorage.Upload(multiPartFile, folderName,  id.String())
+		_, err = h.objStorage.Upload(multiPartFile, folderName,  id.String())
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "upload error."))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -330,6 +330,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 		if filename != ""{
 			continue
 		}
+	
 		err := h.objStorage.Remove(alreadyUploadedImagesPath)
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "Remove"))

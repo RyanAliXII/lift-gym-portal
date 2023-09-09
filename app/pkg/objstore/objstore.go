@@ -14,21 +14,25 @@ import (
 type ObjectStorage struct {
 	cld * cloudinary.Cloudinary
 }
-func (s *ObjectStorage) Upload(file multipart.File, folderName string,  filename string ) (error) {
-	_, err := s.cld.Upload.Upload(context.Background(), file,  uploader.UploadParams{
+func (s *ObjectStorage) Upload(file multipart.File, folderName string,  filename string ) (string, error) {
+	result, err := s.cld.Upload.Upload(context.Background(), file,  uploader.UploadParams{
 		Folder: folderName,
 		PublicID: filename,
 	})
-	return err
+	
+	return result.PublicID, err
 }
-func (s *ObjectStorage)Remove(filename string) error {
+func (s *ObjectStorage)Remove(filepath string) error {
+	var  invalidate bool = true
 	_, err := s.cld.Upload.Destroy(context.Background(), uploader.DestroyParams{
-		PublicID: filename,
+		PublicID: filepath,
+		ResourceType: "image",
+		Invalidate: &invalidate ,
 	})
 	return err
 }
 type ObjectStorer interface {
-	Upload(file multipart.File, folderName string,  filename string ) (error)
+	Upload(file multipart.File, folderName string,  filename string ) (string, error)
 	Remove(filename string) error
 }
 var PublicURL string;
