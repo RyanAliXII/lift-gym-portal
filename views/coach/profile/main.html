@@ -253,6 +253,17 @@
       });
   </script>
   <script>
+    $("#public-profile-tab").on("shown.bs.tab", function (e) {
+      const images = JSON.parse("{{.images}}") ?? [];
+      console.log(images);
+      if (images.length > 0 && filePond.getFiles().length === 0) {
+        images.forEach((img) => {
+          filePond.addFile(img);
+        });
+      }
+    });
+  </script>
+  <script>
     const publicProfileForm = document.querySelector("#publicProfileForm");
 
     publicProfileForm.addEventListener("submit", async (event) => {

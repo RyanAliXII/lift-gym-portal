@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mailer"
@@ -70,9 +71,20 @@ func (h * ProfileHandler) RenderCoachProfile (c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
 	coach, _ := h.coachRepo.GetCoachById(sessionData.User.Id)
+	coachImages, err := h.coachImage.GetImagesByCoachId(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "get images error"))
+	}
+	imageURLS := []string{}
+	for _, coachImage := range coachImages {
+		url := fmt.Sprint(objstore.PublicURL,coachImage.Path)
+		imageURLS = append(imageURLS, url)
+	}
+	imageBytes, _ := json.Marshal(imageURLS)
 	return c.Render(http.StatusOK, "coach/profile/main", Data{
 		"profile": coach,
 		"csrf": c.Get("csrf"),
+		"images": string(imageBytes),
 	})
 }
 func (h * ProfileHandler)ChangeCoachPassword( c echo.Context) error {
@@ -273,7 +285,7 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 
 		}
 	
-		folderName := fmt.Sprintf("/coaches/images/%d", sessionData.User.Id)
+		folderName := fmt.Sprintf("/coaches/images/%d/", sessionData.User.Id)
 		fileExtension := filepath.Ext(fileHeader.Filename)
 		fileName := fmt.Sprint(id.String(), fileExtension)
 		err = h.objStorage.Upload(multiPartFile, folderName,  id.String())

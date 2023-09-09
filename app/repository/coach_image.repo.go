@@ -12,8 +12,8 @@ type CoachImageRepository struct {
 }
 func(repo * CoachImageRepository)GetImagesByCoachId(coachId int)([]model.CoachImage, error){
 	images := make([]model.CoachImage, 0)
-	repo.db.Select(&images, "Select id, coach_id, path from coach_image where coach_id = ? order by created_at desc", coachId)
-	return images, nil
+	err := repo.db.Select(&images, "Select id, coach_id, path from coach_image where coach_id = ? order by created_at desc", coachId)
+	return images, err
 }
 
 func(repo * CoachImageRepository)NewCoachImages(images []model.CoachImage) (error){

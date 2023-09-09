@@ -2,6 +2,7 @@ package objstore
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"os"
 	"sync"
@@ -18,14 +19,13 @@ func (s *ObjectStorage) Upload(file multipart.File, folderName string,  filename
 		Folder: folderName,
 		PublicID: filename,
 	})
-
 	return err
 }
 
 type ObjectStorer interface {
 	Upload(file multipart.File, folderName string,  filename string ) (error)
 }
-
+var PublicURL string;
 var objecStorage * ObjectStorage;
 var initErr error;
 var once sync.Once;
@@ -35,6 +35,7 @@ func GetObjectStorage() (ObjectStorer, error) {
 		apiKey := os.Getenv("CLOUDINARY_API_KEY")
 		apiSecret := os.Getenv("CLOUDINARY_API_SECRET")
 		objecStorage = &ObjectStorage{}
+		PublicURL = fmt.Sprintf("https://res.cloudinary.com/%s", cloudName)
 		objecStorage.cld, initErr = cloudinary.NewFromParams(cloudName, apiKey, apiSecret)
 		
 	})
