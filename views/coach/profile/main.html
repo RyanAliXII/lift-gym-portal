@@ -118,7 +118,7 @@
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
   <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
+  <script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
   <script>
     const changePasswordForm = document.querySelector("#changePasswordForm");
     const oldPasswordGroup = document.querySelector("#oldPasswordGrp");
@@ -204,6 +204,12 @@
 
   <script>
     FilePond.registerPlugin(FilePondPluginImagePreview);
+    FilePond.registerPlugin(FilePondPluginFileRename);
+    FilePond.setOptions({
+      fileRenameFunction: (file) => {
+        return file.basename;
+      },
+    });
     const filePond = FilePond.create(document.querySelector("#profileImages"));
     const swiper = new Swiper(".swiper", {
       // Optional parameters
@@ -255,7 +261,6 @@
   <script>
     $("#public-profile-tab").on("shown.bs.tab", function (e) {
       const images = JSON.parse("{{.images}}") ?? [];
-      console.log(images);
       if (images.length > 0 && filePond.getFiles().length === 0) {
         images.forEach((img) => {
           filePond.addFile(img);
@@ -271,15 +276,22 @@
       const imageUploadFormData = new FormData();
       const filePondFiles = filePond.getFiles();
       filePondFiles.forEach((fpFile) => {
-        imageUploadFormData.append("images", fpFile.file);
+        imageUploadFormData.append("images", fpFile.file, fpFile.file.name);
       });
-      const uploadResponse = await fetch("/coaches/public-profile", {
+      const response = await fetch("/coaches/public-profile", {
         method: "POST",
         body: imageUploadFormData,
         headers: new Headers({
           "X-CSRF-Token": "{{.csrf}}",
         }),
       });
+      if (response.status === 200) {
+        Swal.fire(
+          "Public Profile",
+          "Public profile has been updated.",
+          "success"
+        );
+      }
     });
   </script>
 </html>

@@ -9,7 +9,7 @@ import (
 	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
-	"path/filepath"
+	"slices"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/google/uuid"
@@ -252,7 +252,6 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 	})
 }
 func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
-	
 	form, err := c.MultipartForm()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -263,7 +262,20 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 	files := form.File["images"]
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
-	images := make([]model.CoachImage, 0)
+
+	//get the list of coach images from database
+	alreadyUploadedImages, err := h.coachImage.GetImagesPathByCoachId(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetImagesPathByCoachId"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Message: "Unknown error occured",
+			Status: http.StatusInternalServerError,
+		})
+	}
+	imagesToBeStoredInDB := make([]model.CoachImage, 0)
+	folderName := fmt.Sprintf("/coaches/images/%d/", sessionData.User.Id)
+
+	// loop through files of form data
 	for _, fileHeader := range files {
 		multiPartFile, err := fileHeader.Open()
 		defer multiPartFile.Close()
@@ -274,20 +286,26 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 				Status: http.StatusInternalServerError,
 			})
 		}
-		id, err := uuid.NewUUID()
 		
+		id, err := uuid.NewUUID()
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "uuid err"))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
 				Status: http.StatusInternalServerError,
-				Message: "Unknwon error occured",
+				Message: "Unknown error occured",
 			})
 
 		}
-	
-		folderName := fmt.Sprintf("/coaches/images/%d/", sessionData.User.Id)
-		fileExtension := filepath.Ext(fileHeader.Filename)
-		fileName := fmt.Sprint(id.String(), fileExtension)
+		//check if images is already been uploaded, if uploaded, just skip it.
+		uploadedFilename:= fileHeader.Filename
+		uploadedFileFullPath := fmt.Sprint(folderName, uploadedFilename)
+		if slices.Contains(alreadyUploadedImages, uploadedFileFullPath){
+			continue
+		}
+		
+		fileName := id.String()
+		fullpath := fmt.Sprint(folderName,fileName)
+		
 		err = h.objStorage.Upload(multiPartFile, folderName,  id.String())
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "upload error."))
@@ -296,13 +314,15 @@ func(h * ProfileHandler)UpdatePublicProfile(c echo.Context) error {
 				Status: http.StatusInternalServerError,
 			})
 		}
-		images = append(images, model.CoachImage{
-			Path: fmt.Sprint(folderName,fileName),
+		//on success upload from cloudinary, append the file details in the slice, that will be inserted in the db later.
+		imagesToBeStoredInDB = append(imagesToBeStoredInDB, model.CoachImage{
+			Path: fullpath,
 			CoachId: sessionData.User.Id,
 		})
 			
 	}
-	err = h.coachImage.NewCoachImages(images)
+	//insert uploaded images detail in the database.
+	err = h.coachImage.NewCoachImages(imagesToBeStoredInDB)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "new coach image err"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
