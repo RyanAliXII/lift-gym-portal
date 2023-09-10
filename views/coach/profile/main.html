@@ -273,14 +273,15 @@
 
     publicProfileForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const imageUploadFormData = new FormData();
+      const publicProfileFormData = new FormData();
       const filePondFiles = filePond.getFiles();
       filePondFiles.forEach((fpFile) => {
-        imageUploadFormData.append("images", fpFile.file, fpFile.file.name);
+        publicProfileFormData.append("images", fpFile.file, fpFile.file.name);
       });
+      publicProfileFormData.append("description", editor.getData());
       const response = await fetch("/coaches/public-profile", {
         method: "POST",
-        body: imageUploadFormData,
+        body: publicProfileFormData,
         headers: new Headers({
           "X-CSRF-Token": "{{.csrf}}",
         }),

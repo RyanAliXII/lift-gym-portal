@@ -242,6 +242,15 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		}(fileIdChan)
 
 	}
+	fmt.Println(c.FormValue("description"))
+	err = h.coachRepo.UpdateCoachDescription(sessionData.User.Id, c.FormValue("description"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "UpdateCoachDescriptionErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status:  http.StatusOK,
 		Data: Data{

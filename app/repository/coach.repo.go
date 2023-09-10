@@ -38,21 +38,26 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 }
 func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 	coaches := make([]model.Coach , 0)
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id from coach
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id, description from coach
 	INNER JOIN account on coach.account_id = account.id ORDER BY coach.updated_at DESC`
 	selectErr := repo.db.Select(&coaches, selectQuery)
 	return coaches, selectErr 
 }
 func (repo *CoachRepository)GetCoachById (id int ) (model.Coach, error) {
 	coach := model.Coach{}
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id from coach
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id,description from coach
 	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
 }
+func (repo *CoachRepository)UpdateCoachDescription (id int, description string ) (error) {
+	updateQuery := `UPDATE coach set description = ? where id = ?`
+	_,err := repo.db.Exec( updateQuery, description, id)
+	return err
+}
 func (repo *CoachRepository)GetCoachByIdWithPassword (id int ) (model.Coach, error) {
 	coach := model.Coach{}
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.password, account.id as account_id from coach
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.password, account.id as account_id, description from coach
 	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
