@@ -14,12 +14,11 @@ import (
 type ObjectStorage struct {
 	cld * cloudinary.Cloudinary
 }
-func (s *ObjectStorage) Upload(file multipart.File, folderName string,  filename string ) (string, error) {
-	result, err := s.cld.Upload.Upload(context.Background(), file,  uploader.UploadParams{
+func (s *ObjectStorage) Upload(ctx context.Context, file multipart.File, folderName string,  filename string ) (string, error) {
+	result, err := s.cld.Upload.Upload(ctx, file,  uploader.UploadParams{
 		Folder: folderName,
 		PublicID: filename,
 	})
-	
 	return result.PublicID, err
 }
 func (s *ObjectStorage)Remove(filepath string) error {
@@ -32,7 +31,7 @@ func (s *ObjectStorage)Remove(filepath string) error {
 	return err
 }
 type ObjectStorer interface {
-	Upload(file multipart.File, folderName string,  filename string ) (string, error)
+	Upload(ctx context.Context, file multipart.File, folderName string,  filename string ) (string, error)
 	Remove(filename string) error
 }
 var PublicURL string;

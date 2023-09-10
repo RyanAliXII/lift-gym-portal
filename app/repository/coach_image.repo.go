@@ -21,6 +21,10 @@ func(repo * CoachImageRepository)NewCoachImages(images []model.CoachImage) (erro
 	_, err := repo.db.NamedExec("INSERT INTO coach_image(coach_id, path)VALUES(:coach_id, :path)", images)
 	return err
 }
+func(repo * CoachImageRepository)NewCoachImage(image model.CoachImage) (error){
+	_, err := repo.db.Exec("INSERT INTO coach_image(coach_id, path)VALUES(?, ?)", image.CoachId, image.Path)
+	return err
+}
 func (repo *CoachImageRepository)DeleteCoachImagesByCoach(images []model.CoachImage)(error){
 	for _, image := range images {
 		_, err := repo.db.Exec("DELETE FROM coach_image WHERE coach_id = ? AND path = ?", image.CoachId, image.Path)
