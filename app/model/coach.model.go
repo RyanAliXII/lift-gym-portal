@@ -18,6 +18,7 @@ type Coach struct {
 	Email            string `json:"email" db:"email"`
 	Password         string `json:"password" db:"password"`
 	Address          string `json:"address" db:"address"`
+	Description 	 string `json:"description" db:"description"`
 	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
 	AccountId 		 string `json:"accountId" db:"account_id"`

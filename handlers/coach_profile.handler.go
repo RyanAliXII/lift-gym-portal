@@ -229,7 +229,6 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 				case <-ctx.Done():
 					return
 				case fileId := <- channel:
-					fmt.Println(fileId)
 					err := h.coachImage.DeleteCoachImage(model.CoachImage{
 						Path: fileId,
 						CoachId: sessionData.User.Id,
@@ -242,7 +241,6 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		}(fileIdChan)
 
 	}
-	fmt.Println(c.FormValue("description"))
 	err = h.coachRepo.UpdateCoachDescription(sessionData.User.Id, c.FormValue("description"))
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "UpdateCoachDescriptionErr"))

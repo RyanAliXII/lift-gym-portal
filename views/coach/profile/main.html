@@ -196,6 +196,10 @@
     })
       .then((e) => {
         editor = e;
+        const description = "{{.profile.Description}}";
+        let content = description.replace("<script>", "");
+        content = content.replace("<script/>", "");
+        e.setData(description);
       })
       .catch((error) => {
         console.error(error);
