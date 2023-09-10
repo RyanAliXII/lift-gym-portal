@@ -138,7 +138,15 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 
 	folderName := fmt.Sprintf("coaches/images/%d/", sessionData.User.Id)
 	uploadedImagesMap := map[string]string{}
-	
+
+	const NumberOfFilesAllowed = 3
+	const FiveMegabytes = 5000
+	if len(files) > NumberOfFilesAllowed {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Message: "Files uploaded exceeds the number of files allowed.",
+			Status:  http.StatusBadRequest,
+		})
+	}
 	
 	// loop through files of form data
 	uploadedFilesNewNameMap := map[string]string{}
