@@ -140,7 +140,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 	uploadedImagesMap := map[string]string{}
 
 	const NumberOfFilesAllowed = 3
-	const FiveMegabytes = 5000
+	const FiveMegabytes = 5000000
+
 	if len(files) > NumberOfFilesAllowed {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Message: "Files uploaded exceeds the number of files allowed.",
@@ -151,6 +152,10 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 	// loop through files of form data
 	uploadedFilesNewNameMap := map[string]string{}
 	for _, fileHeader := range files {
+		if fileHeader.Size > FiveMegabytes {
+			logger.Error("File exceeds the allow sized of 5MB. File will be skipped.", zap.Int64("fileSize", fileHeader.Size),)
+			continue
+		}
 		multiPartFile, err := fileHeader.Open()
 		defer multiPartFile.Close()
 		if err != nil {
@@ -183,7 +188,11 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		var fileIdChan = make(chan string)
 		//sender function for uploading
 		go func(channel chan <- string){
-			publicId, err := h.objStorage.Upload(ctx,multiPartFile, folderName, newFilename)
+			publicId, err := h.objStorage.Upload(ctx,multiPartFile, objstore.UploadConfig{
+				FolderName: folderName,
+				Filename: newFilename,
+				AllowedFormats: []string{"jpg", "png", "webp", "jpeg"},
+			})
 			if err != nil {
 				logger.Error(err.Error(), zap.String("error", "UploadErr"))
 				cancel()
