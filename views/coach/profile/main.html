@@ -115,10 +115,12 @@
   </template>
   {{template "partials/sb-scripts"}}
   <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
   <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
   <script>
     const changePasswordForm = document.querySelector("#changePasswordForm");
     const oldPasswordGroup = document.querySelector("#oldPasswordGrp");
@@ -209,12 +211,20 @@
   <script>
     FilePond.registerPlugin(FilePondPluginImagePreview);
     FilePond.registerPlugin(FilePondPluginFileRename);
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
     FilePond.setOptions({
       fileRenameFunction: (file) => {
         return file.basename;
       },
     });
-    const filePond = FilePond.create(document.querySelector("#profileImages"));
+    const FIVE_MB = 5000000;
+    const filePond = FilePond.create(document.querySelector("#profileImages"), {
+      acceptedFileTypes: ["image/png", "image/webp", "image/jpeg", "image/jpg"],
+      allowFileSizeValidation: true,
+      maxFileSize: FIVE_MB,
+      maxFiles: 3,
+    });
     const swiper = new Swiper(".swiper", {
       // Optional parameters
       direction: "horizontal",
