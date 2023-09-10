@@ -141,6 +141,7 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 	
 	
 	// loop through files of form data
+	uploadedFilesNewNameMap := map[string]string{}
 	for _, fileHeader := range files {
 		multiPartFile, err := fileHeader.Open()
 		defer multiPartFile.Close()
@@ -165,6 +166,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		uploadedFilename := fileHeader.Filename
 		uploadedFileFullPath := fmt.Sprint(folderName, uploadedFilename)
 		uploadedImagesMap[uploadedFileFullPath] = fileHeader.Filename
+		newFilename := id.String()
+		uploadedFilesNewNameMap[uploadedFilename] = newFilename
 		if slices.Contains(alreadyUploadedImagesPath, uploadedFileFullPath) {
 			continue
 		}
@@ -172,7 +175,7 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		var fileIdChan = make(chan string)
 		//sender function for uploading
 		go func(channel chan <- string){
-			publicId, err := h.objStorage.Upload(ctx,multiPartFile, folderName, id.String())
+			publicId, err := h.objStorage.Upload(ctx,multiPartFile, folderName, newFilename)
 			if err != nil {
 				logger.Error(err.Error(), zap.String("error", "UploadErr"))
 				cancel()
@@ -199,8 +202,6 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 				}
 		}(fileIdChan)
 	}
-
-	
 	for _, alreadyUploadedImagesPath := range alreadyUploadedImagesPath {
 		filename := uploadedImagesMap[alreadyUploadedImagesPath]
 		if filename != "" {
@@ -208,6 +209,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		}
 		ctx, cancel := context.WithCancel(context.Background())
 		var fileIdChan = make(chan string)
+
+		//sender function for deletion
 		go func(channel chan <- string){
 			err := h.objStorage.Remove(ctx, alreadyUploadedImagesPath)
 			if err != nil {
@@ -220,6 +223,7 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 			close(fileIdChan)
 		}(fileIdChan)
 
+		//receiver function for deletion
 		go func (channel <- chan string){
 			select {
 				case <-ctx.Done():
@@ -239,6 +243,9 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status:  http.StatusOK,
+		Data: Data{
+			"uploadedFilesNewName": uploadedFilesNewNameMap,
+		},
 		Message: "Public profile updated.",
 	})
 
