@@ -135,8 +135,7 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 			Status:  http.StatusInternalServerError,
 		})
 	}
-	// imagesToBeStoredInDB := make([]model.CoachImage, 0)
-	imagesToBeDeletedInDB := make([]model.CoachImage, 0)
+
 	folderName := fmt.Sprintf("coaches/images/%d/", sessionData.User.Id)
 	uploadedImagesMap := map[string]string{}
 	
@@ -177,6 +176,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 			if err != nil {
 				logger.Error(err.Error(), zap.String("error", "UploadErr"))
 				cancel()
+				close(fileIdChan)
+				return
 			}
 			channel <- publicId
 			close(fileIdChan)
@@ -184,52 +185,57 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		
 		//receiver function for uploading
 		go func(channel <-chan string) {
-				select {
-					case <-ctx.Done():
+			select {
+				case <-ctx.Done():
 						return
-					case fileId := <- channel:
-						err := h.coachImage.NewCoachImage(model.CoachImage{
-							Path: fileId,
-							CoachId: sessionData.User.Id,
-						})
-						if err != nil {
+				case fileId := <- channel:
+					err := h.coachImage.NewCoachImage(model.CoachImage{
+						Path: fileId,
+						CoachId: sessionData.User.Id,
+					})
+					if err != nil {
 							logger.Error(err.Error(), zap.String("error","NewCoachImageErr"))
-						}
-						
+					}
 				}
 		}(fileIdChan)
 	}
 
-	// check if the already uploaded images is still uploaded from the form data. if not uploaded, append to slice that will be deleted from db later.
+	
 	for _, alreadyUploadedImagesPath := range alreadyUploadedImagesPath {
 		filename := uploadedImagesMap[alreadyUploadedImagesPath]
 		if filename != "" {
 			continue
 		}
+		ctx, cancel := context.WithCancel(context.Background())
+		var fileIdChan = make(chan string)
+		go func(channel chan <- string){
+			err := h.objStorage.Remove(ctx, alreadyUploadedImagesPath)
+			if err != nil {
+				logger.Error(err.Error(), zap.String("error", "Remove"))
+				cancel()
+				close(fileIdChan)
+				return
+			}
+			fileIdChan <- alreadyUploadedImagesPath
+			close(fileIdChan)
+		}(fileIdChan)
 
-		err := h.objStorage.Remove(alreadyUploadedImagesPath)
-		if err != nil {
-			logger.Error(err.Error(), zap.String("error", "Remove"))
-			return c.JSON(http.StatusInternalServerError, JSONResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "Unknown error occured.",
-			})
-		}
+		go func (channel <- chan string){
+			select {
+				case <-ctx.Done():
+					return
+				case fileId := <- channel:
+					err := h.coachImage.DeleteCoachImage(model.CoachImage{
+						Path: fileId,
+						CoachId: sessionData.User.Id,
+				})
+				if err != nil {
+					logger.Error(err.Error(), zap.String("error", "Remove"))
+					cancel()
+				}
+			}
+		}(fileIdChan)
 
-		imagesToBeDeletedInDB = append(imagesToBeDeletedInDB, model.CoachImage{
-			Path:    alreadyUploadedImagesPath,
-			CoachId: sessionData.User.Id,
-		})
-
-	}
-	
-	err = h.coachImage.DeleteCoachImagesByCoach(imagesToBeDeletedInDB)
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "DeleteCoachImages"))
-		return c.JSON(http.StatusInternalServerError, JSONResponse{
-			Status:  http.StatusInternalServerError,
-			Message: "Unknown error occured.",
-		})
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status:  http.StatusOK,

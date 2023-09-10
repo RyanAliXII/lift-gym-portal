@@ -33,7 +33,10 @@ func (repo *CoachImageRepository)DeleteCoachImagesByCoach(images []model.CoachIm
 		}
 	}
 	return nil
-	
+}
+func (repo *CoachImageRepository)DeleteCoachImage(image model.CoachImage)(error){
+	_, err := repo.db.Exec("DELETE FROM coach_image WHERE coach_id = ? AND path = ?", image.CoachId, image.Path)
+	return err
 }
 func(repo * CoachImageRepository)GetImagesPathByCoachId(coachId int)([]string, error){
 	images := make([]model.CoachImage, 0)

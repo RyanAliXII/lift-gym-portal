@@ -21,7 +21,7 @@ func (s *ObjectStorage) Upload(ctx context.Context, file multipart.File, folderN
 	})
 	return result.PublicID, err
 }
-func (s *ObjectStorage)Remove(filepath string) error {
+func (s *ObjectStorage)Remove(ctx context.Context, filepath string) error {
 	var  invalidate bool = true
 	_, err := s.cld.Upload.Destroy(context.Background(), uploader.DestroyParams{
 		PublicID: filepath,
@@ -32,7 +32,7 @@ func (s *ObjectStorage)Remove(filepath string) error {
 }
 type ObjectStorer interface {
 	Upload(ctx context.Context, file multipart.File, folderName string,  filename string ) (string, error)
-	Remove(filename string) error
+	Remove(ctx context.Context, filename string) error
 }
 var PublicURL string;
 var objecStorage * ObjectStorage;
