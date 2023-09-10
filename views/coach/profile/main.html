@@ -285,12 +285,23 @@
           "X-CSRF-Token": "{{.csrf}}",
         }),
       });
+      const { data } = await response.json();
       if (response.status === 200) {
         Swal.fire(
           "Public Profile",
           "Public profile has been updated.",
           "success"
         );
+      }
+      if (response.status === 200 && data?.uploadedFilesNewName) {
+        for (const [key, value] of Object.entries(
+          data?.uploadedFilesNewName ?? {}
+        )) {
+          const fpFile = filePond.getFiles().find((fp) => fp.file.name === key);
+          fpFile.file.name = value;
+          filePond.removeFile(fpFile.id);
+          filePond.addFile(fpFile.file);
+        }
       }
     });
   </script>

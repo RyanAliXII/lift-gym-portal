@@ -126,8 +126,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
 
-	//get the list of coach images from database
-	alreadyUploadedImagesPath, err := h.coachImage.GetImagesPathByCoachId(sessionData.User.Id)
+	//get the list of coach images from database 
+	storedImagesPath, err := h.coachImage.GetImagesPathByCoachId(sessionData.User.Id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetImagesPathByCoachId"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
@@ -167,10 +167,10 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		uploadedFileFullPath := fmt.Sprint(folderName, uploadedFilename)
 		uploadedImagesMap[uploadedFileFullPath] = fileHeader.Filename
 		newFilename := id.String()
-		uploadedFilesNewNameMap[uploadedFilename] = newFilename
-		if slices.Contains(alreadyUploadedImagesPath, uploadedFileFullPath) {
+		if slices.Contains(storedImagesPath, uploadedFileFullPath) {
 			continue
 		}
+		uploadedFilesNewNameMap[uploadedFilename] = newFilename
 		ctx, cancel := context.WithCancel(context.Background())
 		var fileIdChan = make(chan string)
 		//sender function for uploading
@@ -202,8 +202,8 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 				}
 		}(fileIdChan)
 	}
-	for _, alreadyUploadedImagesPath := range alreadyUploadedImagesPath {
-		filename := uploadedImagesMap[alreadyUploadedImagesPath]
+	for _, storedImagePath := range storedImagesPath {
+		filename := uploadedImagesMap[storedImagePath]
 		if filename != "" {
 			continue
 		}
@@ -211,17 +211,17 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 		var fileIdChan = make(chan string)
 
 		//sender function for deletion
-		go func(channel chan <- string){
-			err := h.objStorage.Remove(ctx, alreadyUploadedImagesPath)
+		go func(channel chan <- string, imagePath string){
+			err := h.objStorage.Remove(ctx, imagePath)
 			if err != nil {
 				logger.Error(err.Error(), zap.String("error", "Remove"))
 				cancel()
 				close(fileIdChan)
 				return
 			}
-			fileIdChan <- alreadyUploadedImagesPath
+			fileIdChan <- imagePath
 			close(fileIdChan)
-		}(fileIdChan)
+		}(fileIdChan, storedImagePath)
 
 		//receiver function for deletion
 		go func (channel <- chan string){
@@ -229,6 +229,7 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 				case <-ctx.Done():
 					return
 				case fileId := <- channel:
+					fmt.Println(fileId)
 					err := h.coachImage.DeleteCoachImage(model.CoachImage{
 						Path: fileId,
 						CoachId: sessionData.User.Id,
