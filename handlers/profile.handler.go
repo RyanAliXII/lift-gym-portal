@@ -18,6 +18,8 @@ type ProfileHandler struct {
 	clientRepo repository.ClientRepository
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
+	coachRepo repository.CoachRepository
+
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -60,6 +62,7 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	})
 	return nil
 }
+
 func (h * ProfileHandler) CreateEmailVerification(c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
     bindErr := sessionData.Bind(c.Get("sessionData"))
@@ -153,11 +156,11 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 		Message: "Password has been changed.",
 	})
 }
-
 func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),
 		verificationRepo: repository.NewVerificationRepository() ,
 		memberRepo: repository.NewMemberRepository(),
+		coachRepo: repository.NewCoachRepository(),
 	}
 }

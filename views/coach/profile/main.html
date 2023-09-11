@@ -1,0 +1,324 @@
+{{define "coach/profile/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/client/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          {{template "partials/client/dashboard-topbar"}}
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="card shadow mb-4 p-5">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    id="information-tab"
+                    data-toggle="tab"
+                    href="#information-panel"
+                    role="tab"
+                    aria-controls="information"
+                    aria-selected="true"
+                    >Information</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="public-profile-tab"
+                    data-toggle="tab"
+                    href="#public-profile-panel"
+                    role="tab"
+                    aria-controls="public-profile"
+                    aria-selected="false"
+                    >Public Profile</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="password-tab"
+                    data-toggle="tab"
+                    href="#password-panel"
+                    role="tab"
+                    aria-controls="password"
+                    aria-selected="false"
+                    >Change Password</a
+                  >
+                </li>
+              </ul>
+              <div class="tab-content" id="profileTabContent">
+                <div
+                  class="tab-pane fade show active"
+                  id="information-panel"
+                  role="tabpanel"
+                  aria-labelledby="info-tab"
+                >
+                  {{ template "coach/profile/info-panel" .}}
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="public-profile-panel"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  {{template "coach/profile/public-profile-panel" .}}
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="password-panel"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  {{template "coach/profile/password-panel" .}}
+                </div>
+              </div>
+            </div>
+            {{template "coach/profile/public-profile-preview" .}}
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+  <template id="slideTemplate">
+    <div class="swiper-slide w-100 d-flex justify-content-center">
+      <img
+        class="object-fit-cover"
+        width="400px"
+        height="330px"
+        style="aspect-ratio: 1/1"
+      />
+    </div>
+  </template>
+  {{template "partials/sb-scripts"}}
+  <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+  <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script>
+    const changePasswordForm = document.querySelector("#changePasswordForm");
+    const oldPasswordGroup = document.querySelector("#oldPasswordGrp");
+    const newPasswordGroup = document.querySelector("#newPasswordGrp");
+
+    const resetChangePasswordErrors = () => {
+      oldPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      oldPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      oldPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+
+      newPasswordGroup.querySelector("input").classList.remove("is-invalid");
+      newPasswordGroup
+        .querySelector(".invalid-feedback")
+        .classList.remove("d-block");
+      newPasswordGroup.querySelector(".invalid-feedback").textContent = "";
+    };
+    changePasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      resetChangePasswordErrors();
+      const formData = new FormData(event.target);
+
+      const response = await fetch("/coaches/profile/password", {
+        body: formData,
+        method: "PATCH",
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+      const { data } = await response.json();
+      if (response.status === 200) {
+        Swal.fire(
+          "Change Password",
+          "Your password has been changed.",
+          "success"
+        );
+        oldPasswordGroup.querySelector("input").value = "";
+        newPasswordGroup.querySelector("input").value = "";
+      }
+
+      if (response.status === 400) {
+        if (data?.errors?.oldPassword) {
+          oldPasswordGroup.querySelector("input").classList.add("is-invalid");
+          oldPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          oldPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.oldPassword;
+        }
+        if (data?.errors?.newPassword) {
+          newPasswordGroup.querySelector("input").classList.add("is-invalid");
+          newPasswordGroup
+            .querySelector(".invalid-feedback")
+            .classList.add("d-block");
+          newPasswordGroup.querySelector(".invalid-feedback").textContent =
+            data?.errors?.newPassword;
+        }
+      }
+    });
+  </script>
+
+  <script>
+    let editor;
+    ClassicEditor.create(document.querySelector("#editor"), {
+      removePlugins: [
+        "CKFinderUploadAdapter",
+        "CKFinder",
+        "EasyImage",
+        "Image",
+        "ImageCaption",
+        "ImageStyle",
+        "ImageToolbar",
+      ],
+    })
+      .then((e) => {
+        editor = e;
+        const description = "{{.profile.Description}}";
+        let content = description.replace("<script>", "");
+        content = content.replace("<script/>", "");
+        e.setData(description);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  </script>
+
+  <script>
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+    FilePond.registerPlugin(FilePondPluginFileRename);
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
+    FilePond.setOptions({
+      fileRenameFunction: (file) => {
+        return file.basename;
+      },
+    });
+    const FIVE_MB = 5000000;
+    const filePond = FilePond.create(document.querySelector("#profileImages"), {
+      acceptedFileTypes: ["image/png", "image/webp", "image/jpeg", "image/jpg"],
+      allowFileSizeValidation: true,
+      maxFileSize: FIVE_MB,
+      maxFiles: 3,
+    });
+    const swiper = new Swiper(".swiper", {
+      // Optional parameters
+      direction: "horizontal",
+      loop: true,
+
+      // If we need pagination
+      pagination: {
+        el: ".swiper-pagination",
+      },
+
+      // Navigation arrows
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  </script>
+
+  <script>
+    const previewDesc = document.querySelector("#previewDescription");
+    const slideTemplate = document.querySelector("#slideTemplate");
+    document
+      .querySelector("#publicProfilePreviewBtn")
+      .addEventListener("click", () => {
+        $("#publicProfilePreviewModal").modal("show");
+        let content = editor.getData();
+        content = content.replace("<script>", "");
+        content = content.replace("<script/>", "");
+
+        const files = filePond.getFiles();
+        swiper.removeAllSlides();
+
+        if (content.length === 0) {
+          previewDesc.innerHTML =
+            "<div class='text-center d-flex align-items-center justify-content-center' style='height:300px; width: 100%'><span>There is no description</span></div>";
+        } else {
+          previewDesc.innerHTML = content;
+        }
+
+        files.forEach((p) => {
+          const slide = slideTemplate.content.cloneNode(true);
+          const url = URL.createObjectURL(p.file);
+          slide.querySelector("img").src = url;
+          swiper.appendSlide(slide);
+        });
+      });
+  </script>
+  <script>
+    $("#public-profile-tab").on("shown.bs.tab", function (e) {
+      const images = JSON.parse("{{.images}}") ?? [];
+      if (images.length > 0 && filePond.getFiles().length === 0) {
+        images.forEach((img) => {
+          filePond.addFile(img);
+        });
+      }
+    });
+  </script>
+  <script>
+    const publicProfileForm = document.querySelector("#publicProfileForm");
+
+    publicProfileForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const publicProfileFormData = new FormData();
+      const filePondFiles = filePond.getFiles();
+      filePondFiles.forEach((fpFile) => {
+        publicProfileFormData.append("images", fpFile.file, fpFile.file.name);
+      });
+      publicProfileFormData.append("description", editor.getData());
+      const response = await fetch("/coaches/public-profile", {
+        method: "POST",
+        body: publicProfileFormData,
+        headers: new Headers({
+          "X-CSRF-Token": "{{.csrf}}",
+        }),
+      });
+      const { data } = await response.json();
+      if (response.status === 200) {
+        Swal.fire(
+          "Public Profile",
+          "Public profile has been updated.",
+          "success"
+        );
+      }
+      if (response.status === 200 && data?.uploadedFilesNewName) {
+        for (const [key, value] of Object.entries(
+          data?.uploadedFilesNewName ?? {}
+        )) {
+          const fpFile = filePond.getFiles().find((fp) => fp.file.name === key);
+          fpFile.file.name = value;
+          filePond.removeFile(fpFile.id);
+          filePond.addFile(fpFile.file);
+        }
+      }
+    });
+  </script>
+</html>
+{{end}}

@@ -1,0 +1,55 @@
+{{define "coach/profile/info-panel"}}
+
+<h2 class="h4 mb-3 text-gray-800 mt-4">General Information</h2>
+<div class="p-2">
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Given name</div>
+    <div class="col-sm-12 col-md-6">{{.profile.GivenName}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Middle name/initial</div>
+    <div class="col-sm-12 col-md-6">{{.profile.MiddleName}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Surname</div>
+    <div class="col-sm-12 col-md-6">{{.profile.Surname}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Date of Birth</div>
+    <div class="col-sm-12 col-md-6">{{.profile.DateOfBirth}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Address</div>
+    <div class="col-sm-12 col-md-6">{{.profile.Address}}</div>
+  </div>
+</div>
+<hr />
+<h2 class="h4 mb-3 text-gray-800">Account and Contact Information</h2>
+<div class="p-2">
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Email</div>
+    <div class="col-sm-12 col-md-4">{{.profile.Email}}</div>
+    <div
+      class="col-sm-12 col-md-2 d-flex flex-column"
+      id="emailVerificationCol"
+    ></div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Mobile number</div>
+    <div class="col-sm-12 col-md-6">{{.profile.MobileNumber}}</div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">
+      Emergency contact number
+    </div>
+    <div class="col-sm-12 col-md-6">{{.profile.EmergencyContact}}</div>
+  </div>
+  <hr />
+</div>
+{{end}}
