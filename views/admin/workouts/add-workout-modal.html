@@ -25,7 +25,13 @@
         <form @submit.prevent="onSubmitNew">
           <div class="form-group">
             <label for="name" class="col-form-label">Name</label>
-            <input type="text" name="name" class="form-control" v-bind="name" />
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              v-bind="name"
+              :class="{'is-invalid': errors?.name}"
+            />
             <div class="invalid-feedback d-block" v-show="errors?.name">
               {errors?.name}
             </div>
@@ -39,6 +45,7 @@
               class="form-control"
               v-bind="description"
               style="height: 150px"
+              :class="{'is-invalid': errors?.description}"
             ></textarea>
             <div class="invalid-feedback d-block" v-show="errors?.name">
               {errors?.description}
