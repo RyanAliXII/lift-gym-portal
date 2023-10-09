@@ -6,7 +6,14 @@ import swal from "sweetalert2";
 createApp({
   setup() {
     const equipments = ref([]);
-    const { values, errors, defineInputBinds, setErrors, resetForm } = useForm({
+    const {
+      values,
+      errors,
+      defineInputBinds,
+      setErrors,
+      resetForm,
+      setValues,
+    } = useForm({
       initialValues: {
         name: "",
         model: "",
@@ -66,6 +73,11 @@ createApp({
         console.error(error);
       }
     };
+
+    const initEdit = (equipment) => {
+      setValues(equipment);
+      $("#editEquipmentModal").modal("show");
+    };
     onMounted(() => {
       fetchEquipments();
     });
@@ -79,6 +91,7 @@ createApp({
       errors,
       equipments,
       onSubmit,
+      initEdit,
     };
   },
   compilerOptions: {
