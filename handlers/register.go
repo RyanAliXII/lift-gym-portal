@@ -22,6 +22,7 @@ func adminRoutes (router  * echo.Group){
 	coachHandler := NewCoachHandler()
 	pkgRequestHandler := NewPackageRequestHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
+	inventoryHandler := NewInventoryHandler()
 	staffHandler := NewStaffHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
@@ -56,6 +57,7 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/staffs",staffHandler.NewStaff)
 	router.PUT("/staffs/:id",staffHandler.UpdateStaff)
 	router.PATCH("/staffs/:id/password",staffHandler.ResetPassword)
+	router.GET("/inventory", inventoryHandler.RenderInventoryPage)
 }
 
 
