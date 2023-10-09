@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -10,9 +10,11 @@ import (
 )
 
 type WorkoutCategoryHandler struct {
+	workoutCategoryRepo repository.WorkoutCategoryRepository
 }
 
 func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
+
 	return c.Render(http.StatusOK, "admin/workouts/category/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Workout | Category",
@@ -20,7 +22,7 @@ func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
 	})	
 }
 func (h *WorkoutCategoryHandler) NewCategory(c echo.Context) error {
-	category := model.WorkoutCateory{}
+	category := model.WorkoutCategory{}
 	err := c.Bind(&category)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "bindErr"))
@@ -41,12 +43,21 @@ func (h *WorkoutCategoryHandler) NewCategory(c echo.Context) error {
 			Message: "Validation error.",
 		})
 	}
-	fmt.Println(category)
+	err = h.workoutCategoryRepo.NewCategory(category)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newCategoryErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Category created.",
 	})
 }
 func NewWorkoutCategoryHandler() WorkoutCategoryHandler {
-	return WorkoutCategoryHandler{}
+	return WorkoutCategoryHandler{
+		workoutCategoryRepo: repository.NewWorkoutCategoryRepository(),
+	}
 }
