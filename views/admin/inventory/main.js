@@ -23,9 +23,7 @@ createApp({
     const dateReceived = defineInputBinds("dateReceived", {
       validateOnChange: true,
     });
-    const onSubmit = async () => {
-      const form = await validate();
-    };
+    const onSubmit = async () => {};
     return {
       name,
       model,
