@@ -15,6 +15,19 @@ type WorkoutCategoryHandler struct {
 
 func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
 
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"  {
+		categories, err := h.workoutCategoryRepo.GetCategories()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetCategoriesErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"categories": categories,
+			},
+		})
+	}
 	return c.Render(http.StatusOK, "admin/workouts/category/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Workout | Category",

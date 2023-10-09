@@ -20,3 +20,9 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 	return err
 
 }
+func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory, error ) {
+	categories := make([]model.WorkoutCategory, 0)
+	err := repo.db.Select(&categories, "SELECT id, name from workout_category where deleted_at is null")
+	return categories, err
+
+}
