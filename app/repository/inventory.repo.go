@@ -17,7 +17,7 @@ func (repo * InventoryRepository) NewEquipment(equipment model.Equipment) error 
 }
 func (repo * InventoryRepository) GetEquipments()([]model.Equipment, error ){
 	equipments := make([]model.Equipment, 0)
-	err := repo.db.Select(&equipments, "SELECT id, name, model, quantity, cost_price, date_received FROM equipment where deleted_at is null")
+	err := repo.db.Select(&equipments, "SELECT id, name, model, quantity, cost_price, date_received FROM equipment where deleted_at is null ORDER BY updated_at DESC	")
   	return equipments, err
 }
 

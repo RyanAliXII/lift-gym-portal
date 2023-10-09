@@ -1,0 +1,103 @@
+{{define "admin/inventory/edit-equipment-modal"}}
+<div
+  class="modal fade"
+  id="editEquipmentModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editEquipmentModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Equipment</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmit">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name</label>
+            <input type="text" name="name" class="form-control" v-bind="name" />
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.name}">
+              {errors?.name}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="model" class="col-form-label">Make/Model</label>
+            <input
+              type="text"
+              name="model"
+              class="form-control"
+              v-bind="model"
+            />
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.model}">
+              {errors?.model}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="quantity" class="col-form-label">Quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              class="form-control"
+              v-bind="quantity"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.quantity}"
+            >
+              {errors?.quantity}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="costPrice" class="col-form-label">Cost Price</label>
+            <input
+              type="number"
+              step=".01"
+              name="costPrice"
+              v-bind="costPrice"
+              class="form-control"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.costPrice}"
+            >
+              {errors?.costPrice}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dateReceived" class="col-form-label"
+              >Date Received</label
+            >
+            <input
+              type="date"
+              name="dateReceived"
+              v-bind="dateReceived"
+              class="form-control"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.dateReceived}"
+            >
+              {errors?.dateReceived}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
