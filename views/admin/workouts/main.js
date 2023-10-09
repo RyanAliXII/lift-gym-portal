@@ -17,8 +17,14 @@ createApp({
         description: "",
       },
     });
-
+    const isSubmitting = ref(false);
     const workouts = ref([]);
+    const selectedWorkout = ref({
+      name: "",
+      description: "",
+      imagePath: "",
+      imageSrc: "",
+    });
     const fetchWorkouts = async () => {
       try {
         const response = await fetch("/app/workouts", {
@@ -34,6 +40,7 @@ createApp({
     };
     const onSubmitNew = async () => {
       try {
+        isSubmitting.value = true;
         if (addWorkoutFileUploader.value.getFiles().length === 0) {
           setErrors({ file: "Animated Image is required." });
           return;
@@ -64,13 +71,21 @@ createApp({
         swal.fire("New Workout", "New workout has been added.", "success");
       } catch (error) {
         console.error(error);
+      } finally {
+        isSubmitting.value = false;
       }
     };
     const name = defineInputBinds("name", { validateOnChange: true });
     const description = defineInputBinds("description", {
       validateOnChange: true,
     });
-
+    const initView = (workout) => {
+      selectedWorkout.value = {
+        ...workout,
+        imageSrc: `${window.publicURL}/${workout.imagePath}`,
+      };
+      $("#viewWorkoutModal").modal("show");
+    };
     onMounted(() => {
       addWorkoutFileUploader.value = FilePond.create({
         multiple: false,
@@ -91,6 +106,9 @@ createApp({
       description,
       errors,
       workouts,
+      selectedWorkout,
+      initView,
+      isSubmitting,
       addWorkoutFileUploaderGroup,
       onSubmitNew,
     };

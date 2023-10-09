@@ -24,6 +24,7 @@ createApp({
     const categories = ref([]);
     const onSubmitNew = async () => {
       try {
+        isSubmitting.value = true;
         const response = await fetch("/app/workouts/categories", {
           method: "POST",
           body: JSON.stringify(values),
@@ -49,6 +50,8 @@ createApp({
         resetForm();
       } catch (error) {
         console.error(error);
+      } finally {
+        isSubmitting.value = false;
       }
     };
 
