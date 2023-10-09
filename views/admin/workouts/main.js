@@ -187,13 +187,21 @@ createApp({
       editWorkoutFileUploaderGroup.value.appendChild(
         editWorkoutFileUploader.value.element
       );
+      $("#addWorkoutModal").on("hidden.bs.modal", function () {
+        addWorkoutFileUploader.value.removeFiles();
+        resetForm();
+      });
+      $("#editWorkoutModal").on("hidden.bs.modal", function () {
+        editWorkoutFileUploader.value.removeFiles();
+        resetForm();
+      });
       fetchWorkouts();
     });
 
     const initEdit = (workout) => {
       setValues(workout);
+      addWorkoutFileUploader.value.removeFiles();
       editWorkoutFileUploader.value.removeFiles();
-
       const imageSrc = `${window.publicURL}/${workout.imagePath}`;
       editWorkoutFileUploader.value.addFile(imageSrc);
       $("#editWorkoutModal").modal("show");

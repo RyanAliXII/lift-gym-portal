@@ -232,7 +232,6 @@ func (h *WorkoutHandler) DeleteWorkout(c echo.Context)  error {
 			Message: "Unknown error occured.",
 		})
 	}
-	
 
 	oldWorkout, err := h.workoutRepo.GetWorkout(workoutId)
 	if err != nil {
@@ -242,7 +241,6 @@ func (h *WorkoutHandler) DeleteWorkout(c echo.Context)  error {
 			Message: "Not found",
 		})
 	}
-	
 	err = h.objectStorage.Remove(context.Background(), oldWorkout.ImagePath)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "removeErr"))
