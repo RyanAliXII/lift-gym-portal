@@ -1,5 +1,5 @@
 import { useForm } from "vee-validate";
-import { createApp } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import { object } from "yup";
 import swal from "sweetalert2";
 createApp({
@@ -14,6 +14,7 @@ createApp({
       },
       validationSchema: object({}),
     });
+    const categories = ref([]);
     const onSubmitNew = async () => {
       try {
         const response = await fetch("/app/workouts/categories", {
@@ -31,22 +32,41 @@ createApp({
           }
           return;
         }
-
         swal.fire(
           "Workout Category",
           "Workout category has been added.",
           "success"
         );
+        fetchCategories();
         $("#addCategoryModal").modal("hide");
         resetForm();
       } catch (error) {
         console.error(error);
       }
     };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/app/workouts/categories", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        if (response.status === 200) {
+          const { data } = await response.json();
+          categories.value = data?.categories ?? [];
+          console.log(data?.categories);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    onMounted(() => {
+      fetchCategories();
+    });
     const name = defineInputBinds("name", { validateOnChange: true });
     return {
       name,
       errors,
+      categories,
       onSubmitNew,
     };
   },

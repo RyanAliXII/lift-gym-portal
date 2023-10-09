@@ -52,7 +52,22 @@
                     </thead>
 
                     <tbody>
-                      <template> </template>
+                      <template v-for="category of categories">
+                        <tr>
+                          <td>{category.name}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              data-html="true"
+                              data-placement="top"
+                              title="Edit"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
                     </tbody>
                   </table>
                 </div>
