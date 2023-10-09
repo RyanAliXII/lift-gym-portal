@@ -68,6 +68,7 @@ func adminRoutes (router  * echo.Group){
 	workoutGrp.GET("", workoutHandler.RenderWorkoutPage)
 	workoutGrp.POST("", workoutHandler.NewWorkout)
 	workoutGrp.PUT("/:id", workoutHandler.UpdateWorkout)
+	workoutGrp.DELETE("/:id", workoutHandler.DeleteWorkout)
 	workoutGrp.GET("/categories", workoutCategoryHandler.RenderCategoryPage)
 	workoutGrp.POST("/categories", workoutCategoryHandler.NewCategory)
 	workoutGrp.PUT("/categories/:id", workoutCategoryHandler.UpdateCategory)

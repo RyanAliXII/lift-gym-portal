@@ -177,6 +177,14 @@ func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
 			Message: "Unknown error occured.",
 		})
 	}
+	oldWorkout, err := h.workoutRepo.GetWorkout(workoutId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getWorkoutErr"))
+		return c.JSON(http.StatusNotFound, JSONResponse{
+			Status: http.StatusNotFound,
+			Message: "Not found",
+		})
+	}
 	const folderName = "/workouts/images"
 	fileKey, err := h.objectStorage.Upload(context.Background(), multiparFile, objstore.UploadConfig{
 		FolderName: folderName,
@@ -190,7 +198,7 @@ func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
 			Message: "Unknown error occured.",
 		})
 	}
-	oldWorkout, err := h.workoutRepo.GetWorkout(workoutId)
+	
 	workout.ImagePath = fileKey
 	workout.Id = workoutId
 	err = h.workoutRepo.UpdateWorkout(workout)
@@ -215,7 +223,48 @@ func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
 	})
 
 }
+func (h *WorkoutHandler) DeleteWorkout(c echo.Context)  error {
+	workoutId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	
 
+	oldWorkout, err := h.workoutRepo.GetWorkout(workoutId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getWorkoutErr"))
+		return c.JSON(http.StatusNotFound, JSONResponse{
+			Status: http.StatusNotFound,
+			Message: "Not found",
+		})
+	}
+	
+	err = h.objectStorage.Remove(context.Background(), oldWorkout.ImagePath)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "removeErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.workoutRepo.DeleteWorkout(workoutId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "deleteWorkoutErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Message: "Unknown error occured.",
+			Status: http.StatusInternalServerError,
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Workout has been added.",
+	})
+
+}
 func NewWorkoutHandler () WorkoutHandler {
 	objstore, err := objstore.GetObjectStorage()
 	if err != nil {

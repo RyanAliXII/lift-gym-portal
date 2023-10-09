@@ -132,6 +132,35 @@ createApp({
       };
       $("#viewWorkoutModal").modal("show");
     };
+    const deleteWorkout = async (id) => {
+      const url = `/app/workouts/${id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      if (response.status === 200) {
+        fetchWorkouts();
+        swal.fire("Delete workout", "Workout has been deleted.", "success");
+      }
+    };
+
+    const initDelete = async (workoutId) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete workout",
+        text: "Are you sure you want to delete workout?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete the workout",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteWorkout(workoutId);
+      }
+    };
     onMounted(() => {
       addWorkoutFileUploader.value = FilePond.create({
         multiple: false,
@@ -179,6 +208,7 @@ createApp({
       isSubmitting,
       onSubmitUpdate,
       initEdit,
+      initDelete,
       addWorkoutFileUploaderGroup,
       editWorkoutFileUploaderGroup,
       onSubmitNew,
