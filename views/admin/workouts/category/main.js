@@ -4,7 +4,7 @@ import { object } from "yup";
 
 createApp({
   setup() {
-    const { values, defineInputBinds } = useForm({
+    const { values, defineInputBinds, errors } = useForm({
       initialValues: {
         id: 0,
         name: "",
@@ -14,6 +14,7 @@ createApp({
     const name = defineInputBinds("name", { validateOnChange: true });
     return {
       name,
+      errors,
     };
   },
 }).mount("#WorkoutCategoryPage");
