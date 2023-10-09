@@ -24,7 +24,6 @@ func (h *DashboardHandler) RenderClientDashboard(c echo.Context ) error {
 
 }
 func (h * DashboardHandler) RenderCoachDashboard(c echo.Context) error {
-
 	return c.Render(http.StatusOK, "coach/dashboard/main", Data{
 		"title": "Dashboard",
 		"module": "Dashboard",
