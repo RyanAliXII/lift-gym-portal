@@ -20,6 +20,11 @@ func (repo * InventoryRepository) GetEquipments()([]model.Equipment, error ){
 	err := repo.db.Select(&equipments, "SELECT id, name, model, quantity, cost_price, date_received FROM equipment where deleted_at is null ORDER BY updated_at DESC	")
   	return equipments, err
 }
+func (repo * InventoryRepository) UpdateEquipment(equipment model.Equipment) error {
+	_, err := repo.db.Exec("UPDATE equipment SET name = ?, model = ?, quantity = ?, cost_price = ?, date_received = ? where id = ?", equipment.Name, 
+	equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived, equipment.Id)
+  return err
+}
 
 func NewInventoryRepository() InventoryRepository{
 	return InventoryRepository{

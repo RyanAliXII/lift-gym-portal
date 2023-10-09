@@ -32,7 +32,7 @@ createApp({
     const dateReceived = defineInputBinds("dateReceived", {
       validateOnChange: true,
     });
-    const onSubmit = async () => {
+    const onSubmitNew = async () => {
       try {
         const response = await fetch("/app/inventory", {
           method: "POST",
@@ -49,10 +49,16 @@ createApp({
           }
           return;
         }
-        resetForm();
-        $("#addEquipmentModal").modal("hide");
-        fetchEquipments();
-        swal.fire("New equipment", "New equipment has been added.", "success");
+        if (response.status === 200) {
+          resetForm();
+          $("#addEquipmentModal").modal("hide");
+          fetchEquipments();
+          swal.fire(
+            "New equipment",
+            "New equipment has been added.",
+            "success"
+          );
+        }
       } catch (error) {
         console.error(error);
       }
@@ -80,8 +86,45 @@ createApp({
     };
     onMounted(() => {
       fetchEquipments();
+      $("#addEquipmentModal").on("hidden.bs.modal", function () {
+        resetForm();
+      });
+      $("#editEquipmentModal").on("hidden.bs.modal", function () {
+        resetForm();
+      });
     });
-
+    const onSubmitUpdate = async () => {
+      try {
+        const url = `/app/inventory/${values?.id}`;
+        const response = await fetch(url, {
+          body: JSON.stringify(values),
+          method: "PUT",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status === 400) {
+          if (data?.errors) {
+            setErrors(data?.errors);
+          }
+          return;
+        }
+        if (response.status === 200) {
+          resetForm();
+          $("#editEquipmentModal").modal("hide");
+          fetchEquipments();
+          swal.fire(
+            "New equipment",
+            "New equipment has been added.",
+            "success"
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     return {
       name,
       model,
@@ -90,7 +133,8 @@ createApp({
       dateReceived,
       errors,
       equipments,
-      onSubmit,
+      onSubmitNew,
+      onSubmitUpdate,
       initEdit,
     };
   },

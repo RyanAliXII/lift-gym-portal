@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -57,6 +58,43 @@ func (h *InventoryHandler) NewEquipment(c echo.Context) error {
 	} 
 
 	err = h.inventoryRepo.NewEquipment(equipment)
+    if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewEquipmentErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: nil,
+		Message: "Equipment added.",
+	})
+}
+
+func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
+	equipment := model.Equipment{}
+	err := c.Bind(&equipment)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := equipment.Validate() 
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validationErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+		})
+	} 
+	equipment.Id = id
+	err = h.inventoryRepo.UpdateEquipment(equipment)
     if err != nil {
 		logger.Error(err.Error(), zap.String("error", "NewEquipmentErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{

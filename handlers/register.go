@@ -59,6 +59,7 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/staffs/:id/password",staffHandler.ResetPassword)
 	router.GET("/inventory", inventoryHandler.RenderInventoryPage)
 	router.POST("/inventory", inventoryHandler.NewEquipment)
+	router.PUT("/inventory/:id", inventoryHandler.UpdateEquipment)
 }
 
 

@@ -8,7 +8,7 @@ import (
 )
 
 type Equipment struct {
-	Id string `json:"id" db:"id"`
+	Id 			 int `json:"id" db:"id"`
 	Name         string  `json:"name" db:"name"`
 	ModelOrMake  string  `json:"model" db:"model"`
 	Quantity     int     `json:"quantity" db:"quantity"`
