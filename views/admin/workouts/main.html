@@ -52,8 +52,20 @@
                     </thead>
 
                     <tbody>
-                      <template>
-                        <tr></tr>
+                      <template v-for="workout of workouts">
+                        <tr>
+                          <td>{workout.name}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="View Workout"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
                       </template>
                     </tbody>
                   </table>
@@ -79,6 +91,7 @@
   {{template "partials/sb-scripts" .}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.publicURL = "{{.publicURL}}";
   </script>
   <script src="/js/admin/workouts/main.js"></script>
 </html>

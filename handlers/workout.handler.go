@@ -18,11 +18,26 @@ type WorkoutHandler struct {
 }
 
 func (h *WorkoutHandler) RenderWorkoutPage(c echo.Context)  error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		workouts, err := h.workoutRepo.GetWorkouts()
 
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetWorkoutsErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"workouts": workouts,
+			},
+			Message: "Workouts fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "admin/workouts/main", Data{
 		"csrf" : c.Get("csrf"),
 		"title": "Workouts",
 		"module": "Workouts",
+		"publicURL": objstore.PublicURL,  
 	})
 
 }

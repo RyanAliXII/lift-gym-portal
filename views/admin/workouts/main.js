@@ -17,6 +17,21 @@ createApp({
         description: "",
       },
     });
+
+    const workouts = ref([]);
+    const fetchWorkouts = async () => {
+      try {
+        const response = await fetch("/app/workouts", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        if (response.status != 200) return;
+
+        workouts.value = data?.workouts ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const onSubmitNew = async () => {
       try {
         if (addWorkoutFileUploader.value.getFiles().length === 0) {
@@ -45,6 +60,7 @@ createApp({
         resetForm();
         addWorkoutFileUploader.value.removeFiles();
         $("#addWorkoutModal").modal("hide");
+        fetchWorkouts();
         swal.fire("New Workout", "New workout has been added.", "success");
       } catch (error) {
         console.error(error);
@@ -68,11 +84,13 @@ createApp({
       addWorkoutFileUploaderGroup.value.appendChild(
         addWorkoutFileUploader.value.element
       );
+      fetchWorkouts();
     });
     return {
       name,
       description,
       errors,
+      workouts,
       addWorkoutFileUploaderGroup,
       onSubmitNew,
     };
