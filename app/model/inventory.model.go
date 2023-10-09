@@ -16,8 +16,8 @@ type Equipment struct {
 	Model
 }
 
-func (m *Equipment) Validate() {
-	m.Model.ValidationRules(&m, 
+func (m Equipment) Validate()(error, map[string]string) {
+	return m.Model.ValidationRules(&m, 
 	validation.Field(&m.Name, validation.Required.Error("Equipment name is required.",), validation.Length(1, 100).Error("Equipment name should be atleast 1 to 100 characters.")),
     validation.Field(&m.ModelOrMake, validation.Required.Error("Model/make is required.",), validation.Length(1, 100).Error("Model/make should be atleast 1 to 100 characters.")),
 	validation.Field(&m.Quantity, validation.Required.Error("Quantity is required."), validation.Min(1).Error("Quantity shoud be atleast 1")),

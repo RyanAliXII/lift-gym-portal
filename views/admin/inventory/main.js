@@ -2,9 +2,10 @@ import { createApp } from "vue";
 import { useForm } from "vee-validate";
 import { format } from "date-fns";
 import { object } from "yup";
+import swal from "sweetalert2";
 createApp({
   setup() {
-    const { values, errors, defineInputBinds, validate } = useForm({
+    const { values, errors, defineInputBinds, setErrors } = useForm({
       initialValues: {
         name: "",
         model: "",
@@ -23,7 +24,28 @@ createApp({
     const dateReceived = defineInputBinds("dateReceived", {
       validateOnChange: true,
     });
-    const onSubmit = async () => {};
+    const onSubmit = async () => {
+      try {
+        const response = await fetch("/app/inventory", {
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+          body: JSON.stringify(values),
+        });
+        const { data } = await response.json();
+        if (response.status === 400) {
+          if (data?.errors) {
+            setErrors(data?.errors);
+          }
+          return;
+        }
+        swal.fire("New equipment", "New equipment has been added.", "success");
+      } catch (error) {
+        console.error(error);
+      }
+    };
     return {
       name,
       model,
