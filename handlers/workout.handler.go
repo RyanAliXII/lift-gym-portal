@@ -18,6 +18,17 @@ func (h *WorkoutHandler) RenderWorkoutPage(c echo.Context)  error {
 	})
 
 }
+func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
+
+
+
+	
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Workout has been added.",
+	})
+
+}
 
 func NewWorkoutHandler () WorkoutHandler {
 	return WorkoutHandler{}
