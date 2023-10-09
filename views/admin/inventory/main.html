@@ -27,6 +27,20 @@
                 New Equipment
               </button>
             </div>
+            <div class="card-body shadow mb-2" style="width: fit-content">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                  >
+                    Equipment Total Cost Price
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    ₱ {formatCurrency(stat.totalCost)}
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -34,6 +48,7 @@
                   List of Equipments
                 </h6>
               </div>
+
               <div class="card-body">
                 <div class="table-responsive">
                   <table
@@ -59,7 +74,7 @@
                           <td>{equipment.name}</td>
                           <td>{equipment.model}</td>
                           <td>{equipment.quantity}</td>
-                          <td>{equipment.costPrice}</td>
+                          <td>₱ {formatCurrency(equipment.costPrice)}</td>
                           <td>{equipment.dateReceived}</td>
                           <td>
                             <div>

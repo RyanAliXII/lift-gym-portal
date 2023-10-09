@@ -6,6 +6,7 @@ import swal from "sweetalert2";
 createApp({
   setup() {
     const equipments = ref([]);
+    const stat = ref({ totalCost: 0 });
     const {
       values,
       errors,
@@ -75,6 +76,7 @@ createApp({
         });
         const { data } = await response.json();
         equipments.value = data?.equipments ?? [];
+        stat.value = data?.stat ?? { totalCost: 0 };
       } catch (error) {
         console.error(error);
       }
@@ -153,7 +155,13 @@ createApp({
         deleteEquipment(id);
       }
     };
-
+    const formatCurrency = (money) => {
+      if (!money) return 0;
+      return money.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    };
     return {
       name,
       model,
@@ -166,6 +174,8 @@ createApp({
       onSubmitUpdate,
       initDelete,
       initEdit,
+      stat,
+      formatCurrency,
     };
   },
   compilerOptions: {

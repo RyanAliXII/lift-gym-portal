@@ -15,10 +15,10 @@ func (repo * InventoryRepository) NewEquipment(equipment model.Equipment) error 
 	  equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived)
 	return err
 }
-func (repo * InventoryRepository) GetStat(equipment model.Equipment) error {
-	_, err := repo.db.Exec("INSERT INTO equipment(name,model,quantity, cost_price, date_received) VALUES(?, ?, ?, ?, ?)", equipment.Name, 
-	equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived)
-  return err
+func (repo * InventoryRepository) GetStat( ) (model.InventoryStat, error) {
+	stat := model.InventoryStat{}
+    err := repo.db.Get(&stat, "SELECT COALESCE(SUM(cost_price), 0) as total_cost from equipment where deleted_at is null")
+  	return stat, err
 }
 func (repo * InventoryRepository) GetEquipments()([]model.Equipment, error ){
 	equipments := make([]model.Equipment, 0)
