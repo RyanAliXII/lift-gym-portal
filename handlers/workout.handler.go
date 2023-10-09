@@ -6,6 +6,7 @@ import (
 	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -104,6 +105,108 @@ func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 	}
 	workout.ImagePath = fileKey
 	err = h.workoutRepo.NewWorkout(workout)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newWorkoutError"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Workout has been added.",
+	})
+
+}
+
+
+func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
+
+	workoutId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	
+	workout := model.Workout{}
+	workout.Name = c.FormValue("name")
+	workout.Description = c.FormValue("description")
+	
+	err, fields := workout.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "validation Error",
+		})
+	}
+	file, err := c.FormFile("file")
+
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "formFile"))
+		fields["file"] = "Animated image is required."
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "validation Error",
+		})
+	}
+	multiparFile, err := file.Open()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "fileOpenErr"))
+	    fields["file"] = "Animated image is required."
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "validation Error",
+		})
+	}
+	id, err := uuid.NewUUID()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "uuidNewErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+
+	dbWorkout, err := h.workoutRepo.GetWorkout(workoutId)
+
+
+	err = h.objectStorage.Remove(context.Background(), dbWorkout.ImagePath)
+
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "removeErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	const folderName = "/workouts/images"
+	fileKey, err := h.objectStorage.Upload(context.Background(), multiparFile, objstore.UploadConfig{
+		FolderName: folderName,
+		Filename: id.String(),
+		AllowedFormats: []string{"jpg", "png", "gif"},
+	})
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "uploadError"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	workout.ImagePath = fileKey
+	workout.Id = workoutId
+	err = h.workoutRepo.UpdateWorkout(workout)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "newWorkoutError"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
