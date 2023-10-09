@@ -1,0 +1,108 @@
+{{define "admin/workouts/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+  <body>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="WorkoutCategoryPage">
+          {{template "partials/dashboard-topbar"}}
+
+          <div class="container-fluid">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="mb-3 ml-2">
+              <button
+                class="btn btn-primary"
+                type="button"
+                data-toggle="modal"
+                data-target="#addCategoryModal"
+              >
+                <i class="fas fa-plus"></i>
+                New Workout
+              </button>
+            </div>
+
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  List of Workouts
+                </h6>
+              </div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="category of categories">
+                        <tr>
+                          <td>{category.name}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              data-html="true"
+                              data-placement="top"
+                              title="Edit"
+                              @click="initEdit(category)"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="btn btn-outline-danger ml-2"
+                              data-toggle="tooltip"
+                              data-html="true"
+                              data-placement="top"
+                              title="Edit"
+                              @click="initDelete(category.id)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- {{template "admin/workouts/category/add-category-modal" . }}
+          {{template "admin/workouts/category/edit-category-modal" . }} -->
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+  {{template "partials/sb-scripts" .}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
+  <!-- <script src="/js/admin/workouts/category/main.js"></script> -->
+</html>
+{{end}}
