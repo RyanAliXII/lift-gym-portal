@@ -7,7 +7,14 @@ createApp({
     delimiters: ["{", "}"],
   },
   setup() {
-    const { values, defineInputBinds, errors, setErrors, resetForm } = useForm({
+    const {
+      values,
+      defineInputBinds,
+      errors,
+      setErrors,
+      resetForm,
+      setValues,
+    } = useForm({
       initialValues: {
         id: 0,
         name: "",
@@ -59,6 +66,12 @@ createApp({
         console.error(error);
       }
     };
+
+    const onSubmitUpdate = async () => {};
+    const initEdit = (category) => {
+      setValues(category);
+      $("#editCategoryModal").modal("show");
+    };
     onMounted(() => {
       fetchCategories();
     });
@@ -68,6 +81,8 @@ createApp({
       errors,
       categories,
       onSubmitNew,
+      initEdit,
+      onSubmitUpdate,
     };
   },
 }).mount("#WorkoutCategoryPage");

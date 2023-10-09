@@ -62,6 +62,7 @@
                               data-html="true"
                               data-placement="top"
                               title="Edit"
+                              @click="initEdit(category)"
                             >
                               <i class="fas fa-edit"></i>
                             </button>
@@ -75,6 +76,7 @@
             </div>
           </div>
           {{template "admin/workouts/category/add-category-modal" . }}
+          {{template "admin/workouts/category/edit-category-modal" . }}
         </div>
         <!-- End of Main Content -->
       </div>
