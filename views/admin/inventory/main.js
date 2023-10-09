@@ -1,10 +1,11 @@
-import { createApp } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import { useForm } from "vee-validate";
 import { format } from "date-fns";
 import { object } from "yup";
 import swal from "sweetalert2";
 createApp({
   setup() {
+    const equipments = ref([]);
     const { values, errors, defineInputBinds, setErrors, resetForm } = useForm({
       initialValues: {
         name: "",
@@ -43,11 +44,32 @@ createApp({
         }
         resetForm();
         $("#addEquipmentModal").modal("hide");
+        fetchEquipments();
         swal.fire("New equipment", "New equipment has been added.", "success");
       } catch (error) {
         console.error(error);
       }
     };
+
+    const fetchEquipments = async () => {
+      try {
+        const response = await fetch("/app/inventory", {
+          method: "GET",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        equipments.value = data?.equipments ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    onMounted(() => {
+      fetchEquipments();
+    });
+
     return {
       name,
       model,
@@ -55,6 +77,7 @@ createApp({
       costPrice,
       dateReceived,
       errors,
+      equipments,
       onSubmit,
     };
   },
