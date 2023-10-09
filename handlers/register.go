@@ -60,6 +60,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/inventory", inventoryHandler.RenderInventoryPage)
 	router.POST("/inventory", inventoryHandler.NewEquipment)
 	router.PUT("/inventory/:id", inventoryHandler.UpdateEquipment)
+	router.DELETE("/inventory/:id", inventoryHandler.DeleteEquipment)
 }
 
 

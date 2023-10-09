@@ -17,6 +17,10 @@ type Equipment struct {
 	Model
 }
 
+type InventoryStat struct {
+ 	TotalCost float64 `json:"totalCost" db:"total_cost"`
+}
+
 func (m Equipment) Validate()(error, map[string]string) {
 	return m.Model.ValidationRules(&m, 
 	validation.Field(&m.Name, validation.Required.Error("Equipment name is required.",), validation.Length(1, 100).Error("Equipment name should be atleast 1 to 100 characters.")),

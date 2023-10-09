@@ -116,8 +116,8 @@ createApp({
           $("#editEquipmentModal").modal("hide");
           fetchEquipments();
           swal.fire(
-            "New equipment",
-            "New equipment has been added.",
+            "Update equipment",
+            "Equipment has been updated.",
             "success"
           );
         }
@@ -125,6 +125,35 @@ createApp({
         console.error(error);
       }
     };
+    const deleteEquipment = async (id) => {
+      const url = `/app/inventory/${id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      if (response.status === 200) {
+        fetchEquipments();
+        swal.fire("Delete equipment", "Equipment has been deleted.", "success");
+      }
+    };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete equipment",
+        text: "Are you sure you want to delete equipment?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete the equipment",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteEquipment(id);
+      }
+    };
+
     return {
       name,
       model,
@@ -135,6 +164,7 @@ createApp({
       equipments,
       onSubmitNew,
       onSubmitUpdate,
+      initDelete,
       initEdit,
     };
   },

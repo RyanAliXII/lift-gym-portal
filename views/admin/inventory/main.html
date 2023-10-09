@@ -31,7 +31,7 @@
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  List of Members
+                  List of Equipments
                 </h6>
               </div>
               <div class="card-body">
@@ -62,16 +62,28 @@
                           <td>{equipment.costPrice}</td>
                           <td>{equipment.dateReceived}</td>
                           <td>
-                            <button
-                              class="btn btn-outline-primary"
-                              data-toggle="tooltip"
-                              data-html="true"
-                              data-placement="top"
-                              title="Edit"
-                              @click="initEdit(equipment)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
+                            <div>
+                              <button
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                data-html="true"
+                                data-placement="top"
+                                title="Edit"
+                                @click="initEdit(equipment)"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button
+                                class="btn btn-outline-danger ml-1"
+                                data-toggle="tooltip"
+                                data-html="true"
+                                data-placement="top"
+                                title="Delete"
+                                @click="initDelete(equipment.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       </template>

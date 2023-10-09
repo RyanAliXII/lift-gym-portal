@@ -74,8 +74,15 @@ func (h *InventoryHandler) NewEquipment(c echo.Context) error {
 
 func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
 	equipment := model.Equipment{}
-	err := c.Bind(&equipment)
 	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = c.Bind(&equipment)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "bindErr"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -83,6 +90,7 @@ func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
+
 	err, fields := equipment.Validate() 
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "validationErr"))
@@ -93,10 +101,35 @@ func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
 			},
 		})
 	} 
+	
 	equipment.Id = id
 	err = h.inventoryRepo.UpdateEquipment(equipment)
     if err != nil {
 		logger.Error(err.Error(), zap.String("error", "NewEquipmentErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: nil,
+		Message: "Equipment added.",
+	})
+}
+
+func (h *InventoryHandler) DeleteEquipment(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.inventoryRepo.DeleteEquipment(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",
