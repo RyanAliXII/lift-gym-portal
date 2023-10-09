@@ -15,6 +15,12 @@ func (repo * InventoryRepository) NewEquipment(equipment model.Equipment) error 
 	  equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived)
 	return err
 }
+func (repo * InventoryRepository) GetEquipments()([]model.Equipment, error ){
+
+	equipments := make([]model.Equipment, 0)
+	err := repo.db.Select(&equipments, "SELECT id, name, model, quantity, cost_price, date_received FROM equipment where deleted_at is null")
+  	return equipments, err
+}
 
 func NewInventoryRepository() InventoryRepository{
 	return InventoryRepository{

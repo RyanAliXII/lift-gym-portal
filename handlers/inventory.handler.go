@@ -18,6 +18,16 @@ func NewInventoryHandler()InventoryHandler{
 	}
 }
 func (h *InventoryHandler) RenderInventoryPage(c echo.Context) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		equipments, err := h.inventoryRepo.GetEquipments()
+		if err != nil{
+			logger.Error(err.Error(),  zap.String("error","GetEquipmentsErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Data:Data{
+			"equipments": equipments,
+		}})
+	}
 	return c.Render(http.StatusOK, "admin/inventory/main", Data{
 		"title": "Equipment Inventory",
 		"module": "Inventory",
