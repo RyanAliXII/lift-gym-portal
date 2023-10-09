@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -67,6 +68,50 @@ func (h *WorkoutCategoryHandler) NewCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Category created.",
+	})
+}
+
+func (h *WorkoutCategoryHandler) UpdateCategory(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	category := model.WorkoutCategory{}
+	err = c.Bind(&category)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := category.Validate()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validationErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	category.Id  = id
+	err = h.workoutCategoryRepo.UpdateCategory(category)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newCategoryErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Category updated.",
 	})
 }
 func NewWorkoutCategoryHandler() WorkoutCategoryHandler {

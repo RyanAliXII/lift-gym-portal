@@ -60,20 +60,52 @@ createApp({
         if (response.status === 200) {
           const { data } = await response.json();
           categories.value = data?.categories ?? [];
-          console.log(data?.categories);
         }
       } catch (error) {
         console.error(error);
       }
     };
 
-    const onSubmitUpdate = async () => {};
+    const onSubmitUpdate = async () => {
+      try {
+        const response = await fetch(`/app/workouts/categories/${values.id}`, {
+          method: "PUT",
+          body: JSON.stringify(values),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            setErrors(data.errors);
+          }
+          return;
+        }
+        swal.fire(
+          "Workout Category",
+          "Workout category has been updated.",
+          "success"
+        );
+        fetchCategories();
+        $("#editCategoryModal").modal("hide");
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const initEdit = (category) => {
       setValues(category);
       $("#editCategoryModal").modal("show");
     };
     onMounted(() => {
       fetchCategories();
+      $("#addCategoryModal").on("hidden.bs.modal", function () {
+        resetForm();
+      });
+      $("#editCategoryModal").on("hidden.bs.modal", function () {
+        resetForm();
+      });
     });
     const name = defineInputBinds("name", { validateOnChange: true });
     return {

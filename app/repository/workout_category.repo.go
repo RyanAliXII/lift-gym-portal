@@ -26,3 +26,8 @@ func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory
 	return categories, err
 
 }
+func(repo * WorkoutCategoryRepository) UpdateCategory(category model.WorkoutCategory) (  error ) {
+	_, err := repo.db.Exec("UPDATE workout_category SET name = ? where id = ?", category.Name, category.Id)
+	return err
+
+}
