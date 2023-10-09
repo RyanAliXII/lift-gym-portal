@@ -4,6 +4,7 @@ import (
 	"context"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/objstore"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -13,6 +14,7 @@ import (
 
 type WorkoutHandler struct {
 	objectStorage objstore.ObjectStorer
+	workoutRepo repository.WorkoutRepository
 }
 
 func (h *WorkoutHandler) RenderWorkoutPage(c echo.Context)  error {
@@ -28,13 +30,7 @@ func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 	workout := model.Workout{}
 	workout.Name = c.FormValue("name")
 	workout.Description = c.FormValue("description")
-	// err := c.Bind(&workout)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, JSONResponse{
-	// 		Status: http.StatusBadRequest,
-	// 		Message: "Unknown error occured",
-	// 	})
-	// }
+
 	err, fields := workout.Validate()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -86,9 +82,20 @@ func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 	})
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "uploadError"))
-		return c.JSON(http.StatusInternalServerError, JSONResponse{})
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
 	}
-	
+	workout.ImagePath = fileKey
+	err = h.workoutRepo.NewWorkout(workout)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newWorkoutError"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Workout has been added.",
@@ -103,5 +110,6 @@ func NewWorkoutHandler () WorkoutHandler {
 	}
 	return WorkoutHandler{
 		objectStorage: objstore ,
+		workoutRepo: repository.NewWorkoutRepository(),
 	}
 } 

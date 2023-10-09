@@ -2,6 +2,7 @@ import { useForm } from "vee-validate";
 import { createApp, onMounted, ref } from "vue";
 import * as FilePond from "filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import swal from "sweetalert2";
 FilePond.registerPlugin(FilePondPluginFileValidateType);
 createApp({
   compilerOptions: {
@@ -10,7 +11,7 @@ createApp({
   setup() {
     let addWorkoutFileUploaderGroup = ref(null);
     let addWorkoutFileUploader = ref(null);
-    const { defineInputBinds, errors, values, setErrors } = useForm({
+    const { defineInputBinds, errors, values, setErrors, resetForm } = useForm({
       initialValues: {
         name: "",
         description: "",
@@ -28,9 +29,7 @@ createApp({
         formData.append("name", values.name);
         formData.append("description", values.description);
         formData.append("file", fpFile.file);
-        console.log(fpFile);
-        // console.log(formData);
-        // console.log(addWorkoutFileUploader.value.getFile(0).file);
+
         const response = await fetch("/app/workouts", {
           method: "POST",
           headers: new Headers({ "X-CSRF-Token": window.csrf }),
@@ -41,7 +40,12 @@ createApp({
           if (data?.errors) {
             setErrors(data.errors);
           }
+          return;
         }
+        resetForm();
+        addWorkoutFileUploader.value.removeFiles();
+        $("#addWorkoutModal").modal("hide");
+        swal.fire("New Workout", "New workout has been added.", "success");
       } catch (error) {
         console.error(error);
       }
