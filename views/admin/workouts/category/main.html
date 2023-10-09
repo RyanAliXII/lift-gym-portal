@@ -1,4 +1,4 @@
-{{define "admin/workout/category/main"}}
+{{define "admin/workouts/category/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
@@ -52,7 +52,7 @@
                     </thead>
 
                     <tbody>
-                      <template v-for="equipment of equipments"> </template>
+                      <template> </template>
                     </tbody>
                   </table>
                 </div>
@@ -75,6 +75,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <!-- <script src="/js/admin/inventory/main.js"></script> -->
+  <script src="/js/admin/workouts/category/main.js"></script>
 </html>
 {{end}}

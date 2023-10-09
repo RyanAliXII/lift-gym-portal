@@ -10,7 +10,7 @@ type WorkoutCategoryHandler struct {
 }
 
 func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
-	return c.Render(http.StatusOK, "admin/workout/category/main", Data{
+	return c.Render(http.StatusOK, "admin/workouts/category/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Workout | Category",
 		"module": "Workout Category",
