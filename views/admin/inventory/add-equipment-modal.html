@@ -24,7 +24,7 @@
         <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="name" class="col-form-label">Name</label>
-            <input type="text" name="name" class="form-control" />
+            <input type="text" name="name" class="form-control" v-bind="name" />
 
             <div class="invalid-feedback" :class="{'d-block': errors?.name}">
               {errors?.name}
@@ -32,7 +32,12 @@
           </div>
           <div class="form-group">
             <label for="model" class="col-form-label">Make/Model</label>
-            <input type="text" name="model" class="form-control" />
+            <input
+              type="text"
+              name="model"
+              class="form-control"
+              v-bind="model"
+            />
 
             <div class="invalid-feedback" :class="{'d-block': errors?.model}">
               {errors?.model}
@@ -40,7 +45,12 @@
           </div>
           <div class="form-group">
             <label for="quantity" class="col-form-label">Quantity</label>
-            <input type="number" name="quantity" class="form-control" />
+            <input
+              type="number"
+              name="quantity"
+              class="form-control"
+              v-bind="quantity"
+            />
 
             <div
               class="invalid-feedback"
@@ -55,6 +65,7 @@
               type="number"
               step=".01"
               name="costPrice"
+              v-bind="costPrice"
               class="form-control"
             />
 
@@ -66,7 +77,10 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="dateReceived" class="col-form-label"
+            <label
+              for="dateReceived"
+              class="col-form-label"
+              v-bind="dateReceived"
               >Date Received</label
             >
             <input type="date" name="dateReceived" class="form-control" />
