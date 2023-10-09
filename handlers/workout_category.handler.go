@@ -114,6 +114,29 @@ func (h *WorkoutCategoryHandler) UpdateCategory(c echo.Context) error {
 		Message: "Category updated.",
 	})
 }
+
+func (h *WorkoutCategoryHandler)DeleteCategory(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.workoutCategoryRepo.DeleteCategory(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newCategoryErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Category updated.",
+	})
+}
 func NewWorkoutCategoryHandler() WorkoutCategoryHandler {
 	return WorkoutCategoryHandler{
 		workoutCategoryRepo: repository.NewWorkoutCategoryRepository(),

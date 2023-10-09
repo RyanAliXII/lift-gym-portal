@@ -98,6 +98,39 @@ createApp({
       setValues(category);
       $("#editCategoryModal").modal("show");
     };
+    const deleteCategory = async (id) => {
+      const url = `/app/workouts/categories/${id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      if (response.status === 200) {
+        fetchCategories();
+        swal.fire(
+          "Delete workout category",
+          "Category has been deleted.",
+          "success"
+        );
+      }
+    };
+
+    const initDelete = async (categoryId) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete workout category",
+        text: "Are you sure you want to delete category?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete the category",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteCategory(categoryId);
+      }
+    };
     onMounted(() => {
       fetchCategories();
       $("#addCategoryModal").on("hidden.bs.modal", function () {
@@ -115,6 +148,7 @@ createApp({
       onSubmitNew,
       initEdit,
       onSubmitUpdate,
+      initDelete,
     };
   },
 }).mount("#WorkoutCategoryPage");

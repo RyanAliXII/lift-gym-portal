@@ -22,12 +22,16 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 }
 func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory, error ) {
 	categories := make([]model.WorkoutCategory, 0)
-	err := repo.db.Select(&categories, "SELECT id, name from workout_category where deleted_at is null")
+	err := repo.db.Select(&categories, "SELECT id, name from workout_category where deleted_at is null order by updated_at desc")
 	return categories, err
-
 }
 func(repo * WorkoutCategoryRepository) UpdateCategory(category model.WorkoutCategory) (  error ) {
 	_, err := repo.db.Exec("UPDATE workout_category SET name = ? where id = ?", category.Name, category.Id)
+	return err
+
+}
+func(repo * WorkoutCategoryRepository) DeleteCategory(id int) (  error ) {
+	_, err := repo.db.Exec("UPDATE workout_category SET deleted_at = now() where id = ?", id)
 	return err
 
 }
