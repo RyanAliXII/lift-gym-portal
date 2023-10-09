@@ -1,0 +1,71 @@
+{{define "admin/workouts/add-workout-modal"}}
+
+<div
+  class="modal fade"
+  id="addWorkoutModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addWorkoutModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New workout</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitNew">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name</label>
+            <input type="text" name="name" class="form-control" v-bind="name" />
+            <div class="invalid-feedback d-block" v-show="errors?.name">
+              {errors?.name}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea
+              type="text"
+              name="description"
+              class="form-control"
+              v-bind="description"
+              style="height: 150px"
+            ></textarea>
+            <div class="invalid-feedback d-block" v-show="errors?.name">
+              {errors?.description}
+            </div>
+          </div>
+
+          <div
+            class="form-group"
+            id="addWorkoutFileUploader"
+            ref="addWorkoutFileUploaderGroup"
+          >
+            <label for="fileUploader">Animated Workout Image</label>
+          </div>
+
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
