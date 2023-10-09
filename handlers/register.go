@@ -67,6 +67,7 @@ func adminRoutes (router  * echo.Group){
 	workoutGrp := router.Group("/workouts")
 	workoutGrp.GET("", workoutHandler.RenderWorkoutPage)
 	workoutGrp.POST("", workoutHandler.NewWorkout)
+	workoutGrp.PUT("/:id", workoutHandler.UpdateWorkout)
 	workoutGrp.GET("/categories", workoutCategoryHandler.RenderCategoryPage)
 	workoutGrp.POST("/categories", workoutCategoryHandler.NewCategory)
 	workoutGrp.PUT("/categories/:id", workoutCategoryHandler.UpdateCategory)

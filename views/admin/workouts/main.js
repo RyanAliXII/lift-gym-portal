@@ -10,8 +10,17 @@ createApp({
   },
   setup() {
     let addWorkoutFileUploaderGroup = ref(null);
+    let editWorkoutFileUploaderGroup = ref(null);
     let addWorkoutFileUploader = ref(null);
-    const { defineInputBinds, errors, values, setErrors, resetForm } = useForm({
+    let editWorkoutFileUploader = ref(null);
+    const {
+      defineInputBinds,
+      errors,
+      values,
+      setErrors,
+      resetForm,
+      setValues,
+    } = useForm({
       initialValues: {
         name: "",
         description: "",
@@ -75,6 +84,43 @@ createApp({
         isSubmitting.value = false;
       }
     };
+    const onSubmitUpdate = async () => {
+      try {
+        isSubmitting.value = true;
+        if (editWorkoutFileUploader.value.getFiles().length === 0) {
+          setErrors({ file: "Animated Image is required." });
+          return;
+        }
+        const fpFile = editWorkoutFileUploader.value.getFile(0);
+
+        const formData = new FormData();
+        formData.append("name", values.name);
+        formData.append("description", values.description);
+        formData.append("file", fpFile.file);
+
+        const response = await fetch(`/app/workouts/${values.id}`, {
+          method: "PUT",
+          headers: new Headers({ "X-CSRF-Token": window.csrf }),
+          body: formData,
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            setErrors(data.errors);
+          }
+          return;
+        }
+        resetForm();
+        editWorkoutFileUploader.value.removeFiles();
+        $("#editWorkoutModal").modal("hide");
+        fetchWorkouts();
+        swal.fire("Update Workout", "Workout has been updated.", "success");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        isSubmitting.value = false;
+      }
+    };
     const name = defineInputBinds("name", { validateOnChange: true });
     const description = defineInputBinds("description", {
       validateOnChange: true,
@@ -96,11 +142,33 @@ createApp({
           "image/gif",
         ],
       });
+      editWorkoutFileUploader.value = FilePond.create({
+        multiple: false,
+        acceptedFileTypes: [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/gif",
+        ],
+      });
+
       addWorkoutFileUploaderGroup.value.appendChild(
         addWorkoutFileUploader.value.element
       );
+      editWorkoutFileUploaderGroup.value.appendChild(
+        editWorkoutFileUploader.value.element
+      );
       fetchWorkouts();
     });
+
+    const initEdit = (workout) => {
+      setValues(workout);
+      editWorkoutFileUploader.value.removeFiles();
+
+      const imageSrc = `${window.publicURL}/${workout.imagePath}`;
+      editWorkoutFileUploader.value.addFile(imageSrc);
+      $("#editWorkoutModal").modal("show");
+    };
     return {
       name,
       description,
@@ -109,7 +177,10 @@ createApp({
       selectedWorkout,
       initView,
       isSubmitting,
+      onSubmitUpdate,
+      initEdit,
       addWorkoutFileUploaderGroup,
+      editWorkoutFileUploaderGroup,
       onSubmitNew,
     };
   },

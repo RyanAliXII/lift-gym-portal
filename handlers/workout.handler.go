@@ -121,7 +121,6 @@ func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 
 
 func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
-
 	workoutId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "strConvErr"))
@@ -178,19 +177,6 @@ func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
 			Message: "Unknown error occured.",
 		})
 	}
-
-	dbWorkout, err := h.workoutRepo.GetWorkout(workoutId)
-
-
-	err = h.objectStorage.Remove(context.Background(), dbWorkout.ImagePath)
-
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "removeErr"))
-		return c.JSON(http.StatusInternalServerError, JSONResponse{
-			Status: http.StatusInternalServerError,
-			Message: "Unknown error occured.",
-		})
-	}
 	const folderName = "/workouts/images"
 	fileKey, err := h.objectStorage.Upload(context.Background(), multiparFile, objstore.UploadConfig{
 		FolderName: folderName,
@@ -204,11 +190,20 @@ func (h *WorkoutHandler) UpdateWorkout(c echo.Context)  error {
 			Message: "Unknown error occured.",
 		})
 	}
+	oldWorkout, err := h.workoutRepo.GetWorkout(workoutId)
 	workout.ImagePath = fileKey
 	workout.Id = workoutId
 	err = h.workoutRepo.UpdateWorkout(workout)
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "newWorkoutError"))
+		logger.Error(err.Error(), zap.String("error", "updateWorkoutErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.objectStorage.Remove(context.Background(), oldWorkout.ImagePath)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "removeErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",

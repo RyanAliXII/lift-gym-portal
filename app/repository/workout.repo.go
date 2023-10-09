@@ -27,7 +27,7 @@ func (repo * WorkoutRepository)GetWorkout(id int) (model.Workout, error) {
 	return workout, err
 }
 func (repo * WorkoutRepository)UpdateWorkout(workout model.Workout) (error) {
- 	_, err := repo.db.Exec("UPDATE workout set name = ?, description = ?, image_path = ? where id = ?", workout.Name, workout.Description, workout.Id)
+ 	_, err := repo.db.Exec("UPDATE workout set name = ?, description = ?, image_path = ? where id = ?", workout.Name, workout.Description, workout.ImagePath, workout.Id)
 	return  err
 }
 func NewWorkoutRepository() WorkoutRepository {
