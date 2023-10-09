@@ -5,7 +5,7 @@ import { object } from "yup";
 import swal from "sweetalert2";
 createApp({
   setup() {
-    const { values, errors, defineInputBinds, setErrors } = useForm({
+    const { values, errors, defineInputBinds, setErrors, resetForm } = useForm({
       initialValues: {
         name: "",
         model: "",
@@ -41,6 +41,8 @@ createApp({
           }
           return;
         }
+        resetForm();
+        $("#addEquipmentModal").modal("hide");
         swal.fire("New equipment", "New equipment has been added.", "success");
       } catch (error) {
         console.error(error);
