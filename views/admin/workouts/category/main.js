@@ -26,6 +26,8 @@ createApp({
 
     const addWorkoutSelectElement = ref(null);
     const addWorkoutSelect = ref(null);
+    const editWorkoutSelectElement = ref(null);
+    const editWorkoutSelect = ref(null);
     const categories = ref([]);
     const fetchWorkouts = async () => {
       try {
@@ -52,7 +54,11 @@ createApp({
       addWorkoutSelect.value = new Choices(addWorkoutSelectElement.value, {
         allowHTML: false,
       });
+      editWorkoutSelect.value = new Choices(editWorkoutSelectElement.value, {
+        allowHTML: false,
+      });
       addWorkoutSelect.value.setChoices(workoutOptions);
+      editWorkoutSelect.value.setChoices(workoutOptions);
     };
 
     const onSubmitNew = async () => {
@@ -107,6 +113,10 @@ createApp({
 
     const onSubmitUpdate = async () => {
       try {
+        const workouts = editWorkoutSelect.value
+          .getValue()
+          .map((w) => w.customProperties);
+        setValues({ ...values, workouts: workouts });
         const response = await fetch(`/app/workouts/categories/${values.id}`, {
           method: "PUT",
           body: JSON.stringify(values),
@@ -135,6 +145,8 @@ createApp({
     };
     const initEdit = (category) => {
       setValues(category);
+      const workoutIds = category?.workouts.map((w) => w.id);
+      editWorkoutSelect.value.setChoiceByValue(workoutIds);
       $("#editCategoryModal").modal("show");
     };
     const deleteCategory = async (id) => {
@@ -178,6 +190,7 @@ createApp({
       });
       $("#editCategoryModal").on("hidden.bs.modal", function () {
         resetForm();
+        editWorkoutSelect.value.removeActiveItems();
       });
       initSelect();
     });
@@ -192,6 +205,7 @@ createApp({
       onSubmitUpdate,
       initDelete,
       addWorkoutSelectElement,
+      editWorkoutSelectElement,
     };
   },
 }).mount("#WorkoutCategoryPage");

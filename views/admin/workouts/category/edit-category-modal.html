@@ -30,7 +30,13 @@
               {errors?.name}
             </div>
           </div>
-
+          <div class="form-group">
+            <label for="name" class="col-form-label">Workouts</label>
+            <select multiple ref="editWorkoutSelectElement"></select>
+            <div class="invalid-feedback d-block" v-show="errors?.workouts">
+              {errors?.workouts?.[0]}
+            </div>
+          </div>
           <div class="d-flex" style="gap: 5px">
             <button
               type="button"

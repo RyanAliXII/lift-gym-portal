@@ -36,10 +36,10 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 	}
 	records := make([]goqu.Record, 0)
 	for _, workout := range category.Workouts {
-			records = append(records, goqu.Record{
-				"category_id":  id,
-				"workout_id": workout.Id,
-			})
+		records = append(records, goqu.Record{
+			"category_id":  id,
+			"workout_id": workout.Id,
+		})
 	}
 	dialect := goqu.Dialect("mysql")
 	ds := dialect.Insert(goqu.T("category_workout")).Prepared(true).Rows(records)
@@ -54,15 +54,43 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 
 }
 func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory, error ) {
+
 	categories := make([]model.WorkoutCategory, 0)
 	err := repo.db.Select(&categories, `SELECT workout_category.id, workout_category.name, CONCAT('[',GROUP_CONCAT(JSON_OBJECT('id', workout.id, 'name', workout.name, 'imagePath', workout.image_path)), ']') as workouts from workout_category 
 	INNER JOIN category_workout on workout_category.id = category_workout.category_id
 	INNER JOIN workout on category_workout.workout_id = workout.id
-	where workout_category.deleted_at is null order by workout_category.updated_at desc`)
+	where workout_category.deleted_at is null GROUP BY workout_category.id order by workout_category.updated_at desc`)
 	return categories, err
 }
 func(repo * WorkoutCategoryRepository) UpdateCategory(category model.WorkoutCategory) (  error ) {
-	_, err := repo.db.Exec("UPDATE workout_category SET name = ? where id = ?", category.Name, category.Id)
+	transaction, err := repo.db.Begin()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	_, err = transaction.Exec("UPDATE workout_category SET name = ? where id = ?", category.Name, category.Id)
+
+	_, err = transaction.Exec("DELETE FROM category_workout where category_id = ?", category.Id)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	records := make([]goqu.Record, 0)
+	for _, workout := range category.Workouts {
+		records = append(records, goqu.Record{
+				"category_id":  category.Id,
+				"workout_id": workout.Id,
+		})
+	}
+	dialect := goqu.Dialect("mysql")
+	ds := dialect.Insert(goqu.T("category_workout")).Prepared(true).Rows(records)
+	query, args, _:= ds.ToSQL()
+	_, err = transaction.Exec(query, args...)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
 	return err
 
 }
