@@ -19,7 +19,6 @@ func NewWorkoutCategoryRepository( ) WorkoutCategoryRepository {
 }
 func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategory) error {
 	transaction, err := repo.db.Begin()
-
 	if err != nil {
 		transaction.Rollback()
 		return err
@@ -56,7 +55,10 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 }
 func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory, error ) {
 	categories := make([]model.WorkoutCategory, 0)
-	err := repo.db.Select(&categories, "SELECT id, name from workout_category where deleted_at is null order by updated_at desc")
+	err := repo.db.Select(&categories, `SELECT workout_category.id, workout_category.name, CONCAT('[',GROUP_CONCAT(JSON_OBJECT('id', workout.id, 'name', workout.name, 'imagePath', workout.image_path)), ']') as workouts from workout_category 
+	INNER JOIN category_workout on workout_category.id = category_workout.category_id
+	INNER JOIN workout on category_workout.workout_id = workout.id
+	where workout_category.deleted_at is null order by workout_category.updated_at desc`)
 	return categories, err
 }
 func(repo * WorkoutCategoryRepository) UpdateCategory(category model.WorkoutCategory) (  error ) {

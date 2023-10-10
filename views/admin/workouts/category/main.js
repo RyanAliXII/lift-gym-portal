@@ -73,14 +73,6 @@ createApp({
         const { data } = await response.json();
         if (response.status >= 400) {
           if (data?.errors) {
-            // if (data?.errors?.workouts) {
-            //   console.log("HIT");
-            //   const errorsData = data?.errors;
-            //   errorsData.workouts = [data?.errors?.workouts];
-            //   console.log(errorsData);
-            //   setErrors({ ...errorsData });
-            //   return;
-            // }
             setErrors({ ...data?.errors });
           }
           return;
@@ -182,6 +174,7 @@ createApp({
       fetchCategories();
       $("#addCategoryModal").on("hidden.bs.modal", function () {
         resetForm();
+        addWorkoutSelect.value.removeActiveItems();
       });
       $("#editCategoryModal").on("hidden.bs.modal", function () {
         resetForm();
