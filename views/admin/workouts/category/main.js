@@ -79,6 +79,7 @@ createApp({
         const { data } = await response.json();
         if (response.status >= 400) {
           if (data?.errors) {
+            delete data?.errors?.workouts;
             setErrors({ ...data?.errors });
           }
           return;

@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -34,6 +36,35 @@ func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
 		"title": "Workout | Category",
 		"module": "Workout Category",
 	})	
+}
+func (h *WorkoutCategoryHandler) RenderClientWorkoutPage(c echo.Context)  error {
+	workoutCategories, _ := h.workoutCategoryRepo.GetCategories()
+	return c.Render(http.StatusOK, "client/workouts/main", Data{
+		"title": "Workouts",
+		"module": "Workouts",
+		"categories": workoutCategories,
+	})
+
+}
+func (h *WorkoutCategoryHandler) RenderClientWorkoutsByCategoryId(c echo.Context)  error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
+	}
+	workoutCategory, err := h.workoutCategoryRepo.GetCategoryById(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetCategoryByIdError"))
+		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
+	}
+	title := fmt.Sprintf("Workout: %s", workoutCategory.Name)
+	return c.Render(http.StatusOK, "client/workouts/id/main", Data{
+		"title": title,
+		"module": workoutCategory.Name,
+		"category": workoutCategory,
+		"publicURL" : objstore.PublicURL,
+	})
+
 }
 func (h *WorkoutCategoryHandler) NewCategory(c echo.Context) error {
 	category := model.WorkoutCategory{}

@@ -42,6 +42,7 @@ func (h *WorkoutHandler) RenderWorkoutPage(c echo.Context)  error {
 	})
 
 }
+
 func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 	workout := model.Workout{}
 	workout.Name = c.FormValue("name")

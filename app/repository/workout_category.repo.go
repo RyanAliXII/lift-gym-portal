@@ -56,11 +56,19 @@ func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategor
 func(repo * WorkoutCategoryRepository) GetCategories() ( []model.WorkoutCategory, error ) {
 
 	categories := make([]model.WorkoutCategory, 0)
-	err := repo.db.Select(&categories, `SELECT workout_category.id, workout_category.name, CONCAT('[',GROUP_CONCAT(JSON_OBJECT('id', workout.id, 'name', workout.name, 'imagePath', workout.image_path)), ']') as workouts from workout_category 
+	err := repo.db.Select(&categories, `SELECT workout_category.id, workout_category.name, CONCAT('[',GROUP_CONCAT(JSON_OBJECT('id', workout.id, 'name', workout.name, 'description', workout.description, 'imagePath', workout.image_path)), ']') as workouts from workout_category 
 	INNER JOIN category_workout on workout_category.id = category_workout.category_id
 	INNER JOIN workout on category_workout.workout_id = workout.id
 	where workout_category.deleted_at is null GROUP BY workout_category.id order by workout_category.updated_at desc`)
 	return categories, err
+}
+func(repo * WorkoutCategoryRepository) GetCategoryById(id int) ( model.WorkoutCategory, error ) {
+	category := model.WorkoutCategory{}
+	err := repo.db.Get(&category, `SELECT workout_category.id, workout_category.name, CONCAT('[',GROUP_CONCAT(JSON_OBJECT('id', workout.id, 'name', workout.name,'description',workout.description,'imagePath', workout.image_path)), ']') as workouts from workout_category 
+	INNER JOIN category_workout on workout_category.id = category_workout.category_id
+	INNER JOIN workout on category_workout.workout_id = workout.id
+	where workout_category.deleted_at is null and workout_category.id = ? GROUP BY workout_category.id order by workout_category.updated_at desc LIMIT 1`, id)
+	return category, err
 }
 func(repo * WorkoutCategoryRepository) UpdateCategory(category model.WorkoutCategory) (  error ) {
 	transaction, err := repo.db.Begin()
