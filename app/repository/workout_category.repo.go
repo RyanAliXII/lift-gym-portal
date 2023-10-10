@@ -4,6 +4,8 @@ import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +18,39 @@ func NewWorkoutCategoryRepository( ) WorkoutCategoryRepository {
 	}
 }
 func(repo * WorkoutCategoryRepository) NewCategory(category model.WorkoutCategory) error {
-	_, err := repo.db.Exec("INSERT INTO workout_category(name) VALUES(?)", category.Name)
+	transaction, err := repo.db.Begin()
+
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	result, err := transaction.Exec("INSERT INTO workout_category(name) VALUES(?)", category.Name)
+
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	records := make([]goqu.Record, 0)
+	for _, workout := range category.Workouts {
+			records = append(records, goqu.Record{
+				"category_id":  id,
+				"workout_id": workout.Id,
+			})
+	}
+	dialect := goqu.Dialect("mysql")
+	ds := dialect.Insert(goqu.T("category_workout")).Prepared(true).Rows(records)
+	query, args, _:= ds.ToSQL()
+	_, err = transaction.Exec(query, args...)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
 	return err
 
 }

@@ -1,7 +1,8 @@
 import { useForm } from "vee-validate";
-import { createApp, onMounted, ref } from "vue";
+import { createApp, onMounted, ref, watch } from "vue";
 import { object } from "yup";
 import swal from "sweetalert2";
+import Choices from "choices.js";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -11,20 +12,55 @@ createApp({
       values,
       defineInputBinds,
       errors,
-      setErrors,
       resetForm,
       setValues,
+      setErrors,
     } = useForm({
       initialValues: {
         id: 0,
         name: "",
+        workouts: [],
       },
       validationSchema: object({}),
     });
+
+    const addWorkoutSelectElement = ref(null);
+    const addWorkoutSelect = ref(null);
     const categories = ref([]);
+    const fetchWorkouts = async () => {
+      try {
+        const response = await fetch("/app/workouts", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        if (response.status != 200) return;
+
+        return data?.workouts ?? [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    };
+    const initSelect = async () => {
+      const workouts = await fetchWorkouts();
+      const workoutOptions = workouts.map((w) => ({
+        value: w.id,
+        label: w.name,
+        id: w.id,
+        customProperties: w,
+      }));
+      addWorkoutSelect.value = new Choices(addWorkoutSelectElement.value, {
+        allowHTML: false,
+      });
+      addWorkoutSelect.value.setChoices(workoutOptions);
+    };
+
     const onSubmitNew = async () => {
       try {
-        isSubmitting.value = true;
+        const workouts = addWorkoutSelect.value
+          .getValue()
+          .map((w) => w.customProperties);
+        setValues({ ...values, workouts: workouts });
         const response = await fetch("/app/workouts/categories", {
           method: "POST",
           body: JSON.stringify(values),
@@ -33,10 +69,19 @@ createApp({
             "X-CSRF-Token": window.csrf,
           }),
         });
+
         const { data } = await response.json();
         if (response.status >= 400) {
           if (data?.errors) {
-            setErrors(data.errors);
+            // if (data?.errors?.workouts) {
+            //   console.log("HIT");
+            //   const errorsData = data?.errors;
+            //   errorsData.workouts = [data?.errors?.workouts];
+            //   console.log(errorsData);
+            //   setErrors({ ...errorsData });
+            //   return;
+            // }
+            setErrors({ ...data?.errors });
           }
           return;
         }
@@ -48,10 +93,9 @@ createApp({
         fetchCategories();
         $("#addCategoryModal").modal("hide");
         resetForm();
+        addWorkoutSelect.value.removeActiveItems();
       } catch (error) {
         console.error(error);
-      } finally {
-        isSubmitting.value = false;
       }
     };
 
@@ -142,8 +186,10 @@ createApp({
       $("#editCategoryModal").on("hidden.bs.modal", function () {
         resetForm();
       });
+      initSelect();
     });
     const name = defineInputBinds("name", { validateOnChange: true });
+    // defineInputBinds("workouts", { validateOnChange: true });
     return {
       name,
       errors,
@@ -152,6 +198,7 @@ createApp({
       initEdit,
       onSubmitUpdate,
       initDelete,
+      addWorkoutSelectElement,
     };
   },
 }).mount("#WorkoutCategoryPage");

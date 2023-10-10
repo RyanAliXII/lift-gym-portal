@@ -24,6 +24,8 @@ require (
 	git.sr.ht/~jamesponddotco/xstd-go v0.0.0-20230506171649-ea779401c9ea // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/creasty/defaults v1.5.1 // indirect
+	github.com/doug-martin/goqu v5.0.0+incompatible // indirect
+	github.com/doug-martin/goqu/v9 v9.18.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
