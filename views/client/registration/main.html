@@ -1,9 +1,9 @@
-{{define "client/dashboard/main"}}
+{{define "client/registration/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
   <body class="bg-gradient-primary">
-    <div class="container">
+    <div class="container" id="RegistrationPage">
       <div class="card o-hidden border-0 shadow-lg my-5">
         <div class="card-body p-0">
           <!-- Nested Row within Card Body -->
@@ -14,57 +14,56 @@
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                 </div>
-                <form class="user">
+                <form @submit.prevent="onSubmit">
                   <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                       <input
                         type="text"
                         class="form-control form-control-user"
-                        id="exampleFirstName"
-                        placeholder="First Name"
+                        ref="givenName"
+                        placeholder="Given name"
                       />
                     </div>
                     <div class="col-sm-6">
                       <input
                         type="text"
                         class="form-control form-control-user"
-                        id="exampleLastName"
-                        placeholder="Last Name"
+                        placeholder="Surname"
+                        ref="surname"
                       />
                     </div>
                   </div>
                   <div class="form-group">
                     <input
                       type="email"
+                      ref="email"
                       class="form-control form-control-user"
-                      id="exampleInputEmail"
                       placeholder="Email Address"
                     />
                   </div>
-                  <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                      <input
-                        type="password"
-                        class="form-control form-control-user"
-                        id="exampleInputPassword"
-                        placeholder="Password"
-                      />
-                    </div>
-                    <div class="col-sm-6">
-                      <input
-                        type="password"
-                        class="form-control form-control-user"
-                        id="exampleRepeatPassword"
-                        placeholder="Repeat Password"
-                      />
-                    </div>
+                  <div class="form-group">
+                    <input
+                      type="date"
+                      class="form-control form-control-user"
+                      placeholder="Date of birth"
+                      ref="dateOfBirth"
+                    />
                   </div>
-                  <a
-                    href="login.html"
+                  <div class="form-group">
+                    <input
+                      ref="password"
+                      type="password"
+                      class="form-control form-control-user"
+                      id="exampleInputPassword"
+                      placeholder="Password"
+                    />
+                  </div>
+                  <button
+                    type="submit"
                     class="btn btn-primary btn-user btn-block"
                   >
                     Register Account
-                  </a>
+                  </button>
                   <hr />
                 </form>
                 <hr />
@@ -84,18 +83,9 @@
         </div>
       </div>
     </div>
-
-    <!-- Bootstrap core JavaScript-->
-    <!-- <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <!-- <script src="vendor/jquery-easing/jquery.easing.min.js"></script> -->
-
-    <!-- Custom scripts for all pages-->
-    <!-- <script src="js/sb-admin-2.min.js"></script> -->
   </body>
 
   {{template "partials/sb-scripts"}}
+  <script src="/js/client/registration/main.js"></script>
 </html>
 {{end}}
