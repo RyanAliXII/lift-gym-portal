@@ -21,7 +21,7 @@
                 class="btn btn-primary"
                 type="button"
                 data-toggle="modal"
-                data-target="#newStaffModal"
+                data-target="#newRoleModal"
               >
                 <i class="fas fa-plus"></i>
                 New Role
@@ -74,7 +74,7 @@
               </div>
             </div>
           </div>
-          {{template "admin/staff/new-staff-modal" .}} {{template
+          {{template "admin/role/new-role-modal" .}} {{template
           "admin/staff/edit-staff-modal" .}}
         </div>
         <!-- End of Main Content -->
@@ -92,6 +92,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <!-- <script src="/js/admin/staff/main.js"></script> -->
+  <script src="/js/admin/role/main.js"></script>
 </html>
 {{end}}
