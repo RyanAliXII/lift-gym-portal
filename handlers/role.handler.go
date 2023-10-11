@@ -31,6 +31,8 @@ func (h *RoleHandler) RenderRolePage(c echo.Context) error {
 	}	
 	return c.Render(http.StatusOK, "admin/role/main", Data{
 		"csrf" : c.Get("csrf"),
+		"title": "Access Control | Roles",
+		"module":"Roles and Permissions",
 		"permissions": acl.Permissions,
 	})
 }

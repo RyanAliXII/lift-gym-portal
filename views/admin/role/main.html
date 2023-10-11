@@ -43,31 +43,17 @@
                     <thead>
                       <tr>
                         <th>Role</th>
-                        <th></th>
+                        <th>Permissions</th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <!-- <template v-for="staff of staffs">
+                      <template v-for="role of roles">
                         <tr>
-                          <td>{staff.givenName}</td>
-                          <td>{staff.middleName}</td>
-                          <td>{staff.surname}</td>
-                          <td>{staff.email}</td>
-                          <td>
-                            <button
-                              type="button"
-                              class="btn btn-outline-primary"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Edit"
-                              @click="initEdit(staff)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
-                          </td>
+                          <td>{role.name}</td>
+                          <td>{role.permissions.join(", ")}</td>
                         </tr>
-                      </template> -->
+                      </template>
                     </tbody>
                   </table>
                 </div>

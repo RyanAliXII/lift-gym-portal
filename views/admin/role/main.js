@@ -9,6 +9,7 @@ createApp({
   setup() {
     const addSelectElement = ref(null);
     const addSelect = ref(null);
+    const roles = ref([]);
     const form = ref({
       name: "",
       permissions: [],
@@ -22,6 +23,18 @@ createApp({
       const name = event.target.name;
       errors.value = { ...errors.value, name: undefined };
       form.value = { ...form, [name]: event.target.value };
+    };
+
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch("/app/roles", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        roles.value = data?.roles ?? [];
+      } catch (err) {
+        roles.value = [];
+      }
     };
     const onSubmitNew = async () => {
       try {
@@ -55,6 +68,7 @@ createApp({
     };
 
     onMounted(() => {
+      fetchRoles();
       addSelect.value = new Choices(addSelectElement.value, {
         allowHTML: true,
       });
@@ -64,6 +78,7 @@ createApp({
       form,
       handleFormInput,
       errors,
+      roles,
       onSubmitNew,
     };
   },

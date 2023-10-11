@@ -23,7 +23,7 @@ func (repo *RoleRepository) GetRoles() ([]model.Role, error) {
 	roles := make([]model.Role,0)
 	query := `
 	SELECT role.id, name, CONCAT('[',GROUP_CONCAT('"',permission.value,'"'),']') as permissions from role
-	INNER JOIN permission on role.id = permission.role_id;
+	INNER JOIN permission on role.id = permission.role_id GROUP BY role.id ORDER BY role.updated_at DESC
 	`
 	err := repo.db.Select(&roles, query)
 	return roles, err
