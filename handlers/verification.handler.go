@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
@@ -23,12 +22,7 @@ func(h * VerificationHandler) VerifyEmail(c echo.Context) error {
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetEmailVerificationByPublicId"))
 		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
-		// return c.JSON(http.StatusNotFound, JSONResponse{
-		// 	Status: http.StatusNotFound,
-		// 	Message: "Page not found.",
-		// })
 	}
-	fmt.Println(verification)
 	err = h.verificationRepo.MarkAsComplete(verification.Id) 
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "MarkAsComplete"))

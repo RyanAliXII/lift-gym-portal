@@ -32,4 +32,4 @@ createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
   },
-}).mount("#ClientLoginPage");
+}).mount("#LoginPage");
