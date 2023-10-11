@@ -1,15 +1,17 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/acl"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 type RoleHandler struct {
+	roleRepo repository.RoleRepository
 }
 
 func (h *RoleHandler) RenderRolePage(c echo.Context) error {
@@ -42,7 +44,14 @@ func (h *RoleHandler) NewRole(c echo.Context) error {
 			Message: "Validation error.",
 		})
 	}
-	fmt.Println(role)
+	err = h.roleRepo.NewRole(role)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newRoleErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Success",
@@ -50,5 +59,7 @@ func (h *RoleHandler) NewRole(c echo.Context) error {
 }
 
 func NewRoleHandler () RoleHandler {
-	return RoleHandler{}
+	return RoleHandler{
+		roleRepo: repository.NewRoleRepository(),
+	}
 }
