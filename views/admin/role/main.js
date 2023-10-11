@@ -8,7 +8,9 @@ createApp({
   },
   setup() {
     const addSelectElement = ref(null);
+    const editSelectElement = ref(null);
     const addSelect = ref(null);
+    const editSelect = ref(null);
     const roles = ref([]);
     const form = ref({
       name: "",
@@ -72,13 +74,38 @@ createApp({
       addSelect.value = new Choices(addSelectElement.value, {
         allowHTML: true,
       });
+      editSelect.value = new Choices(editSelectElement.value, {
+        allowHTML: true,
+      });
+      $("#newRoleModal").on("hidden.bs.modal", () => {
+        form.value = {
+          name: "",
+          permissions: [],
+        };
+        addSelect.value.removeActiveItems();
+      });
+      $("#editRoleModal").on("hidden.bs.modal", () => {
+        form.value = {
+          name: "",
+          permissions: [],
+        };
+        editSelect.value.removeActiveItems();
+      });
     });
+
+    const initEdit = (role) => {
+      form.value = { ...role };
+      editSelect.value.setChoiceByValue(role.permissions);
+      $("#editRoleModal").modal("show");
+    };
     return {
       addSelectElement,
       form,
       handleFormInput,
       errors,
       roles,
+      initEdit,
+      editSelectElement,
       onSubmitNew,
     };
   },

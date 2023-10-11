@@ -44,6 +44,7 @@
                       <tr>
                         <th>Role</th>
                         <th>Permissions</th>
+                        <th></th>
                       </tr>
                     </thead>
 
@@ -52,6 +53,15 @@
                         <tr>
                           <td>{role.name}</td>
                           <td>{role.permissions.join(", ")}</td>
+                          <td>
+                            <button
+                              type="button"
+                              @click="initEdit(role)"
+                              class="btn btn-outline-primary"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
@@ -60,7 +70,8 @@
               </div>
             </div>
           </div>
-          {{template "admin/role/new-role-modal" .}}
+          {{template "admin/role/new-role-modal" .}} {{template
+          "admin/role/edit-role-modal" .}}
         </div>
         <!-- End of Main Content -->
       </div>
