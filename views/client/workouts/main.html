@@ -20,8 +20,14 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            {{template "partials/dashboard-page-heading" .}}
-
+            {{template "partials/dashboard-page-heading" .}} {{ if or (not
+            .client.IsMember) (not .client.IsVerified) }}
+            <div class="alert alert-warning" role="alert">
+              <i class="fas fa-exclamation-triangle"></i>
+              Workouts can only be viewed if your account is verified and a
+              member.
+            </div>
+            {{end}}
             <!-- Content Row -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -45,7 +51,8 @@
                     </thead>
 
                     <tbody>
-                      {{range $category := .categories}}
+                      {{if and .client.IsMember .client.IsVerified }} {{range
+                      $category := .categories}}
                       <tr>
                         <td>{{$category.Name}}</td>
                         <td>
@@ -60,7 +67,7 @@
                         </td>
                       </tr>
 
-                      {{end}}
+                      {{end}} {{end}}
                     </tbody>
                   </table>
                 </div>

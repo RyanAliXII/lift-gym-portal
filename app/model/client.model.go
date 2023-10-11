@@ -24,6 +24,7 @@ type Client struct {
 	DateOfBirth      string `json:"dateOfBirth,omitempty" db:"date_of_birth"`
 	AccountId 		 string `json:"accountId,omitempty" db:"account_id"`
 	IsVerified		 bool 	`json:"isVerified,omitempty" db:"is_verified"`
+	IsMember		 bool 	`json:"isMember,omitempty" db:"is_member"`
 	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
 	Model
 }
@@ -116,7 +117,36 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil})))
 }
+func (m Client) ValidateRegistration () (error, map[string]string){
 
+	db := db.GetConnection()
+	return m.Model.ValidationRules(&m, 
+		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
+		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
+		validation.Field(&m.Password, validation.Required.Error("Password is required."), validation.Length(10, 30).Error("Password must be atleast 10 characters to 30 characters long.")),
+		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
+			format := "2006-01-02"
+			strDate ,_ := value.(string)
+			_, err := time.Parse(format, strDate)
+			if err != nil {
+				return fmt.Errorf("Date of birth is required.")
+			}
+			return nil
+		})),
+	validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
+			recordCount := 0
+			query := `SELECT COUNT(1) as record_count from client
+			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			db.Get(&recordCount, query, m.Email)
+			if recordCount > 0 {
+				return fmt.Errorf("Email is already registered")
+			}
+		
+			return nil
+		})),	
+	)
+}
 type ClientJSON struct {
 	Client
 }

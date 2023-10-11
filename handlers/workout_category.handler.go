@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 type WorkoutCategoryHandler struct {
 	workoutCategoryRepo repository.WorkoutCategoryRepository
+	clientRepo repository.ClientRepository
 }
 
 func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
@@ -38,11 +40,30 @@ func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
 	})	
 }
 func (h *WorkoutCategoryHandler) RenderClientWorkoutPage(c echo.Context)  error {
+
+	sessionData := mysqlsession.SessionData{}
+	bindErr := sessionData.Bind(c.Get("sessionData"))
+	if bindErr != nil {
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
+	
+	if getClientErr != nil {
+		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
 	workoutCategories, _ := h.workoutCategoryRepo.GetCategories()
 	return c.Render(http.StatusOK, "client/workouts/main", Data{
 		"title": "Workouts",
 		"module": "Workouts",
 		"categories": workoutCategories,
+		"client": client,
 	})
 
 }
@@ -50,6 +71,23 @@ func (h *WorkoutCategoryHandler) RenderClientWorkoutsByCategoryId(c echo.Context
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "convErr"))
+		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
+	}
+
+	sessionData := mysqlsession.SessionData{}
+	bindErr := sessionData.Bind(c.Get("sessionData"))
+	if bindErr != nil {
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+		   "message": "Unknown error occured",
+	   })
+	}
+	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
+	if !client.IsMember || !client.IsVerified {
+		return c.Render(http.StatusNotFound,"partials/error/404-page", nil )
+	}
+	if getClientErr != nil {
+		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
 		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
 	}
 	workoutCategory, err := h.workoutCategoryRepo.GetCategoryById(id)
@@ -171,5 +209,6 @@ func (h *WorkoutCategoryHandler)DeleteCategory(c echo.Context) error {
 func NewWorkoutCategoryHandler() WorkoutCategoryHandler {
 	return WorkoutCategoryHandler{
 		workoutCategoryRepo: repository.NewWorkoutCategoryRepository(),
+		clientRepo: repository.NewClientRepository(),
 	}
 }

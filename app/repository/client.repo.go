@@ -38,15 +38,22 @@ func (repo *ClientRepository) New(client model.Client)(error) {
 }
 func (repo * ClientRepository)Get()([]model.Client, error) {
 	clients := make([]model.Client , 0)
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id from client
-	INNER JOIN account on client.account_id = account.id ORDER BY client.updated_at DESC`
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	INNER JOIN account on client.account_id = account.id 
+	LEFT JOIN subscription on subscription.client_id = client.id
+	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
+	ORDER BY client.updated_at DESC`
 	selectErr := repo.db.Select(&clients, selectQuery)
 	return clients, selectErr 
 }
 func (repo * ClientRepository)GetById(id int)(model.Client, error) {
 	clients := model.Client{}
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end ) as is_verified from client
-	INNER JOIN account on client.account_id = account.id where client.id = ? ORDER BY client.updated_at DESC LIMIT 1;`
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	INNER JOIN account on client.account_id = account.id 
+	LEFT JOIN subscription on subscription.client_id = client.id
+	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
+	where client.id = ?
+	ORDER BY client.updated_at DESC;`
 	getErr := repo.db.Get(&clients, selectQuery , id)
 	return clients, getErr 
 }
