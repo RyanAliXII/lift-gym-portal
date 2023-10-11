@@ -24,6 +24,8 @@ func adminRoutes (router  * echo.Group){
 	membershipRequestHandler := NewMembershipRequestHandler()
 	inventoryHandler := NewInventoryHandler()
 	staffHandler := NewStaffHandler()
+	workoutCategoryHandler := NewWorkoutCategoryHandler()
+	workoutHandler := NewWorkoutHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
@@ -61,6 +63,16 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/inventory", inventoryHandler.NewEquipment)
 	router.PUT("/inventory/:id", inventoryHandler.UpdateEquipment)
 	router.DELETE("/inventory/:id", inventoryHandler.DeleteEquipment)
+	
+	workoutGrp := router.Group("/workouts")
+	workoutGrp.GET("", workoutHandler.RenderWorkoutPage)
+	workoutGrp.POST("", workoutHandler.NewWorkout)
+	workoutGrp.PUT("/:id", workoutHandler.UpdateWorkout)
+	workoutGrp.DELETE("/:id", workoutHandler.DeleteWorkout)
+	workoutGrp.GET("/categories", workoutCategoryHandler.RenderCategoryPage)
+	workoutGrp.POST("/categories", workoutCategoryHandler.NewCategory)
+	workoutGrp.PUT("/categories/:id", workoutCategoryHandler.UpdateCategory)
+	workoutGrp.DELETE("/categories/:id", workoutCategoryHandler.DeleteCategory)
 }
 
 
@@ -71,6 +83,7 @@ func clientRoutes(router * echo.Group){
 	verificationHandler := NewVerificationHandler()
 	membershipRequestHandler := NewMembershipRequestHandler()
 	pkgRequestHandler := NewPackageRequestHandler()
+	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -87,6 +100,8 @@ func clientRoutes(router * echo.Group){
 	router.GET("/packages", pkgRequestHandler.GetUnrequestedPackages)
 	router.POST("/package-requests", pkgRequestHandler.NewPackageRequest)
 	router.PATCH("/package-requests/:id/status", pkgRequestHandler.CancelPackageRequest)
+	router.GET("/workouts", workoutCategoryHandler.RenderClientWorkoutPage)
+	router.GET("/workouts/:id", workoutCategoryHandler.RenderClientWorkoutsByCategoryId)
 }
 
 func coachRoutes(router * echo.Group) {

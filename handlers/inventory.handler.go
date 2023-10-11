@@ -120,7 +120,7 @@ func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Data: nil,
-		Message: "Equipment added.",
+		Message: "Equipment updated.",
 	})
 }
 

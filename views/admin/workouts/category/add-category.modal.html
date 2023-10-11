@@ -1,0 +1,61 @@
+{{define "admin/workouts/category/add-category-modal"}}
+
+<div
+  class="modal fade"
+  id="addCategoryModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addCategoryModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Category</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitNew">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name</label>
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              v-bind="name"
+              :class="{'is-invalid': errors?.name}"
+            />
+            <div class="invalid-feedback d-block" v-show="errors?.name">
+              {errors?.name}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="name" class="col-form-label">Workouts</label>
+            <select multiple ref="addWorkoutSelectElement"></select>
+            <div class="invalid-feedback d-block" v-show="errors?.workouts">
+              {errors?.workouts?.[0]}
+            </div>
+          </div>
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

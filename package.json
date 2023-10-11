@@ -10,6 +10,8 @@
   "dependencies": {
     "choices.js": "^10.2.0",
     "date-fns": "^2.30.0",
+    "filepond": "^4.30.4",
+    "filepond-plugin-file-validate-type": "^1.2.8",
     "sweetalert2": "^11.7.27",
     "uuid": "^9.0.0",
     "vee-validate": "^4.11.3",

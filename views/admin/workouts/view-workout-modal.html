@@ -1,0 +1,30 @@
+{{define "admin/workouts/view-workout-modal"}}
+
+<div
+  class="modal fade"
+  id="viewWorkoutModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="viewWorkoutModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">Workout: {selectedWorkout.name}</div>
+      <div class="p-4 border d-flex justify-content-center align-items-center">
+        <img
+          :src="selectedWorkout.imageSrc"
+          class="img-fluid"
+          style="max-height: 300px"
+          alt="workoutImage"
+        />
+      </div>
+      <div>
+        <h2 class="text-center mt-3 text-gray-800">{selectedWorkout.name}</h2>
+        <div class="px-4 pb-3 text-center">{selectedWorkout.description}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{end}}
