@@ -21,17 +21,18 @@
         </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="onSubmitNew">
           <div class="form-group">
             <label for="name" class="col-form-label">Given name</label>
             <input
               type="text"
               class="form-control"
               name="name"
-              v-model="name"
-              :class="{'is-invalid':errors.name}"
+              @input="handleFormInput"
+              :value="form.name"
+              :class="{'is-invalid':errors?.name}"
             />
-            <div class="invalid-feedback" :class="{'d-block':errors.name}">
+            <div class="invalid-feedback" :class="{'d-block':errors?.name}">
               {errors?.name}
             </div>
           </div>
@@ -42,8 +43,11 @@
               <option value="{{$permission}}">{{$permission}}</option>
               {{end}}
             </select>
-            <div class="invalid-feedback" :class="{'d-block':errors.name}">
-              {errors?.name}
+            <div
+              class="invalid-feedback"
+              :class="{'d-block':errors?.permissions}"
+            >
+              {errors?.permissions}
             </div>
           </div>
           <div class="d-flex" style="gap: 5px">

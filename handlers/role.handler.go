@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/acl"
 	"net/http"
 
@@ -19,7 +21,28 @@ func (h *RoleHandler) RenderRolePage(c echo.Context) error {
 }
 
 func (h *RoleHandler) NewRole(c echo.Context) error {
-	
+	role := model.Role{}
+
+	err := c.Bind(&role)
+	if err != nil {
+
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := role.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	fmt.Println(role)
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Success",
