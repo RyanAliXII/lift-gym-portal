@@ -21,7 +21,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="onSubmitNewStaff">
+        <form>
           <div class="form-group">
             <label for="name" class="col-form-label">Given name</label>
             <input
@@ -37,7 +37,11 @@
           </div>
           <div class="form-group">
             <label for="permissions" class="col-form-label">Permissions</label>
-            <select multiple ref="addSelectElement"></select>
+            <select multiple ref="addSelectElement">
+              {{range $permission := .permissions}}
+              <option value="{{$permission}}">{{$permission}}</option>
+              {{end}}
+            </select>
             <div class="invalid-feedback" :class="{'d-block':errors.name}">
               {errors?.name}
             </div>
