@@ -1,41 +1,75 @@
-import { format } from "date-fns";
 import { useForm } from "vee-validate";
-import { createApp, onMounted } from "vue";
+import { createApp, ref } from "vue";
 import { object } from "yup";
 
 createApp({
+  compilerOptions: {
+    delimiters: ["{", "}"],
+  },
   setup() {
-    const { defineInputBinds, handleSubmit } = useForm({
+    const displaySuccessMessage = ref(false);
+    const {
+      defineInputBinds,
+      handleSubmit,
+      setErrors,
+      errors,
+      isSubmitting,
+      resetForm,
+    } = useForm({
       initialValues: {
         givenName: "",
+        middleName: "",
         surname: "",
         email: "",
         password: "",
-        dateOfBirth: format(new Date(), "yyyy-MM-dd"),
+        dateOfBirth: "",
       },
-
-      validateOnMount: false,
       validationSchema: object({}),
+      validateOnMount: false,
     });
 
-    const givenName = defineInputBinds("givenName", { validateOnChange: true });
-    const surname = defineInputBinds("surname", { validateOnChange: true });
-    const email = defineInputBinds("email", { validateOnChange: true });
-    const password = defineInputBinds("password", { validateOnChange: true });
-    const repeatPasword = defineInputBinds("repeatPasword", {
-      validateOnChange: true,
+    const givenName = defineInputBinds("givenName", { validateOnInput: true });
+    const middleName = defineInputBinds("middleName", {
+      validateOnInput: true,
     });
+    const surname = defineInputBinds("surname", { validateOnInput: true });
+    const email = defineInputBinds("email", { validateOnInput: true });
+    const password = defineInputBinds("password", { validateOnInput: true });
     const dateOfBirth = defineInputBinds("dateOfBirth", {
-      validateOnChange: true,
+      validateOnInput: true,
     });
-    const onSubmit = handleSubmit(async (values) => {});
+    const onSubmit = handleSubmit(async (values) => {
+      const response = await fetch("/clients/registration", {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      const { data } = await response.json();
+
+      if (response.status >= 400) {
+        if (data?.errors) {
+          setErrors({ ...data?.errors });
+        }
+        return;
+      }
+      displaySuccessMessage.value = true;
+      resetForm();
+    });
+
     return {
       givenName,
       surname,
       email,
       password,
       dateOfBirth,
+      middleName,
       onSubmit,
+      isSubmitting,
+      errors,
+      displaySuccessMessage,
     };
   },
 }).mount("#RegistrationPage");

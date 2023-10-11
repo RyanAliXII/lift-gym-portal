@@ -89,6 +89,7 @@ func clientRoutes(router * echo.Group){
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
 	router.GET("/registration", registrationHandler.RenderRegistrationPage)
+	router.POST("/registration", registrationHandler.RegisterClient)
 	router.Use(middlewares.AuthMiddleware("client_sid", "/clients/login"))
 	router.GET("/dashboard", dashboardHandler.RenderClientDashboard)
 	router.GET("/profile", profileHandler.RenderClientProfilePage)

@@ -3,8 +3,29 @@
 <html lang="en">
   {{template "partials/sb-head" .}}
   <body class="bg-gradient-primary">
-    <div class="container" id="RegistrationPage">
-      <div class="card o-hidden border-0 shadow-lg my-5">
+    <div
+      class="d-flex align-items-center justify-content-center"
+      id="RegistrationPage"
+      style="min-height: 100vh"
+    >
+      <div class="card text-center" v-if="displaySuccessMessage">
+        <div class="card-body">
+          <i class="fas fa-check-circle text-success h1"></i>
+          <h5 class="card-title">Registration Completed</h5>
+          <p class="card-text">
+            You are now registered. Please verify your email in order gain
+            access to other features.
+          </p>
+          <a href="/clients/login" class="btn btn-primary"
+            >Sign In
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      <div
+        class="card o-hidden border-0 shadow-lg my-5 col-12 col-md-8"
+        v-if="!displaySuccessMessage"
+      >
         <div class="card-body p-0">
           <!-- Nested Row within Card Body -->
           <div class="row">
@@ -15,51 +36,99 @@
                   <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                 </div>
                 <form @submit.prevent="onSubmit">
-                  <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                      <input
-                        type="text"
-                        class="form-control form-control-user"
-                        ref="givenName"
-                        placeholder="Given name"
-                      />
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control form-control-user"
+                      v-bind="givenName"
+                      placeholder="Given name"
+                      :class="{'is-invalid': errors?.givenName}"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.givenName}"
+                    >
+                      {errors?.givenName}
                     </div>
-                    <div class="col-sm-6">
-                      <input
-                        type="text"
-                        class="form-control form-control-user"
-                        placeholder="Surname"
-                        ref="surname"
-                      />
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control form-control-user"
+                      placeholder="Middle name"
+                      v-bind="middleName"
+                      :class="{'is-invalid': errors?.middleName}"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.middleName}"
+                    >
+                      {errors?.middleName}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control form-control-user"
+                      placeholder="Surname"
+                      v-bind="surname"
+                      :class="{'is-invalid': errors?.surname}"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.surname}"
+                    >
+                      {errors?.surname}
                     </div>
                   </div>
                   <div class="form-group">
                     <input
                       type="email"
-                      ref="email"
                       class="form-control form-control-user"
                       placeholder="Email Address"
+                      v-bind="email"
+                      :class="{'is-invalid': errors?.email}"
                     />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.email}"
+                    >
+                      {errors?.email}
+                    </div>
                   </div>
                   <div class="form-group">
                     <input
                       type="date"
                       class="form-control form-control-user"
                       placeholder="Date of birth"
-                      ref="dateOfBirth"
+                      v-bind="dateOfBirth"
+                      :class="{'is-invalid': errors?.dateOfBirth}"
                     />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.dataOfBirth}"
+                    >
+                      {errors?.dateOfBirth}
+                    </div>
                   </div>
                   <div class="form-group">
                     <input
-                      ref="password"
                       type="password"
                       class="form-control form-control-user"
-                      id="exampleInputPassword"
+                      v-bind="password"
                       placeholder="Password"
+                      :class="{'is-invalid': errors?.password}"
                     />
+                    <div
+                      class="invalid-feedback"
+                      :class="{'d-block': errors?.password}"
+                    >
+                      {errors?.password}
+                    </div>
                   </div>
                   <button
                     type="submit"
+                    :disabled="isSubmitting"
                     class="btn btn-primary btn-user btn-block"
                   >
                     Register Account
@@ -84,7 +153,9 @@
       </div>
     </div>
   </body>
-
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   {{template "partials/sb-scripts"}}
   <script src="/js/client/registration/main.js"></script>
 </html>
