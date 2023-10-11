@@ -34,16 +34,11 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	}
 	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
 	member , _ := h.memberRepo.GetMemberById(sessionData.User.Id)
-	isMember := false
-	if member.Id > 0 {
-		isMember = true
-	}
 	var emailVerification model.EmailVerification
 
 	if !client.IsVerified {
 		emailVerification, _ = h.verificationRepo.GetLatestSentEmailVerification(client.Id)	
 	}
-
 	if getClientErr != nil {
 		logger.Error(getClientErr.Error(), zap.String("error", "getClientErr"))
 		return c.JSON(http.StatusInternalServerError, Data{
@@ -57,7 +52,7 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 		"module": "Profile",
 		"profile": client,
 		"emailVerification": emailVerification,
-		"isMember": isMember,
+		"isMember": client.IsMember,
 		"member": member,
 	})
 	return nil
