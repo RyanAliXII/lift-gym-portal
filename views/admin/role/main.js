@@ -13,6 +13,7 @@ createApp({
     const editSelect = ref(null);
     const roles = ref([]);
     const form = ref({
+      id: 0,
       name: "",
       permissions: [],
     });
@@ -38,6 +39,39 @@ createApp({
         roles.value = [];
       }
     };
+    const onSubmitUpdate = async () => {
+      try {
+        errors.value = {};
+        const permissions = editSelect.value.getValue().map((p) => p.value);
+        const response = await fetch(`/app/roles/${form.value.id}`, {
+          method: "PUT",
+          body: JSON.stringify({ ...form.value, permissions: permissions }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data.errors;
+          }
+          return;
+        }
+        form.value = {
+          id: 0,
+          name: "",
+          permissions: [],
+        };
+        fetchRoles();
+        editSelect.value.removeActiveItems();
+        $("#editRoleModal").modal("hide");
+        swal.fire("New Role", "Role has been created.", "success");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     const onSubmitNew = async () => {
       try {
         errors.value = {};
@@ -61,6 +95,7 @@ createApp({
           name: "",
           permissions: [],
         };
+        fetchRoles();
         addSelect.value.removeActiveItems();
         $("#newRoleModal").modal("hide");
         swal.fire("New Role", "Role has been created.", "success");
@@ -107,6 +142,7 @@ createApp({
       initEdit,
       editSelectElement,
       onSubmitNew,
+      onSubmitUpdate,
     };
   },
 }).mount("#RolePage");

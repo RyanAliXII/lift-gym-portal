@@ -5,6 +5,7 @@ import (
 	"lift-fitness-gym/app/pkg/acl"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -72,6 +73,50 @@ func (h *RoleHandler) NewRole(c echo.Context) error {
 		Message: "Success",
 	})
 }
+
+func (h *RoleHandler) UpdateRole(c echo.Context) error {
+	roleId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured",
+		})
+	}
+	role := model.Role{}
+	err = c.Bind(&role)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := role.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	role.Id = roleId
+	err = h.roleRepo.UpdateRole(role)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "updateRoleErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Success",
+	})
+}
+
 
 func NewRoleHandler () RoleHandler {
 	return RoleHandler{

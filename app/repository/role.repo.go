@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
@@ -58,6 +59,45 @@ func (repo *RoleRepository) NewRole(role model.Role) error {
 	query, args, _ := ds.ToSQL()
 	_, err = transaction.Exec(query, args...)
 	if err != nil{
+	     transaction.Rollback()
+		 return err
+	}
+	transaction.Commit()
+	return nil;
+}
+
+
+func (repo *RoleRepository) UpdateRole(role model.Role) error {
+	transaction, err := repo.db.Begin()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	_, err = transaction.Exec("UPDATE role set name = ? where id = ?", role.Name, role.Id)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+
+	_, err = transaction.Exec("DELETE FROM permission where role_id = ?", role.Id)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	records := make([]goqu.Record, 0)
+
+	for _, permission := range role.Permissions {
+		records = append(records, goqu.Record{
+			"role_id": role.Id,
+			"value": permission,
+		})
+	}
+	dialect := goqu.Dialect("mysql")
+	ds := dialect.Insert(goqu.T("permission")).Rows(records).Prepared(true)
+	query, args, _ := ds.ToSQL()
+	_, err = transaction.Exec(query, args...)
+	if err != nil{
+		fmt.Print("HERE")
 	     transaction.Rollback()
 		 return err
 	}

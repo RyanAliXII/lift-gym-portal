@@ -76,6 +76,7 @@ func adminRoutes (router  * echo.Group){
 	workoutGrp.DELETE("/categories/:id", workoutCategoryHandler.DeleteCategory)
 	router.GET("/roles", rolesPermissionHandler.RenderRolePage)
 	router.POST("/roles", rolesPermissionHandler.NewRole)
+	router.PUT("/roles/:id", rolesPermissionHandler.UpdateRole)
 }
 
 
