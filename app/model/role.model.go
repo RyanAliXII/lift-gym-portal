@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/pkg/acl"
 	"slices"
@@ -11,7 +13,7 @@ import (
 type Role struct {
 	Id          int      `json:"id" db:"id"`
 	Name        string   `json:"name" db:"name"`
-	Permissions []string `json:"permissions" db:"permissions"`
+	Permissions Permissions `json:"permissions" db:"permissions"`
 	Model
 }
 
@@ -29,4 +31,26 @@ func (m Role) Validate() (error, map[string]string) {
 			return nil
 		}))),
 	)
+}
+
+type Permissions []string 
+
+
+
+func (instance *Permissions) Scan(value interface{}) error {
+	permissions := make([]string, 0)
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = permissions
+		}
+	} else {
+		*instance = permissions
+	}
+	return nil
+
+}
+func (copy Permissions) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
 }

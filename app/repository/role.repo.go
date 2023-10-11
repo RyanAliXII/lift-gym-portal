@@ -17,6 +17,18 @@ func NewRoleRepository() RoleRepository{
 		db: db.GetConnection(),
 	}
 }
+
+func (repo *RoleRepository) GetRoles() ([]model.Role, error) {
+
+	roles := make([]model.Role,0)
+	query := `
+	SELECT role.id, name, CONCAT('[',GROUP_CONCAT('"',permission.value,'"'),']') as permissions from role
+	INNER JOIN permission on role.id = permission.role_id;
+	`
+	err := repo.db.Select(&roles, query)
+	return roles, err
+}
+
 func (repo *RoleRepository) NewRole(role model.Role) error {
 	transaction, err := repo.db.Begin()
 	if err != nil {

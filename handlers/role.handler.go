@@ -15,7 +15,20 @@ type RoleHandler struct {
 }
 
 func (h *RoleHandler) RenderRolePage(c echo.Context) error {
-
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		roles, err := h.roleRepo.GetRoles()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "getRoles"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"roles": roles,
+			},
+			Message: "Roles fetched.",
+		})
+	}	
 	return c.Render(http.StatusOK, "admin/role/main", Data{
 		"csrf" : c.Get("csrf"),
 		"permissions": acl.Permissions,
