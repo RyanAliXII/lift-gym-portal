@@ -19,7 +19,7 @@ func (h *RoleHandler) RenderRolePage(c echo.Context) error {
 }
 
 func (h *RoleHandler) NewRole(c echo.Context) error {
-
+	
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Success",
