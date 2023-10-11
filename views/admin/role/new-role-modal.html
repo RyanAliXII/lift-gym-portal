@@ -21,14 +21,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="handleSubmit">
           <div class="form-group">
             <label for="name" class="col-form-label">Given name</label>
             <input
               type="text"
               class="form-control"
               name="name"
-              v-bind="name"
+              v-model="name"
               :class="{'is-invalid':errors.name}"
             />
             <div class="invalid-feedback" :class="{'d-block':errors.name}">
