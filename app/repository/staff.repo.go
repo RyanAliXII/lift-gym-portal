@@ -28,8 +28,8 @@ func (repo * StaffRepository) NewStaff(staff model.Staff) error{
 		transaction.Rollback()
 		return err
 	}
-	insertUserQuery := `INSERT INTO user(given_name, middle_name, surname, account_id) VALUES(?, ?, ?, ?)`
-	_, err = transaction.Exec(insertUserQuery, staff.GivenName, staff.MiddleName, staff.Surname, accountId)
+	insertUserQuery := `INSERT INTO user(given_name, middle_name, surname, account_id, role_id) VALUES(?, ?, ?, ?, ?)`
+	_, err = transaction.Exec(insertUserQuery, staff.GivenName, staff.MiddleName, staff.Surname, accountId, staff.RoleId)
 	if err != nil {
 		transaction.Rollback()
 		return err
@@ -69,7 +69,7 @@ func (repo * StaffRepository) UpdateStaff(staff model.Staff) error{
 
 func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	staffs := make([]model.Staff, 0)
-	query := `SELECT user.id, given_name, middle_name, surname, email FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false ORDER BY user.updated_at DESC`
+	query := `SELECT user.id, given_name, middle_name, surname, (case when role_id is null then 0 else role_id end) as role_id,  email FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false ORDER BY user.updated_at DESC`
 	err := repo.db.Select(&staffs, query)
 	if err != nil {
 		 return staffs, err

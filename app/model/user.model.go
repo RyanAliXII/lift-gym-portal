@@ -7,4 +7,6 @@ type User struct {
 	Surname    string `json:"surname" db:"surname"`
 	Email      string `json:"email" db:"email"`
 	Password   string `json:"password" db:"password"`
+	RoleId     int `json:"roleId" db:"role_id"`
+	Role 	  string `json:"role" db:"role"`
 }

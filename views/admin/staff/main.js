@@ -2,12 +2,14 @@ import { useForm } from "vee-validate";
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
 import { object } from "yup";
+import Choices from "choices.js";
 
 const initalErrors = {
   givenName: "",
   middleName: "",
   surname: "",
   email: "",
+  roleId: "",
 };
 
 const initialForm = {
@@ -16,10 +18,13 @@ const initialForm = {
   middleName: "",
   surname: "",
   email: "",
+  roleId: 0,
 };
 createApp({
   setup() {
     const staffs = ref([]);
+    const addSelectRoleElement = ref(null);
+    const addRoleSelect = ref(null);
     const {
       defineInputBinds,
       values: form,
@@ -57,9 +62,11 @@ createApp({
     const onSubmitNewStaff = async () => {
       try {
         setErrors({ ...initalErrors });
+        const roleId = parseInt(addRoleSelect.value.getValue().value);
+
         const response = await fetch("/app/staffs", {
           method: "POST",
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...form, roleId }),
           headers: new Headers({
             "content-type": "application/json",
             "X-CSRF-Token": window.csrf,
@@ -145,6 +152,9 @@ createApp({
       $("#editStaffModal").modal("show");
     };
     onMounted(() => {
+      addRoleSelect.value = new Choices(addSelectRoleElement.value, {
+        allowHTML: true,
+      });
       fetchStaffs();
       $("#newStaffModal").on("hidden.bs.modal", () => {
         setErrors({ ...initalErrors });
@@ -166,6 +176,7 @@ createApp({
       initEdit,
       onSubmitUpdate,
       initResetPassword,
+      addSelectRoleElement,
     };
   },
   compilerOptions: {
