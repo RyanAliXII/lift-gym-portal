@@ -57,8 +57,8 @@ func (repo * StaffRepository) UpdateStaff(staff model.Staff) error{
 		transaction.Rollback()
 		return err
 	}
-	updateUserQuery := `UPDATE user set given_name = ?, middle_name = ?, surname = ? where id = ?`
-	_, err = transaction.Exec(updateUserQuery, staff.GivenName, staff.MiddleName, staff.Surname, staff.Id)
+	updateUserQuery := `UPDATE user set given_name = ?, middle_name = ?, surname = ?, role_id = ? where id = ?`
+	_, err = transaction.Exec(updateUserQuery, staff.GivenName, staff.MiddleName, staff.Surname, staff.RoleId, staff.Id)
 	if err != nil {
 		transaction.Rollback()
 		return err
