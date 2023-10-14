@@ -6,7 +6,7 @@ type CoachRate struct {
 	Id          int     `json:"id"`
 	Description string  `json:"description" db:"description"`
 	Price       float64 `json:"price" db:"price"`
-	CoachId     float64 `json:"coachId" db:"coach_id"`
+	CoachId     int `json:"coachId" db:"coach_id"`
 	Model
 }
 
