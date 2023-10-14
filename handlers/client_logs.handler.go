@@ -140,7 +140,24 @@ func (h * ClientLogHandler) UpdateLog(c echo.Context)error {
 
 	err = h.clientLogRepo.UpdateLog(log)
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "NewLogerr"))
+		logger.Error(err.Error(), zap.String("error", "UpdateLogErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,		
+			Message: "Unknown error occured",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client Log Updated",
+	})
+}
+
+
+func (h * ClientLogHandler)DeleteLog(c echo.Context)error {
+	id, err := strconv.Atoi(c.Param("id"))
+	err = h.clientLogRepo.DeleteLog(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteLogErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,		
 			Message: "Unknown error occured",
@@ -151,5 +168,6 @@ func (h * ClientLogHandler) UpdateLog(c echo.Context)error {
 		Message: "Client Logged",
 	})
 }
+
 
 

@@ -1,7 +1,7 @@
 import Choices from "choices.js";
 import { createApp, onMounted, ref } from "vue";
 import { useDebounce, useDebounceFn } from "@vueuse/core";
-import Swal from "sweetalert2";
+import swal from "sweetalert2";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -90,7 +90,7 @@ createApp({
           }
           return;
         }
-        Swal.fire(
+        swal.fire(
           "Client Loggged In",
           "Client has been loggged in successfully",
           "success"
@@ -122,11 +122,38 @@ createApp({
           }
           return;
         }
-        Swal.fire("Client Log Updated", "Client has been updated.", "success");
+        swal.fire("Client Log Updated", "Client has been updated.", "success");
         form.value = {
           ...initialForm,
         };
         $("#editLogModal").modal("hide");
+        fetchLogs();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const deleteLog = async (id) => {
+      errors.value = {};
+      try {
+        const response = await fetch(`/app/client-logs/${id}`, {
+          method: "DELETE",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
+        }
+        swal.fire(
+          "Client Log Deleted",
+          "Client log has been deleted.",
+          "success"
+        );
         fetchLogs();
       } catch (error) {
         console.error(error);
@@ -230,6 +257,21 @@ createApp({
       editLogClientSelect.value.setChoiceByValue(log.clientId);
       $("#editLogModal").modal("show");
     };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Client Log",
+        text: "Are you sure you want to delete client log?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete the log",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteLog(id);
+      }
+    };
+
     return {
       logClientSelectElement,
       form,
@@ -242,6 +284,7 @@ createApp({
       initEdit,
       updateLog,
       editLogClientSelectElement,
+      initDelete,
     };
   },
 }).mount("#ClientLog");

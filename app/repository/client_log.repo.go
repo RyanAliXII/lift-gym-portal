@@ -35,3 +35,9 @@ func (repo * ClientLogRepository)GetLogs() ([]model.ClientLog, error){
 	err := repo.db.Select(&logs, query)
 	return logs, err
 }
+
+func (repo * ClientLogRepository)DeleteLog(id int) error{
+	_, err := repo.db.Exec("UPDATE client_log set deleted_at = now() where id = ?", id)
+	return err
+}
+

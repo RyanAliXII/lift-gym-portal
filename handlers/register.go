@@ -81,6 +81,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/client-logs", clientLogHandler.RenderClientLogPage)
 	router.POST("/client-logs", clientLogHandler.NewLog)
 	router.PUT("/client-logs/:id", clientLogHandler.UpdateLog)
+	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog)
 }
 
 
