@@ -65,6 +65,7 @@
                               class="btn btn-outline-primary"
                               data-toggle="tooltip"
                               title="Edit Log"
+                              @click="initEdit(log)"
                             >
                               <i class="fas fa-edit"></i>
                             </button>
@@ -84,7 +85,8 @@
               </div>
             </div>
           </div>
-          {{template "admin/client-logs/log-modal" .}}
+          {{template "admin/client-logs/log-modal" .}} {{template
+          "admin/client-logs/edit-log-modal" .}}
         </div>
         <!-- End of Main Content -->
       </div>

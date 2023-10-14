@@ -80,6 +80,7 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/roles/:id", rolesPermissionHandler.UpdateRole)
 	router.GET("/client-logs", clientLogHandler.RenderClientLogPage)
 	router.POST("/client-logs", clientLogHandler.NewLog)
+	router.PUT("/client-logs/:id", clientLogHandler.UpdateLog)
 }
 
 

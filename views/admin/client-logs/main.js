@@ -8,6 +8,7 @@ createApp({
   },
   setup() {
     const initialForm = {
+      id: 0,
       clientId: 0,
       isMember: false,
       amountPaid: 0,
@@ -15,6 +16,8 @@ createApp({
     const logs = ref([]);
     const logClientSelectElement = ref(null);
     const logClientSelect = ref(null);
+    const editLogClientSelectElement = ref(null);
+    const editLogClientSelect = ref(null);
     const form = ref({
       ...initialForm,
     });
@@ -40,7 +43,7 @@ createApp({
         console.error(error);
       }
     };
-    const search = useDebounceFn(async (query) => {
+    const fetchClientByKeyword = async (query) => {
       const response = await fetch(
         `/app/clients?${new URLSearchParams({
           keyword: query,
@@ -60,8 +63,15 @@ createApp({
           customProperties: client,
         }));
         logClientSelect.value.setChoices(selectValues, "value", "label", true);
+        editLogClientSelect.value.setChoices(
+          selectValues,
+          "value",
+          "label",
+          true
+        );
       }
-    }, 500);
+    };
+    const search = useDebounceFn(fetchClientByKeyword, 500);
     const submitLog = async () => {
       errors.value = {};
       try {
@@ -88,12 +98,49 @@ createApp({
         form.value = {
           ...initialForm,
         };
+        fetchLogs();
         $("#logClientModal").modal("hide");
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const updateLog = async () => {
+      errors.value = {};
+      try {
+        const response = await fetch(`/app/client-logs/${form.value.id}`, {
+          method: "PUT",
+          body: JSON.stringify(form.value),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
+        }
+        Swal.fire("Client Log Updated", "Client has been updated.", "success");
+        form.value = {
+          ...initialForm,
+        };
+        $("#editLogModal").modal("hide");
+        fetchLogs();
+      } catch (error) {
+        console.error(error);
+      }
     };
     const initModalListeners = () => {
       $("#logClientModal").on("hidden.bs.modal", () => {
         logClientSelect.value.removeActiveItems();
+        form.value = {
+          ...initialForm,
+        };
+      });
+      $("#editLogModal").on("hidden.bs.modal", () => {
+        editLogClientSelect.value.removeActiveItems();
         form.value = {
           ...initialForm,
         };
@@ -121,8 +168,21 @@ createApp({
         allowHTML: false,
         placeholder: "Seach Client",
       });
+      editLogClientSelect.value = new Choices(
+        editLogClientSelectElement.value,
+        {
+          allowHTML: false,
+          placeholder: "Seach Client",
+        }
+      );
 
       logClientSelect.value.passedElement.element.addEventListener(
+        "search",
+        (event) => {
+          search(event.detail.value);
+        }
+      );
+      editLogClientSelect.value.passedElement.element.addEventListener(
         "search",
         (event) => {
           search(event.detail.value);
@@ -140,10 +200,36 @@ createApp({
           delete errors.clientId;
         }
       );
+
+      editLogClientSelect.value.passedElement.element.addEventListener(
+        "change",
+        () => {
+          const select = editLogClientSelect.value.getValue();
+
+          if (!select) return;
+
+          form.value = {
+            ...form.value,
+            clientId: select.value,
+            isMember: select.customProperties.isMember,
+          };
+          delete errors.clientId;
+        }
+      );
       initModalListeners();
       fetchLogs();
     });
-
+    const initEdit = async (log) => {
+      form.value = {
+        id: log.id,
+        clientId: log.clientId,
+        amountPaid: log.amountPaid,
+        isMember: log.isMember,
+      };
+      await fetchClientByKeyword(log.client.givenName);
+      editLogClientSelect.value.setChoiceByValue(log.clientId);
+      $("#editLogModal").modal("show");
+    };
     return {
       logClientSelectElement,
       form,
@@ -153,6 +239,9 @@ createApp({
       submitLog,
       errors,
       toMoney,
+      initEdit,
+      updateLog,
+      editLogClientSelectElement,
     };
   },
 }).mount("#ClientLog");

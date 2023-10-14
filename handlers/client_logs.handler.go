@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -90,3 +91,65 @@ func (h * ClientLogHandler) NewLog(c echo.Context)error {
 		Message: "Client Logged",
 	})
 }
+
+
+func (h * ClientLogHandler) UpdateLog(c echo.Context)error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured",
+		})
+	}
+	log := model.ClientLog{}
+	err = c.Bind(&log)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured",
+		})
+	}
+	log.Id = id
+	err, fields := log.Validate()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validateErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+
+	client, err := h.clientRepo.GetById(log.ClientId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getById"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured",
+		})
+	}
+	
+	log.IsMember = client.IsMember
+	if log.IsMember {
+		log.AmountPaid = 0
+	}
+
+	err = h.clientLogRepo.UpdateLog(log)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewLogerr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,		
+			Message: "Unknown error occured",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client Logged",
+	})
+}
+
+
