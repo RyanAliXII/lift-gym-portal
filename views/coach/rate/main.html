@@ -28,7 +28,16 @@
           <!-- Begin Page Content -->
           <div class="container-fluid" id="CoachingRate">
             {{template "partials/dashboard-page-heading" .}}
-
+            <div class="mb-3 ml-2">
+              <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#newRateModal"
+              >
+                <i class="fas fa-plus"></i>
+                New Rate
+              </button>
+            </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -58,6 +67,7 @@
                 </div>
               </div>
             </div>
+            {{template "coach/rate/new-rate-modal" . }}
           </div>
           <!-- /.container-fluid -->
         </div>
