@@ -26,7 +26,7 @@
             <label>Client</label>
             <select ref="logClientSelectElement"></select>
           </div>
-          <div class="form-group">
+          <div class="form-group" v-if="!form.isMember">
             <label>Amount</label>
             <input class="form-control" type="number" name="amount" />
           </div>

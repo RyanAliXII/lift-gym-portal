@@ -8,7 +8,7 @@ createApp({
     const form = ref({
       clientId: 0,
       isMember: false,
-      amount: 0,
+      amountPaid: 0,
     });
     const search = useDebounceFn(async (query) => {
       const response = await fetch(
@@ -24,7 +24,10 @@ createApp({
         const { data } = await response.json();
         const selectValues = (data?.clients ?? []).map((client) => ({
           value: client.id,
-          label: `${client.givenName} ${client.surname} - ${client.email}`,
+          label: `${client.givenName} ${client.surname} - ${client.email} - ${
+            client.isMember ? "Member" : "Non-Member"
+          }`,
+          customProperties: client,
         }));
         logClientSelect.value.setChoices(selectValues, "value", "label", true);
       }
@@ -42,10 +45,23 @@ createApp({
           search(event.detail.value);
         }
       );
+      logClientSelect.value.passedElement.element.addEventListener(
+        "change",
+        () => {
+          const select = logClientSelect.value.getValue();
+
+          form.value = {
+            ...form.value,
+            clientId: select.value,
+            isMember: select.customProperties.isMember,
+          };
+        }
+      );
     });
 
     return {
       logClientSelectElement,
+      form,
     };
   },
 }).mount("#ClientLog");
