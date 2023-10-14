@@ -26,6 +26,15 @@ func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 		"coaches": coaches,
 	})
 }
+
+func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
+
+	return c.Render(http.StatusOK, "client/hire-a-coach/main", Data{
+		"csrf": c.Get("csrf"),
+		"title": "Hire a Coach",
+		"module": "Coaches",		
+ 	})
+}
 func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {
 	csrf := c.Get("csrf")
 	return c.Render(http.StatusOK, "admin/coach/register-coach", Data{

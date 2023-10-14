@@ -94,6 +94,7 @@ func clientRoutes(router * echo.Group){
 	pkgRequestHandler := NewPackageRequestHandler()
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	registrationHandler := NewRegistrationHandler()
+	coachHandler := NewCoachHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -114,6 +115,7 @@ func clientRoutes(router * echo.Group){
 	router.PATCH("/package-requests/:id/status", pkgRequestHandler.CancelPackageRequest)
 	router.GET("/workouts", workoutCategoryHandler.RenderClientWorkoutPage)
 	router.GET("/workouts/:id", workoutCategoryHandler.RenderClientWorkoutsByCategoryId)
+	router.GET("/hire-a-coach", coachHandler.RenderClientHireCoachPage)
 }
 
 func coachRoutes(router * echo.Group) {
