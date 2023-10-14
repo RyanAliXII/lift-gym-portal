@@ -10,7 +10,9 @@ type ClientLog struct {
 	Id       int  `json:"id" db:"id"`
 	ClientId int  `json:"clientId" db:"client_id"`
 	IsMember bool `json:"isMember" db:"is_member"`
+	Client ClientJSON `json:"client" db:"client"`
 	AmountPaid float64 	`json:"amountPaid" db:"amount_paid"`
+	CreatedAt string `json:"createdAt,omitempty" db:"created_at"`
 	Model
 }
 

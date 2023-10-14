@@ -68,6 +68,7 @@ createApp({
         year: "numeric",
       });
     };
+
     const initCancellation = async (member) => {
       const result = await swal.fire({
         showCancelButton: true,

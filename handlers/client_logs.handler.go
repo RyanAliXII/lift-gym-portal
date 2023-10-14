@@ -20,6 +20,21 @@ func NewClientLogHandler()ClientLogHandler{
 	}
 }
 func (h *ClientLogHandler) RenderClientLogPage(c echo.Context) error{
+
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		logs, err := h.clientLogRepo.GetLogs()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetLogsErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"clientLogs": logs,
+			},
+			Message: "Client logs fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "admin/client-logs/main", Data{
 		 "title": "Client Logs",
 		 "module": "Client Logs",

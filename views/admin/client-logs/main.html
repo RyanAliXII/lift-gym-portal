@@ -30,7 +30,7 @@
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  List of Client Logs
+                  List of Logged Clients
                 </h6>
               </div>
               <div class="card-body">
@@ -43,14 +43,42 @@
                   >
                     <thead>
                       <tr>
-                        <th>Given name</th>
-                        <th>Middle name</th>
-                        <th>Surname</th>
+                        <td>Created At</td>
+                        <th>Client</th>
+                        <th>Client Email</th>
+                        <th>Member(Yes/No)</th>
+                        <th>Amount Paid</th>
                         <th></th>
                       </tr>
                     </thead>
 
-                    <tbody></tbody>
+                    <tbody>
+                      <template v-for="log of logs ">
+                        <tr>
+                          <td>{formatDate(log.createdAt)}</td>
+                          <td>{ log.client.givenName } {log.client.surname}</td>
+                          <td>{log.client.email}</td>
+                          <td>{log.isMember ? "Yes" : "No"}</td>
+                          <td>₱ {toMoney(log.amountPaid)}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              title="Edit Log"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="btn btn-outline-danger ml-2"
+                              data-toggle="tooltip"
+                              title="Delete Log"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
                   </table>
                 </div>
               </div>

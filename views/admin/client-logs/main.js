@@ -99,6 +99,23 @@ createApp({
         };
       });
     };
+
+    const formatDate = (date) => {
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
+    const toMoney = (money) => {
+      if (!money) return 0;
+      return money.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    };
     onMounted(() => {
       logClientSelect.value = new Choices(logClientSelectElement.value, {
         allowHTML: false,
@@ -130,9 +147,12 @@ createApp({
     return {
       logClientSelectElement,
       form,
+      logs,
+      formatDate,
       handleFormInput,
       submitLog,
       errors,
+      toMoney,
     };
   },
 }).mount("#ClientLog");
