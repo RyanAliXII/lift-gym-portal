@@ -85,6 +85,36 @@ createApp({
         console.error(error);
       }
     };
+
+    const deleteRate = async (rateId) => {
+      const response = await fetch(`/coaches/rates/${form.id}`, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      if (response.status >= 400) return;
+      swal.fire(
+        "Coaching Rate Deletion",
+        "Coaching rate has been deleted.",
+        "success"
+      );
+      fetchRates();
+    };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Coaching Rate",
+        text: "Are you sure you want to delete coaching rate?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete this coaching rate",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+      }
+    };
     onMounted(() => {
       fetchRates();
       $("#newRateModal").on("hidden.bs.modal", () => {
@@ -109,6 +139,7 @@ createApp({
       initEdit,
       onSubmitNewRate,
       onSubmitUpdateRate,
+      initDelete,
     };
   },
 }).mount("#CoachingRate");
