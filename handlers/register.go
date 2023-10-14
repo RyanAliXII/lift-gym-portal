@@ -131,4 +131,5 @@ func coachRoutes(router * echo.Group) {
 	router.PATCH("/profile/password", coachProfileHandler.ChangePassword)
 	router.POST("/public-profile", coachProfileHandler.UpdatePublicProfile)
 	router.GET("/rates", coachRateHandler.RenderCoachRatePage)
+	router.POST("/rates", coachRateHandler.NewRate)
 }

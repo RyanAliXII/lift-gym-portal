@@ -28,6 +28,8 @@
             <textarea
               class="form-control"
               name="description"
+              style="height: 170px"
+              maxlength="255"
               placeholder="Describe your rate and benefits for coaching"
               :class="{'is-invalid': errors?.description}"
               v-model="form.description"
