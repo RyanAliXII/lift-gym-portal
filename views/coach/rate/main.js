@@ -61,6 +61,10 @@ createApp({
     };
     onMounted(() => {
       fetchRates();
+      $("#newRateModal").on("hidden.bs.modal", () => {
+        form.value = { ...initialForm };
+        errors.value = {};
+      });
     });
 
     return {
