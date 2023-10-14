@@ -4,6 +4,8 @@
   },
   "devDependencies": {
     "@nodelib/fs.walk": "^2.0.0",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
@@ -15,6 +17,7 @@
     "filepond": "^4.30.4",
     "filepond-plugin-file-validate-type": "^1.2.8",
     "sweetalert2": "^11.7.27",
+    "swiper": "^10.3.1",
     "uuid": "^9.0.0",
     "vee-validate": "^4.11.3",
     "vue": "^3.3.4",

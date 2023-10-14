@@ -1,0 +1,34 @@
+{{define "client/hire-a-coach/profile-preview"}}
+<div
+  class="modal fade"
+  id="publicProfilePreviewModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="publicProfilePreviewModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="swiper mt-5 w-100 bg-gray-200" style="height: 300px">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper"></div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+
+      <div>
+        <h2 class="text-center mt-5">
+          {{ .profile.GivenName}} {{ .profile.Surname}}
+        </h2>
+
+        <div id="previewDescription" class="p-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{end}}

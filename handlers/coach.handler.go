@@ -28,7 +28,21 @@ func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 }
 
 func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		coaches, err := h.coachRepo.GetCoaches()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
+		}
 
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"coaches": coaches,
+			},
+			Message: "Coaches fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "client/hire-a-coach/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Hire a Coach",

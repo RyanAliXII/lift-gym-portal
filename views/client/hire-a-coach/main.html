@@ -37,15 +37,31 @@
                   >
                     <thead>
                       <tr>
-                        <th>Created At</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Status</th>
+                        <th>Coach</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
                         <th></th>
                       </tr>
                     </thead>
 
-                    <tbody></tbody>
+                    <tbody>
+                      <template v-for="coach of coaches">
+                        <tr>
+                          <td>{coach.givenName} {coach.surname}</td>
+                          <td>{coach.mobileNumber}</td>
+                          <td>{coach.email}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              title="View Coach Profile"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
                   </table>
                 </div>
               </div>
