@@ -24,6 +24,7 @@ createApp({
 
     const onSubmitNewRate = async () => {
       try {
+        errors.value = {};
         const response = await fetch("/coaches/rates", {
           method: "POST",
           body: JSON.stringify(form.value),
