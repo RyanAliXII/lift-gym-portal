@@ -55,6 +55,7 @@ createApp({
         }
         swal.fire("New Rate", "New rate has been created.", "success");
         $("#newRateModal").modal("hide");
+        fetchRates();
       } catch (error) {
         console.error(error);
       }
@@ -63,7 +64,7 @@ createApp({
     const onSubmitUpdateRate = async () => {
       try {
         errors.value = {};
-        const response = await fetch(`/coaches/rates/${form.id}`, {
+        const response = await fetch(`/coaches/rates/${form.value.id}`, {
           method: "PUT",
           body: JSON.stringify(form.value),
           headers: new Headers({
@@ -81,13 +82,14 @@ createApp({
         }
         swal.fire("Rate Update", "Rate has been updated.", "success");
         $("#editRateModal").modal("hide");
+        fetchRates();
       } catch (error) {
         console.error(error);
       }
     };
 
     const deleteRate = async (rateId) => {
-      const response = await fetch(`/coaches/rates/${form.id}`, {
+      const response = await fetch(`/coaches/rates/${rateId}`, {
         method: "DELETE",
         headers: new Headers({
           "Content-Type": "application/json",
@@ -113,6 +115,7 @@ createApp({
         icon: "warning",
       });
       if (result.isConfirmed) {
+        deleteRate(id);
       }
     };
     onMounted(() => {

@@ -153,18 +153,6 @@ func (h *CoachRateHandler)DeleteRate(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	rate := model.CoachRate{}
-	err, fields := rate.Validate()
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, JSONResponse{
-			Status: http.StatusBadRequest,
-			Data: Data{
-				"errors": fields,
-			},
-			Message: "Validation error.",
-		})
-	}
-	rate.Id = id
 	sessionData := mysqlsession.SessionData{}
 	err = sessionData.Bind(c.Get("sessionData"))
 	if err != nil {
@@ -174,8 +162,7 @@ func (h *CoachRateHandler)DeleteRate(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	rate.CoachId = sessionData.User.Id
-	err = h.coachRateRepo.UpdateRate(rate)
+	err = h.coachRateRepo.DeleteRateByIdAndCoachId(id, sessionData.User.Id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "UpdateRateErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
