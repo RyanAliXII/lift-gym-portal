@@ -2,12 +2,14 @@ import { useForm } from "vee-validate";
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
 import { object } from "yup";
+import Choices from "choices.js";
 
 const initalErrors = {
   givenName: "",
   middleName: "",
   surname: "",
   email: "",
+  roleId: "",
 };
 
 const initialForm = {
@@ -16,10 +18,15 @@ const initialForm = {
   middleName: "",
   surname: "",
   email: "",
+  roleId: 0,
 };
 createApp({
   setup() {
     const staffs = ref([]);
+    const addSelectRoleElement = ref(null);
+    const addRoleSelect = ref(null);
+    const editSelectRoleElement = ref(null);
+    const editRoleSelect = ref(null);
     const {
       defineInputBinds,
       values: form,
@@ -57,9 +64,11 @@ createApp({
     const onSubmitNewStaff = async () => {
       try {
         setErrors({ ...initalErrors });
+        let roleId = addRoleSelect.value.getValue()?.value ?? 0;
+        roleId = parseInt(roleId);
         const response = await fetch("/app/staffs", {
           method: "POST",
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...form, roleId }),
           headers: new Headers({
             "content-type": "application/json",
             "X-CSRF-Token": window.csrf,
@@ -85,9 +94,11 @@ createApp({
 
     const onSubmitUpdate = async () => {
       try {
+        let roleId = editRoleSelect.value.getValue()?.value ?? 0;
+        roleId = parseInt(roleId);
         const response = await fetch(`/app/staffs/${form.id}`, {
           method: "PUT",
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...form, roleId }),
           headers: new Headers({
             "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
@@ -142,17 +153,28 @@ createApp({
     };
     const initEdit = (staff) => {
       setValues({ ...staff });
+      editRoleSelect.value.setChoiceByValue(staff.roleId.toString());
       $("#editStaffModal").modal("show");
     };
     onMounted(() => {
+      addRoleSelect.value = new Choices(addSelectRoleElement.value, {
+        allowHTML: true,
+      });
+      editRoleSelect.value = new Choices(editSelectRoleElement.value, {
+        allowHTML: true,
+      });
+      addRoleSelect.value.removeActiveItems();
+      editRoleSelect.value.removeActiveItems();
       fetchStaffs();
       $("#newStaffModal").on("hidden.bs.modal", () => {
         setErrors({ ...initalErrors });
         setValues({ ...initialForm });
+        addRoleSelect.value.removeActiveItems();
       });
       $("#editStaffModal").on("hidden.bs.modal", () => {
         setErrors({ ...initalErrors });
         setValues({ ...initialForm });
+        editRoleSelect.value.removeActiveItems();
       });
     });
     return {
@@ -166,6 +188,9 @@ createApp({
       initEdit,
       onSubmitUpdate,
       initResetPassword,
+      addSelectRoleElement,
+      editRoleSelect,
+      editSelectRoleElement,
     };
   },
   compilerOptions: {

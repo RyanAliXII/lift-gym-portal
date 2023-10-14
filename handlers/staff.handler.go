@@ -14,6 +14,7 @@ import (
 
 type StaffHandler struct {
 	staffRepo repository.StaffRepository
+	roleRepo repository.RoleRepository
 }
 
 func (h *StaffHandler) RenderStaffPage(c echo.Context)error {
@@ -27,10 +28,12 @@ func (h *StaffHandler) RenderStaffPage(c echo.Context)error {
 			},
 		})
 	}
+	roles, _ := h.roleRepo.GetRoles()
 	return c.Render(http.StatusOK, "admin/staff/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Staffs",
 		"module": "Staffs",
+		"roles": roles,
 	})
 }
 func (h *StaffHandler)NewStaff (c echo.Context) error {
@@ -161,5 +164,6 @@ func (h *StaffHandler)ResetPassword(c echo.Context) error {
 func NewStaffHandler() StaffHandler{
 	return StaffHandler{
 		staffRepo: repository.NewStaffRepository(),
+		roleRepo: repository.NewRoleRepository(),
 	}
 }

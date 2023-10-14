@@ -26,6 +26,7 @@ func adminRoutes (router  * echo.Group){
 	staffHandler := NewStaffHandler()
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	workoutHandler := NewWorkoutHandler()
+	rolesPermissionHandler := NewRoleHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
@@ -73,6 +74,9 @@ func adminRoutes (router  * echo.Group){
 	workoutGrp.POST("/categories", workoutCategoryHandler.NewCategory)
 	workoutGrp.PUT("/categories/:id", workoutCategoryHandler.UpdateCategory)
 	workoutGrp.DELETE("/categories/:id", workoutCategoryHandler.DeleteCategory)
+	router.GET("/roles", rolesPermissionHandler.RenderRolePage)
+	router.POST("/roles", rolesPermissionHandler.NewRole)
+	router.PUT("/roles/:id", rolesPermissionHandler.UpdateRole)
 }
 
 
