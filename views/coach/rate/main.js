@@ -1,15 +1,16 @@
 import { createApp, ref } from "vue";
-
+import swal from "sweetalert2";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
   },
   setup() {
-    const form = ref({
+    const initialForm = {
       id: 0,
       description: "",
       price: 0,
-    });
+    };
+    const form = ref({ ...initialForm });
     const handleFormInput = (event) => {
       let value = event.target.value;
       let name = event.target.name;
@@ -39,6 +40,9 @@ createApp({
           }
           return;
         }
+        swal.fire("New Rate", "New rate has been created.", "success");
+        $("#newRateModal").modal("hide");
+        form.value = { ...initialForm };
       } catch (error) {
         console.error(error);
       }
