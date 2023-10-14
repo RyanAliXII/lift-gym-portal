@@ -33,3 +33,4 @@ func (repo * CoachRateRepository) GetRatesByCoachId(id int) ([]model.CoachRate, 
 	err := repo.db.Select(&rates, "SELECT id, description, price, coach_id from coaching_rate where coach_id = ? and deleted_at is null ORDER BY updated_at DESC", id)
 	return rates,err 
 }
+
