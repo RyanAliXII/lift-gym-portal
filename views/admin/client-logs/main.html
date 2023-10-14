@@ -70,6 +70,9 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   <script src="/js/admin/client-logs/main.js"></script>
 </html>
 {{end}}

@@ -21,14 +21,31 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="submitLog">
           <div class="form-group">
             <label>Client</label>
             <select ref="logClientSelectElement"></select>
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.clientId}"
+            >
+              {errors?.clientId}
+            </div>
           </div>
           <div class="form-group" v-if="!form.isMember">
             <label>Amount</label>
-            <input class="form-control" type="number" name="amount" />
+            <input
+              class="form-control"
+              min="0"
+              type="number"
+              name="amountPaid"
+              :value="form.amountPaid"
+              @input="handleFormInput"
+              :class="{'is-invalid': errors?.amountPaid}"
+            />
+            <div class="invalid-feedback" :class="{'d-block': errors?.amount}">
+              {errors?.amountPaid}
+            </div>
           </div>
           <div class="d-flex" style="gap: 5px">
             <button

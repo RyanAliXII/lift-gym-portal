@@ -23,10 +23,10 @@ func (m ClientLog) Validate() (error, map[string]string) {
 				}
 				amountPaid,ok := value.(float64)
 				if (!ok){
-					return fmt.Errorf("Amount paid is required.")
+					return fmt.Errorf("Amount is required.")
 				}
 				if amountPaid == 0 {
-					return fmt.Errorf("Amount paid is required.")
+					return fmt.Errorf("Amount is required.")
 				}
 				return nil
 		})),
