@@ -6,9 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ClientLogHandler struct {
-
-}
+type ClientLogHandler struct {}
 func NewClientLogHandler()ClientLogHandler{
 	return ClientLogHandler{}
 }
