@@ -60,7 +60,10 @@
                           <td>{rate.description}</td>
                           <td>{rate.price}</td>
                           <td>
-                            <button class="btn btn-outline-primary">
+                            <button
+                              class="btn btn-outline-primary"
+                              @click="initEdit(rate)"
+                            >
                               <i class="fas fa-edit"></i>
                             </button>
                           </td>
@@ -70,7 +73,8 @@
                   </table>
                 </div>
               </div>
-              {{template "coach/rate/new-rate-modal" . }}
+              {{template "coach/rate/new-rate-modal" . }} {{template
+              "coach/rate/edit-rate-modal" . }}
             </div>
           </div>
           <!-- /.container-fluid -->

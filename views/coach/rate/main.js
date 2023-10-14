@@ -65,13 +65,22 @@ createApp({
         form.value = { ...initialForm };
         errors.value = {};
       });
+      $("#editRateModal").on("hidden.bs.modal", () => {
+        form.value = { ...initialForm };
+        errors.value = {};
+      });
     });
+    const initEdit = (rate) => {
+      form.value = rate;
+      $("#editRateModal").modal("show");
+    };
 
     return {
       form,
       errors,
       handleFormInput,
       rates,
+      initEdit,
       onSubmitNewRate,
     };
   },
