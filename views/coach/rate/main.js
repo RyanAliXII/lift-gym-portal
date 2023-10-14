@@ -59,6 +59,32 @@ createApp({
         console.error(error);
       }
     };
+
+    const onSubmitUpdateRate = async () => {
+      try {
+        errors.value = {};
+        const response = await fetch(`/coaches/rates/${form.id}`, {
+          method: "PUT",
+          body: JSON.stringify(form.value),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors ?? {};
+          }
+          return;
+        }
+        swal.fire("Rate Update", "Rate has been updated.", "success");
+        $("#editRateModal").modal("hide");
+      } catch (error) {
+        console.error(error);
+      }
+    };
     onMounted(() => {
       fetchRates();
       $("#newRateModal").on("hidden.bs.modal", () => {
@@ -82,6 +108,7 @@ createApp({
       rates,
       initEdit,
       onSubmitNewRate,
+      onSubmitUpdateRate,
     };
   },
 }).mount("#CoachingRate");

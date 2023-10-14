@@ -132,4 +132,5 @@ func coachRoutes(router * echo.Group) {
 	router.POST("/public-profile", coachProfileHandler.UpdatePublicProfile)
 	router.GET("/rates", coachRateHandler.RenderCoachRatePage)
 	router.POST("/rates", coachRateHandler.NewRate)
+	router.PUT("/rates/:id", coachRateHandler.UpdateRate)
 }
