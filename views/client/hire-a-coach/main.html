@@ -9,6 +9,14 @@
       {{template "partials/client/sidebar" .}}
       <!-- End of Sidebar -->
       <!-- Content Wrapper -->
+      <style>
+        .slide-image {
+          width: "400px" !important;
+          height: "330px" !important;
+          aspect-ratio: 1/1 !important;
+          object-fit: cover !important;
+        }
+      </style>
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
         <div id="content">
@@ -67,7 +75,7 @@
                 </div>
               </div>
             </div>
-
+            <div class="hide" ref="slideTemplate"></div>
             {{template "client/hire-a-coach/profile-preview" .}}
           </div>
           <!-- /.container-fluid -->
@@ -87,6 +95,7 @@
   {{template "partials/sb-scripts"}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.publicUrl = "{{.objstorePublicUrl}}";
   </script>
   <script src="/js/client/hire-a-coach/main.js"></script>
 </html>

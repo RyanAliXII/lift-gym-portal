@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -46,7 +47,8 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 	return c.Render(http.StatusOK, "client/hire-a-coach/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Hire a Coach",
-		"module": "Coaches",		
+		"module": "Coaches",
+		"objstorePublicUrl": objstore.PublicURL,		
  	})
 }
 func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {

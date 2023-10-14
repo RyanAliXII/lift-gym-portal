@@ -1,9 +1,14 @@
 import { createApp, onMounted, ref } from "vue";
-import Swiper from "swiper";
-import "swiper/css";
+
+import { Swiper, SwiperSlide } from "swiper/vue";
+
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
+  },
+  components: {
+    Swiper,
+    SwiperSlide,
   },
   setup() {
     const coaches = ref([]);
@@ -11,9 +16,10 @@ createApp({
       givenName: "",
       surname: "",
       description: "",
+      images: [],
     });
+    const slideTemplate = ref(null);
     const swiperElement = ref(null);
-    const swiper = ref(null);
     const fetchCoaches = async () => {
       const response = await fetch("/clients/hire-a-coach", {
         headers: new Headers({ "Content-Type": "application/json" }),
@@ -23,34 +29,24 @@ createApp({
       const { data } = await response.json();
       coaches.value = data?.coaches ?? [];
     };
-    const preview = (coach) => {
-      console.log(coach);
+    const preview = (c) => {
+      c.description = c.description.replace("<script>", "");
+      c.description = c.description.replace("</script>", "");
+      coach.value = c;
+
       $("#profilePreviewModal").modal("show");
     };
 
     onMounted(() => {
       fetchCoaches();
-      swiper.value = new Swiper(swiperElement.value, {
-        // Optional parameters
-        direction: "horizontal",
-        loop: true,
-
-        // If we need pagination
-        pagination: {
-          el: ".swiper-pagination",
-        },
-
-        // Navigation arrows
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      });
     });
     return {
       coaches,
+      slideTemplate,
       swiperElement,
       preview,
+      coach,
+      publicUrl: window.publicUrl,
     };
   },
 }).mount("#HireCoach");
