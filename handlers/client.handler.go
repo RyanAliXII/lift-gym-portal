@@ -33,6 +33,23 @@ func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 
 func (h * ClientHandler) handleJSONContent( c echo.Context ) error {
 
+
+	keyword := c.QueryParam("keyword")
+	if len(keyword) > 0 {
+		clients, err := h.clientRepo.Search(keyword)
+	
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "Search"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			   Status: http.StatusOK,
+			   Data: Data{
+				   "clients": clients,
+			   },
+			   Message: "Searched Client.",
+		})
+
+	}
 	clientType := c.QueryParam("type")
 	if len(clientType) > 0 {
 		if clientType == "unsubscribed"{

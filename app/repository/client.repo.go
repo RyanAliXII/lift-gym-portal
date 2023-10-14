@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
@@ -44,6 +45,19 @@ func (repo * ClientRepository)Get()([]model.Client, error) {
 	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
 	ORDER BY client.updated_at DESC`
 	selectErr := repo.db.Select(&clients, selectQuery)
+	return clients, selectErr 
+}
+
+func (repo * ClientRepository)Search(keyword string)([]model.Client, error) {
+	clients := make([]model.Client , 0)
+	keywordLike := fmt.Sprintf("%s%s%s","%", keyword, "%")
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	INNER JOIN account on client.account_id = account.id 
+	LEFT JOIN subscription on subscription.client_id = client.id
+	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
+    where client.given_name LIKE ? OR client.middle_name LIKE ? OR client.surname LIKE ? OR client.mobile_number LIKE ? OR account.email LIKE ?
+	ORDER BY client.updated_at DESC LIMIT 50`
+	selectErr := repo.db.Select(&clients, selectQuery, keywordLike, keywordLike, keywordLike, keywordLike, keywordLike)
 	return clients, selectErr 
 }
 func (repo * ClientRepository)GetById(id int)(model.Client, error) {

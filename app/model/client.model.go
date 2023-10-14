@@ -23,8 +23,8 @@ type Client struct {
 	MobileNumber     string `json:"mobileNumber,omitempty" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth,omitempty" db:"date_of_birth"`
 	AccountId 		 string `json:"accountId,omitempty" db:"account_id"`
-	IsVerified		 bool 	`json:"isVerified,omitempty" db:"is_verified"`
-	IsMember		 bool 	`json:"isMember,omitempty" db:"is_member"`
+	IsVerified		 bool 	`json:"isVerified" db:"is_verified"`
+	IsMember		 bool 	`json:"isMember" db:"is_member"`
 	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
 	Model
 }

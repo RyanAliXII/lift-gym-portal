@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vorms/core": "^1.1.0",
+    "@vueuse/core": "^10.5.0",
     "choices.js": "^10.2.0",
     "date-fns": "^2.30.0",
     "filepond": "^4.30.4",

@@ -1,0 +1,109 @@
+{{define "admin/client-logs/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+  <body>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="ClientLog">
+          {{template "partials/dashboard-topbar"}}
+
+          <div class="container-fluid">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="mb-3 ml-2">
+              <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#logClientModal"
+              >
+                <i class="fas fa-plus"></i>
+                Log Client
+              </button>
+            </div>
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  List of Logged Clients
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <td>Created At</td>
+                        <th>Client</th>
+                        <th>Client Email</th>
+                        <th>Member(Yes/No)</th>
+                        <th>Amount Paid</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="log of logs ">
+                        <tr>
+                          <td>{formatDate(log.createdAt)}</td>
+                          <td>{ log.client.givenName } {log.client.surname}</td>
+                          <td>{log.client.email}</td>
+                          <td>{log.isMember ? "Yes" : "No"}</td>
+                          <td>₱ {toMoney(log.amountPaid)}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              data-toggle="tooltip"
+                              title="Edit Log"
+                              @click="initEdit(log)"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="btn btn-outline-danger ml-2"
+                              data-toggle="tooltip"
+                              title="Delete Log"
+                              @click="initDelete(log.id)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{template "admin/client-logs/log-modal" .}} {{template
+          "admin/client-logs/edit-log-modal" .}}
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    {{template "partials/sb-scripts" .}}
+  </body>
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
+  <script src="/js/admin/client-logs/main.js"></script>
+</html>
+{{end}}
