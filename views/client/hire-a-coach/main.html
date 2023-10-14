@@ -55,6 +55,7 @@
                               class="btn btn-outline-primary"
                               data-toggle="tooltip"
                               title="View Coach Profile"
+                              @click="preview(coach)"
                             >
                               <i class="fas fa-eye"></i>
                             </button>
@@ -66,6 +67,8 @@
                 </div>
               </div>
             </div>
+
+            {{template "client/hire-a-coach/profile-preview" .}}
           </div>
           <!-- /.container-fluid -->
         </div>

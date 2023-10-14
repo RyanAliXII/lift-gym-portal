@@ -1,15 +1,19 @@
 {{define "client/hire-a-coach/profile-preview"}}
 <div
   class="modal fade"
-  id="publicProfilePreviewModal"
+  id="profilePreviewModal"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="publicProfilePreviewModal"
+  aria-labelledby="profilePreviewModal"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="swiper mt-5 w-100 bg-gray-200" style="height: 300px">
+      <div
+        class="swiper mt-5 w-100 bg-gray-200"
+        style="height: 300px"
+        ref="swiperElement"
+      >
         <!-- Additional required wrapper -->
         <div class="swiper-wrapper"></div>
         <!-- If we need pagination -->
@@ -21,9 +25,7 @@
       </div>
 
       <div>
-        <h2 class="text-center mt-5">
-          {{ .profile.GivenName}} {{ .profile.Surname}}
-        </h2>
+        <h2 class="text-center mt-5"></h2>
 
         <div id="previewDescription" class="p-3"></div>
       </div>

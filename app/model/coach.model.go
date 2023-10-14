@@ -24,6 +24,7 @@ type Coach struct {
 	AccountId 		 string `json:"accountId" db:"account_id"`
 	IsVerified		 bool `json:"isVerified" db:"is_verified"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
+	Images 			 CoachImages `json:"images" db:"images"`
 	Model
 }
 func (m Coach) Validate() (error, map[string]string) {
