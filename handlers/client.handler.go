@@ -36,7 +36,11 @@ func (h * ClientHandler) handleJSONContent( c echo.Context ) error {
 
 	keyword := c.QueryParam("keyword")
 	if len(keyword) > 0 {
-		clients, _ := h.clientRepo.Search(keyword)
+		clients, err := h.clientRepo.Search(keyword)
+	
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "Search"))
+		}
 		return c.JSON(http.StatusOK, JSONResponse{
 			   Status: http.StatusOK,
 			   Data: Data{

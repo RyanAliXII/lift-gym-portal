@@ -5,8 +5,30 @@ createApp({
   setup() {
     const logClientSelectElement = ref(null);
     const logClientSelect = ref(null);
+    const form = ref({
+      clientId: 0,
+      isMember: false,
+      amount: 0,
+    });
+    const search = useDebounceFn(async (query) => {
+      const response = await fetch(
+        `/app/clients?${new URLSearchParams({
+          keyword: query,
+        }).toString()}`,
+        {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        }
+      );
 
-    const search = useDebounceFn((query) => {}, 500);
+      if (response.status === 200) {
+        const { data } = await response.json();
+        const selectValues = (data?.clients ?? []).map((client) => ({
+          value: client.id,
+          label: `${client.givenName} ${client.surname} - ${client.email}`,
+        }));
+        logClientSelect.value.setChoices(selectValues, "value", "label", true);
+      }
+    }, 500);
 
     onMounted(() => {
       logClientSelect.value = new Choices(logClientSelectElement.value, {
