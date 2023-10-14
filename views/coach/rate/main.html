@@ -1,7 +1,8 @@
-{{define "client/hire-a-coach/main"}}
+{{define "coach/rate/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
+
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -25,14 +26,14 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid" id="HireCoach">
+          <div class="container-fluid" id="CoachingRate">
             {{template "partials/dashboard-page-heading" .}}
 
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  List of Coaches
+                  Your Coaching Rates
                 </h6>
               </div>
               <div class="card-body">
@@ -45,41 +46,18 @@
                   >
                     <thead>
                       <tr>
-                        <th>Coach</th>
-                        <th>Mobile</th>
-                        <th>Email</th>
-                        <th></th>
+                        <th>Description</th>
+                        <th>Price</th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <template v-for="coach of coaches">
-                        <tr>
-                          <td>{coach.givenName} {coach.surname}</td>
-                          <td>{coach.mobileNumber}</td>
-                          <td>{coach.email}</td>
-                          <td>
-                            <button
-                              class="btn btn-outline-primary"
-                              data-toggle="tooltip"
-                              title="View Coach Profile"
-                              @click="preview(coach)"
-                            >
-                              <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-primary ml-2">
-                              Hire Coach
-                            </button>
-                          </td>
-                        </tr>
-                      </template>
+                      <template> </template>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            <div class="hide" ref="slideTemplate"></div>
-            {{template "client/hire-a-coach/profile-preview" .}}
           </div>
           <!-- /.container-fluid -->
         </div>
@@ -94,12 +72,6 @@
       <i class="fas fa-angle-up"></i>
     </a>
   </body>
-
   {{template "partials/sb-scripts"}}
-  <script>
-    window.csrf = "{{.csrf}}";
-    window.publicUrl = "{{.objstorePublicUrl}}";
-  </script>
-  <script src="/js/client/hire-a-coach/main.js"></script>
 </html>
 {{end}}

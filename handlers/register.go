@@ -122,6 +122,7 @@ func coachRoutes(router * echo.Group) {
 	loginHandler := NewLoginHandler()
 	dashboardHandler := NewDashboardHandler()
 	coachProfileHandler :=  NewCoachProfileHandler()
+	coachRateHandler := NewCoachRateHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
@@ -129,4 +130,5 @@ func coachRoutes(router * echo.Group) {
 	router.GET("/profile", coachProfileHandler.RenderProfilePage)
 	router.PATCH("/profile/password", coachProfileHandler.ChangePassword)
 	router.POST("/public-profile", coachProfileHandler.UpdatePublicProfile)
+	router.GET("/rates", coachRateHandler.RenderCoachRatePage)
 }
