@@ -2,15 +2,22 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
-type ClientLogHandler struct {}
+type ClientLogHandler struct {
+	clientLogRepo repository.ClientLogRepository
+	clientRepo repository.ClientRepository
+}
 func NewClientLogHandler()ClientLogHandler{
-	return ClientLogHandler{}
+	return ClientLogHandler{
+		clientLogRepo: repository.NewClientLogRepository(),
+		clientRepo: repository.NewClientRepository(),
+	}
 }
 func (h *ClientLogHandler) RenderClientLogPage(c echo.Context) error{
 	return c.Render(http.StatusOK, "admin/client-logs/main", Data{
@@ -38,6 +45,29 @@ func (h * ClientLogHandler) NewLog(c echo.Context)error {
 				"errors": fields,
 			},
 			Message: "Validation error.",
+		})
+	}
+
+	client, err := h.clientRepo.GetById(log.ClientId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getById"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured",
+		})
+	}
+	
+	log.IsMember = client.IsMember
+	if log.IsMember {
+		log.AmountPaid = 0
+	}
+
+	err = h.clientLogRepo.NewLog(log)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewLogerr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,		
+			Message: "Unknown error occured",
 		})
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
