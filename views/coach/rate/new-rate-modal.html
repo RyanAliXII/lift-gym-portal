@@ -22,7 +22,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="onSubmitNewRate">
           <div class="form-group">
             <label for="description" class="col-form-label">Description</label>
             <textarea
@@ -32,9 +32,8 @@
               maxlength="255"
               placeholder="Describe your rate and benefits for coaching"
               :class="{'is-invalid': errors?.description}"
-              v-model="form.description"
-              @oninput="handleFormInput"
-              value="form.price"
+              @input="handleFormInput"
+              :value="form.description"
             ></textarea>
             <div class="invalid-feedback" v-show="errors?.description">
               {errors?.description}
@@ -48,10 +47,9 @@
               name="price"
               step=".01"
               min="0"
-              @oninput="handleFormInput"
-              value="form.price"
+              @input="handleFormInput"
+              :value="form.price"
               :class="{'is-invalid': errors?.price}"
-              v-model="form.price"
             />
             <div class="invalid-feedback" v-show="errors?.price">
               {errors?.price}

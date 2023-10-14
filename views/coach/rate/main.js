@@ -1,6 +1,9 @@
 import { createApp, ref } from "vue";
 
 createApp({
+  compilerOptions: {
+    delimiters: ["{", "}"],
+  },
   setup() {
     const form = ref({
       id: 0,
@@ -18,10 +21,34 @@ createApp({
     };
     const errors = ref({});
 
+    const onSubmitNewRate = async () => {
+      try {
+        const response = await fetch("/coaches/rates", {
+          method: "POST",
+          body: JSON.stringify(form.value),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors ?? {};
+          }
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     return {
       form,
       errors,
       handleFormInput,
+      onSubmitNewRate,
     };
   },
 }).mount("#CoachingRate");
