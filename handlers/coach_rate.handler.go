@@ -47,6 +47,28 @@ func (h *CoachRateHandler) RenderCoachRatePage(c echo.Context) error {
 	})
 }
 
+func (h *CoachRateHandler) GetCoachRatesByCoachId(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("coachId"))
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "strConvErr"))
+			return c.JSON(http.StatusBadRequest, JSONResponse{
+				Status: http.StatusBadRequest,
+				Message: "Unknown error occured.",
+			})
+		}
+		rates, err := h.coachRateRepo.GetRatesByCoachId(id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetRatesByCoachId"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"rates": rates,
+			},
+			Message: "Coach rates fetched.",
+		})
+}
+
 func (h *CoachRateHandler) NewRate(c echo.Context) error {
 	rate := model.CoachRate{}
 	err := c.Bind(&rate)

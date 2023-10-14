@@ -95,6 +95,7 @@ func clientRoutes(router * echo.Group){
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	registrationHandler := NewRegistrationHandler()
 	coachHandler := NewCoachHandler()
+	coachRateHandler := NewCoachRateHandler()
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -116,6 +117,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/workouts", workoutCategoryHandler.RenderClientWorkoutPage)
 	router.GET("/workouts/:id", workoutCategoryHandler.RenderClientWorkoutsByCategoryId)
 	router.GET("/hire-a-coach", coachHandler.RenderClientHireCoachPage)
+	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 }
 
 func coachRoutes(router * echo.Group) {
