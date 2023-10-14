@@ -23,7 +23,22 @@ func NewCoachRateHandler() CoachRateHandler {
 
 func (h *CoachRateHandler) RenderCoachRatePage(c echo.Context) error {
 
-	
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		sessionData := mysqlsession.SessionData{}
+		sessionData.Bind(c.Get("sessionData"))
+		rates, err := h.coachRateRepo.GetRatesByCoachId(sessionData.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetRatesByCoachId"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"rates": rates,
+			},
+			Message: "Coach rates fetched.",
+		})
+	}
 	return c.Render(http.StatusOK, "coach/rate/main", Data{
 		"title":"Coach Rates",
 		"module": "Coaching Rates",

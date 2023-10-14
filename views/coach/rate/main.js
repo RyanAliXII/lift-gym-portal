@@ -1,4 +1,4 @@
-import { createApp, ref } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
 createApp({
   compilerOptions: {
@@ -21,7 +21,19 @@ createApp({
       delete errors.value[name];
     };
     const errors = ref({});
-
+    const rates = ref([]);
+    const fetchRates = async () => {
+      try {
+        const response = await fetch("/coaches/rates", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 500) return;
+        rates.value = data?.rates ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const onSubmitNewRate = async () => {
       try {
         errors.value = {};
@@ -43,16 +55,19 @@ createApp({
         }
         swal.fire("New Rate", "New rate has been created.", "success");
         $("#newRateModal").modal("hide");
-        form.value = { ...initialForm };
       } catch (error) {
         console.error(error);
       }
     };
+    onMounted(() => {
+      fetchRates();
+    });
 
     return {
       form,
       errors,
       handleFormInput,
+      rates,
       onSubmitNewRate,
     };
   },

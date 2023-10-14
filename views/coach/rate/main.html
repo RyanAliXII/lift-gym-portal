@@ -54,7 +54,12 @@
                     </thead>
 
                     <tbody>
-                      <template> </template>
+                      <template v-for="rate of rates">
+                        <tr>
+                          <td>{rate.description}</td>
+                          <td>{rate.price}</td>
+                        </tr>
+                      </template>
                     </tbody>
                   </table>
                 </div>
