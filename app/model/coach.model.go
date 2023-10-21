@@ -115,8 +115,9 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 
 type HiredCoach struct {
 	Id string `json:"id" db:"id"`
-	CoachId int `json:"coach_id" db:"coach_id"`
-	RateId int `json:"rate_id" db:"rate_id"`
+	CoachId int `json:"coachId" db:"coach_id"`
+	RateId int `json:"rateId" db:"rate_id"`
+	ClientId int `json:"clientId" db:"client_id"`
 	Model
 }
 

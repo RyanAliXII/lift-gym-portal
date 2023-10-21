@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 
 type CoachHandler struct {
 	coachRepo repository.CoachRepository
+	hiredCoachRepo repository.HiredCoachRepository
 }
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
@@ -54,8 +56,6 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 
 func (h * CoachHandler) HireCoach (c echo.Context ) error {
 	hiredCoach := model.HiredCoach{}
-
-
 	err := c.Bind(&hiredCoach)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "bindErr"))
@@ -65,14 +65,32 @@ func (h * CoachHandler) HireCoach (c echo.Context ) error {
 		})
 	}
 	err, fields := hiredCoach.Validate()
-
 	if err != nil {
-
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
 			Data: Data{
 				"errors": fields,
 			},
+			Message: "Validation error.",
+		})
+	}
+	sessionData := c.Get("sessionData")
+	session := mysqlsession.SessionData{}
+	err = session.Bind(&sessionData)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "sessionErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	hiredCoach.ClientId  = session.User.Id
+	err = h.hiredCoachRepo.Hire(hiredCoach)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "HireErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
 		})
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
@@ -237,5 +255,6 @@ func (h  *CoachHandler)ResetPassword(c echo.Context) error {
 func NewCoachHandler() CoachHandler{
 	return CoachHandler{
 		coachRepo: repository.NewCoachRepository(),
+		hiredCoachRepo: repository.NewHiredCoachRepository(),
 	}
 }
