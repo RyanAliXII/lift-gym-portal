@@ -21,10 +21,13 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label>Coaching Rate</label>
             <select ref="hireSelectElement"></select>
+            <div class="invalid-feedback" :class="{'d-block': errors?.rateId}">
+              {errors?.rateId}
+            </div>
           </div>
           <div class="d-flex" style="gap: 5px">
             <button

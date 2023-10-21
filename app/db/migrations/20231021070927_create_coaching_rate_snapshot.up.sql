@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS coaching_rate(
+CREATE TABLE IF NOT EXISTS coaching_rate_snapshot(
    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    coach_id int not null,
    description VARCHAR(255) DEFAULT '',

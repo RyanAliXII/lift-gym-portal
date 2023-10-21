@@ -19,6 +19,9 @@ createApp({
       description: "",
       images: [],
     });
+    const errors = ref({
+      rateId: undefined,
+    });
     const form = ref({
       coachId: 0,
       rateId: 0,
@@ -36,8 +39,17 @@ createApp({
       const { data } = await response.json();
       coaches.value = data?.coaches ?? [];
     };
-    const fetchCoachingRateByCoachId = async () => {
+    const fetchCoachingRatesByCoachId = async (coachId) => {
       try {
+        const response = await fetch(`/clients/coaches/${coachId}/rates`);
+
+        if (response.status >= 400) return;
+        const { data } = await response.json();
+        const rateSelectValues = (data?.rates ?? []).map((rate) => ({
+          value: rate.id,
+          label: rate.description,
+        }));
+        hireSelect.value.setChoices(rateSelectValues, "value", "label", true);
       } catch (error) {}
     };
     const preview = (c) => {
@@ -48,14 +60,26 @@ createApp({
       $("#profilePreviewModal").modal("show");
     };
     const initHire = (coachId) => {
-      form.value.id = coachId;
+      form.value.coachId = coachId;
+      fetchCoachingRatesByCoachId(coachId);
       $("#hireModal").modal("show");
+    };
+
+    const onSubmit = () => {
+      try {
+      } catch (error) {}
     };
     onMounted(() => {
       fetchCoaches();
       hireSelect.value = new Choices(hireSelectElement.value, {
         allowHTML: false,
       });
+      hireSelect.value.passedElement.element.addEventListener(
+        "change",
+        (event) => {
+          form.value.rateId = event.detail.value;
+        }
+      );
     });
     return {
       coaches,
@@ -66,6 +90,8 @@ createApp({
       initHire,
       hireSelectElement,
       publicUrl: window.publicUrl,
+      onSubmit,
+      errors,
     };
   },
 }).mount("#HireCoach");
