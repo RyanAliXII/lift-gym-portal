@@ -65,7 +65,9 @@ func (h * CoachHandler) HireCoach (c echo.Context ) error {
 		})
 	}
 	err, fields := hiredCoach.Validate()
+
 	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validateErr"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
 			Data: Data{
@@ -76,7 +78,7 @@ func (h * CoachHandler) HireCoach (c echo.Context ) error {
 	}
 	sessionData := c.Get("sessionData")
 	session := mysqlsession.SessionData{}
-	err = session.Bind(&sessionData)
+	err = session.Bind(sessionData)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "sessionErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{

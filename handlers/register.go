@@ -117,6 +117,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/workouts", workoutCategoryHandler.RenderClientWorkoutPage)
 	router.GET("/workouts/:id", workoutCategoryHandler.RenderClientWorkoutsByCategoryId)
 	router.GET("/hire-a-coach", coachHandler.RenderClientHireCoachPage)
+	router.POST("/hire-a-coach", coachHandler.HireCoach)
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 }
 

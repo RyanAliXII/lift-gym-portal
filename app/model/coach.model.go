@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/db"
 	"time"
@@ -113,18 +115,42 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 }
 
 
+type CoachJSON struct {
+	Coach
+}
+func (instance *CoachJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = CoachJSON{}
+		}
+	} else {
+		*instance = CoachJSON{}
+	}
+	return nil
+
+}
+func (copy CoachJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
+}
+
 type HiredCoach struct {
 	Id string `json:"id" db:"id"`
 	CoachId int `json:"coachId" db:"coach_id"`
 	RateId int `json:"rateId" db:"rate_id"`
 	ClientId int `json:"clientId" db:"client_id"`
+	Coach CoachJSON `json:"coach" db:"coach"`
+	Rate CoachRateJSON `json:"rate" db:"rate"`
+	RateSnapshot CoachRate `json:"rateSnapshot" db:"rate_snapshot"`
 	Model
 }
+
 
 func(m HiredCoach) Validate() (error, map[string]string) {
 	return m.Model.ValidationRules(&m,
 		 validation.Field(&m.CoachId, validation.Required.Error("Coach is required."), validation.Min(1).Error("Coach is required.")), 
-		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min("Rate is required.")))
+		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
 }
 
 

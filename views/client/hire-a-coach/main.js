@@ -2,7 +2,7 @@ import { createApp, onMounted, ref } from "vue";
 
 import { Swiper, SwiperSlide } from "swiper/vue";
 import Choices from "choices.js";
-
+import swal from "sweetalert2";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -65,9 +65,28 @@ createApp({
       $("#hireModal").modal("show");
     };
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
       try {
-      } catch (error) {}
+        const response = await fetch("/clients/hire-a-coach", {
+          body: JSON.stringify(form.value),
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+            return;
+          }
+          return;
+        }
+        swal.fire("Hire Coach", "Coach has been hired.", "success");
+      } catch (error) {
+        console.error(error);
+      }
     };
     onMounted(() => {
       fetchCoaches();

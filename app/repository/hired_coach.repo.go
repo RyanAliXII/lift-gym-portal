@@ -22,12 +22,12 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 		return err
 	}
 	coachRate := model.CoachRate{}
-	err = transaction.Get(&coachRate, "SELECT id, description, price, coach_id from coaching_rate where id = ? and coach_id = ? LIMIT 1", hiredCoach.RateId, hiredCoach.CoachId)
+	err = transaction.Get(&coachRate, "SELECT id, description, price, coach_id from coaching_rate where id = ? and coach_id = ? and deleted_at is null LIMIT 1", hiredCoach.RateId, hiredCoach.CoachId)
 	if err != nil {
 		transaction.Rollback()
 		return err
 	}
-	result, err := transaction.Exec("INSERT INTO coaching_rate_snapshot (description, price, coach_id) VALUES(?, ?, ?, ?)", coachRate.Description, coachRate.Price, coachRate.CoachId)
+	result, err := transaction.Exec("INSERT INTO coaching_rate_snapshot (description, price, coach_id) VALUES(?, ?, ?)", coachRate.Description, coachRate.Price, coachRate.CoachId)
 	if err != nil {
 		transaction.Rollback()
 		return err
@@ -44,4 +44,33 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 	}
 	transaction.Commit()
 	return nil
+}
+
+func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int ){
+	query := `
+		SELECT 
+		hired_coach.id, 
+		hired_coach.coach_id,
+		hired_coach.rate_id, 
+		hired_coach.rate_snapshot_id,
+		hired_coach.client_id,
+		JSON_OBJECT(
+			'id', hired_coach.coach_id,
+			'givenName', coach.given_name,
+			'middleName', coach.middle_name,
+			'surname', coach.surname,
+			'email', account.email,
+			'mobileNumber', coach.mobile_number
+		) as coach,
+		JSON_OBJECT('id', coaching_rate.id, 'description', coaching_rate.description, 'price', coaching_rate.price) as rate,
+		JSON_OBJECT('id', coaching_rate_snapshot.id, 'description', coaching_rate_snapshot.description, 'price', coaching_rate_snapshot.price) as rate_snapshot
+		FROM hired_coach
+		INNER JOIN coach ON hired_coach.coach_id = coach.id
+		INNER JOIN account ON coach.account_id = account.id
+		INNER JOIN coaching_rate ON hired_coach.rate_id = coaching_rate.id
+		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
+		where client_id = ?
+	`
+		
+
 }
