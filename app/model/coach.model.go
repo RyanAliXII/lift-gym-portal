@@ -139,10 +139,11 @@ type HiredCoach struct {
 	Id string `json:"id" db:"id"`
 	CoachId int `json:"coachId" db:"coach_id"`
 	RateId int `json:"rateId" db:"rate_id"`
+	RateSnapshotId int `json:"rateSnapshotId" db:"rate_snapshot_id"`
 	ClientId int `json:"clientId" db:"client_id"`
 	Coach CoachJSON `json:"coach" db:"coach"`
 	Rate CoachRateJSON `json:"rate" db:"rate"`
-	RateSnapshot CoachRate `json:"rateSnapshot" db:"rate_snapshot"`
+	RateSnapshot CoachRateJSON `json:"rateSnapshot" db:"rate_snapshot"`
 	Model
 }
 

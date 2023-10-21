@@ -21,6 +21,8 @@ type CoachHandler struct {
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 	csrf := c.Get("csrf")
+
+
 	coaches,_ := h.coachRepo.GetCoaches()
 	return c.Render(http.StatusOK, "admin/coach/main", Data{
 		"title": "Coaches",
@@ -37,7 +39,7 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
 		}
-
+		
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{

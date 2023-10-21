@@ -46,7 +46,7 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 	return nil
 }
 
-func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int ){
+func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([]model.HiredCoach, error){
 	query := `
 		SELECT 
 		hired_coach.id, 
@@ -71,6 +71,10 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int ){
 		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
 		where client_id = ?
 	`
-		
-
+    hiredCoaches := make([]model.HiredCoach, 0)
+	err := repo.db.Select(&hiredCoaches, query, clientId)
+	if err != nil {
+		return hiredCoaches, err
+	}
+	return hiredCoaches, nil
 }
