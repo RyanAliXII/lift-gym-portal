@@ -62,7 +62,7 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([
 			'email', account.email,
 			'mobileNumber', coach.mobile_number
 		) as coach,
-		JSON_OBJECT('id', coaching_rate.id, 'description', coaching_rate.description, 'price', coaching_rate.price) as rate,
+		JSON_OBJECT('id', coaching_rate.id, 'description', coaching_rate.description, 'price', coaching_rate.price, 'coachId', coaching_rate.coach_id) as rate,
 		JSON_OBJECT('id', coaching_rate_snapshot.id, 'description', coaching_rate_snapshot.description, 'price', coaching_rate_snapshot.price) as rate_snapshot
 		FROM hired_coach
 		INNER JOIN coach ON hired_coach.coach_id = coach.id
@@ -70,6 +70,7 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([
 		INNER JOIN coaching_rate ON hired_coach.rate_id = coaching_rate.id
 		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
 		where client_id = ?
+		ORDER BY hired_coach.created_at desc
 	`
     hiredCoaches := make([]model.HiredCoach, 0)
 	err := repo.db.Select(&hiredCoaches, query, clientId)

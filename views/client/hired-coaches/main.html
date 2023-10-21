@@ -1,0 +1,106 @@
+{{define "client/hired-coaches/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/client/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <style>
+        .slide-image {
+          width: "400px" !important;
+          height: "330px" !important;
+          aspect-ratio: 1/1 !important;
+          object-fit: cover !important;
+        }
+      </style>
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          {{template "partials/client/dashboard-topbar"}}
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid" id="HiredCoaches">
+            {{template "partials/dashboard-page-heading" .}}
+
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  List of Hired Coaches
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Coach</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="hiredCoach of hiredCoaches">
+                        <tr>
+                          <td>
+                            {hiredCoach.coach.givenName}
+                            {hiredCoach.coach.surname}
+                          </td>
+                          <td>{hiredCoach.coach.email}</td>
+                          <td>{hiredCoach.coach.mobileNumber}</td>
+                          <td>{hiredCoach.rateSnapshot.description}</td>
+                          <td>PHP {toMoney(hiredCoach.rateSnapshot.price)}</td>
+                          <td class="flex" style="gap: 5px">
+                            <button
+                              class="btn btn-outline-danger"
+                              data-toggle="tooltip"
+                              title="Cancel"
+                            >
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- {{template "client/hire-a-coach/hire-modal" . }} -->
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+
+  {{template "partials/sb-scripts"}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
+  <script src="/js/client/hired-coaches/main.js"></script>
+</html>
+{{end}}
