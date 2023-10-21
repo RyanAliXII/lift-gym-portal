@@ -111,3 +111,19 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil})))
 }
+
+
+type HiredCoach struct {
+	Id string `json:"id" db:"id"`
+	CoachId int `json:"coach_id" db:"coach_id"`
+	RateId int `json:"rate_id" db:"rate_id"`
+	Model
+}
+
+func(m HiredCoach) Validate() (error, map[string]string) {
+	return m.Model.ValidationRules(&m,
+		 validation.Field(&m.CoachId, validation.Required.Error("Coach is required."), validation.Min(1).Error("Coach is required.")), 
+		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min("Rate is required.")))
+}
+
+

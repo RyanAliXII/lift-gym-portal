@@ -51,6 +51,35 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		"objstorePublicUrl": objstore.PublicURL,		
  	})
 }
+
+func (h * CoachHandler) HireCoach (c echo.Context ) error {
+	hiredCoach := model.HiredCoach{}
+
+
+	err := c.Bind(&hiredCoach)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := hiredCoach.Validate()
+
+	if err != nil {
+
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Coach has been hired.",
+	})
+}
 func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {
 	csrf := c.Get("csrf")
 	return c.Render(http.StatusOK, "admin/coach/register-coach", Data{
