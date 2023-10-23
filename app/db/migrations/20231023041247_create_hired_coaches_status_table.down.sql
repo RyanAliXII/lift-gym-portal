@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS hired_coaches_status;

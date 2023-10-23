@@ -136,14 +136,18 @@ func (copy CoachJSON) Value(value interface{}) (driver.Value, error) {
 }
 
 type HiredCoach struct {
-	Id string `json:"id" db:"id"`
+	Id int `json:"id" db:"id"`
 	CoachId int `json:"coachId" db:"coach_id"`
 	RateId int `json:"rateId" db:"rate_id"`
 	RateSnapshotId int `json:"rateSnapshotId" db:"rate_snapshot_id"`
 	ClientId int `json:"clientId" db:"client_id"`
 	Coach CoachJSON `json:"coach" db:"coach"`
+	Client ClientJSON `json:"client" db:"client"`
 	Rate CoachRateJSON `json:"rate" db:"rate"`
 	RateSnapshot CoachRateJSON `json:"rateSnapshot" db:"rate_snapshot"`
+	Status string `json:"status" db:"status"`
+	StatusId int `json:"statusId" db:"status_id"`
+	Remarks string `json:"remarks" db:"remarks"`
 	Model
 }
 

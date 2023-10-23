@@ -121,6 +121,7 @@ func clientRoutes(router * echo.Group){
 	router.POST("/hire-a-coach", coachHandler.HireCoach)
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
+	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
 }
 
 func coachRoutes(router * echo.Group) {
@@ -128,6 +129,7 @@ func coachRoutes(router * echo.Group) {
 	dashboardHandler := NewDashboardHandler()
 	coachProfileHandler :=  NewCoachProfileHandler()
 	coachRateHandler := NewCoachRateHandler()
+	hiredCoachHandler := NewHiredCoachHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
@@ -139,4 +141,6 @@ func coachRoutes(router * echo.Group) {
 	router.POST("/rates", coachRateHandler.NewRate)
 	router.PUT("/rates/:id", coachRateHandler.UpdateRate)
 	router.DELETE("/rates/:id", coachRateHandler.DeleteRate)
+	router.GET("/appointments", hiredCoachHandler.RenderCoachAppointments)
+	
 }

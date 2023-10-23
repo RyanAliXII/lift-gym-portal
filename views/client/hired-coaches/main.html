@@ -49,6 +49,7 @@
                         <th>Email</th>
                         <th>Mobile Number</th>
                         <th>Description</th>
+                        <th>Status</th>
                         <th>Price</th>
                         <th></th>
                       </tr>
@@ -64,12 +65,22 @@
                           <td>{hiredCoach.coach.email}</td>
                           <td>{hiredCoach.coach.mobileNumber}</td>
                           <td>{hiredCoach.rateSnapshot.description}</td>
+                          <td
+                            class="text-primary"
+                            :class="
+                            {'text-danger': hiredCoach.statusId === 4,
+                            'text-success': hiredCoach.statusId === 3}"
+                          >
+                            {hiredCoach.status}
+                          </td>
                           <td>PHP {toMoney(hiredCoach.rateSnapshot.price)}</td>
                           <td class="flex" style="gap: 5px">
                             <button
                               class="btn btn-outline-danger"
+                              v-if="hiredCoach.statusId != 4 && hiredCoach.statusId != 2"
                               data-toggle="tooltip"
                               title="Cancel"
+                              @click="initCancel(hiredCoach.id)"
                             >
                               <i class="fas fa-times"></i>
                             </button>
