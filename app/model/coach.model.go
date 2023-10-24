@@ -18,12 +18,12 @@ type Coach struct {
 	MiddleName       string `json:"middleName" db:"middle_name"`
 	Surname          string `json:"surname" db:"surname"`
 	Email            string `json:"email" db:"email"`
-	Password         string `json:"password" db:"password"`
+	Password         string `json:"password,omitempty" db:"password"`
 	Address          string `json:"address" db:"address"`
 	Description 	 string `json:"description" db:"description"`
 	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
-	AccountId 		 string `json:"accountId" db:"account_id"`
+	AccountId 		 int `json:"accountId" db:"account_id"`
 	IsVerified		 bool `json:"isVerified" db:"is_verified"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
 	Images 			 CoachImages `json:"images" db:"images"`
@@ -148,6 +148,7 @@ type HiredCoach struct {
 	Status string `json:"status" db:"status"`
 	StatusId int `json:"statusId" db:"status_id"`
 	Remarks string `json:"remarks" db:"remarks"`
+	Datetime string `json:"datetime" db:"datetime"`
 	Model
 }
 

@@ -120,6 +120,28 @@ func (h *HiredCoachHandler) CancelAppointmentByClient(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
-		Message: "Appoinment Cancelled.",
+		Message: "Appointment Cancelled.",
 	})
 }
+
+func (h *HiredCoachHandler) UpdateStatus(c echo.Context) error {
+	id, err  := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","atoiErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	sessionData := mysqlsession.SessionData{}
+	err = sessionData.Bind(c.Get("sessionData"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "sessionError"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status:http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return nil
+}
+

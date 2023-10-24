@@ -55,6 +55,7 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([
 	hired_coach.rate_id, 
 	hired_coach.rate_snapshot_id,
 	hired_coach.client_id,
+	remarks,
 	hired_coach.status_id,
 	hcs.description as status,
 	JSON_OBJECT(
@@ -92,6 +93,9 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 		hired_coach.rate_id, 
 		hired_coach.rate_snapshot_id,
 		hired_coach.client_id,
+		hired_coach.status_id,
+		hcs.description as status,
+		remarks,
 		JSON_OBJECT(
 			'id', client.id,
 			'givenName', client.given_name,
@@ -107,6 +111,7 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 		INNER JOIN account ON client.account_id = account.id
 		INNER JOIN coaching_rate ON hired_coach.rate_id = coaching_rate.id
 		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
+		INNER JOIN hired_coaches_status as hcs on hired_coach.status_id = hcs.id
 		where hired_coach.coach_id = ?
 		ORDER BY hired_coach.created_at desc
 	`
@@ -119,6 +124,11 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 }
 
 func(repo * HiredCoachRepository)CancelAppointmentByClient(appointment model.HiredCoach) error {
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and client_id = ? and status_id = ?", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.ClientId, status.CoachAppointmentStatusPending)
+	return err
+}
+
+func(repo * HiredCoachRepository)MarkAppointmentAsApproved(appointment model.HiredCoach) error {
 	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and client_id = ? and status_id = ?", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.ClientId, status.CoachAppointmentStatusPending)
 	return err
 }

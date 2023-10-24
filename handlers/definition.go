@@ -11,6 +11,5 @@ type JSONResponse struct {
 
 
 type UpdateStatusBody struct {
-
 	Remarks string `json:"remarks"`
 }

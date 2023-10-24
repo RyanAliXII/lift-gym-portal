@@ -45,10 +45,13 @@
                   >
                     <thead>
                       <tr>
+                        <th>Appoinment Date</th>
                         <th>Client</th>
                         <th>Email</th>
                         <th>Mobile Number</th>
                         <th>Description</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
                         <th>Price</th>
                         <th></th>
                       </tr>
@@ -57,6 +60,7 @@
                     <tbody>
                       <template v-for="appointment of appointments">
                         <tr>
+                          <td>No Date Set</td>
                           <td>
                             {appointment.client.givenName}
                             {appointment.client.surname}
@@ -64,15 +68,39 @@
                           <td>{appointment.client.email}</td>
                           <td>{appointment.client.mobileNumber}</td>
                           <td>{appointment.rateSnapshot.description}</td>
+                          <td
+                            class="text-primary"
+                            :class="
+                            {'text-danger': appointment.statusId === 4,
+                            'text-success': appointment.statusId === 3}"
+                          >
+                            {appointment.status}
+                          </td>
+                          <td>
+                            {appointment.remarks.length === 0 ? 'No Remarks.':
+                            appointment.remarks}
+                          </td>
                           <td>PHP {toMoney(appointment.rateSnapshot.price)}</td>
                           <td class="flex" style="gap: 5px">
-                            <button
-                              class="btn btn-outline-danger"
-                              data-toggle="tooltip"
-                              title="Cancel"
-                            >
-                              <i class="fas fa-times"></i>
-                            </button>
+                            <div class="d-flex" style="gap: 10px">
+                              <button
+                                v-if="appointment.statusId === 1"
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                title="Approve"
+                                @click="initApproval(appointment.id)"
+                              >
+                                <i class="fas fa-thumbs-up"></i>
+                              </button>
+                              <button
+                                v-if="appointment.statusId === 1"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                title="Cancel"
+                              >
+                                <i class="fas fa-times"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       </template>
@@ -81,7 +109,7 @@
                 </div>
               </div>
             </div>
-            <!-- {{template "client/hire-a-coach/hire-modal" . }} -->
+            {{template "coach/appointments/meeting-date-modal" . }}
           </div>
           <!-- /.container-fluid -->
         </div>
