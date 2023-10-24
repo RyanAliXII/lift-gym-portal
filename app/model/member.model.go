@@ -19,4 +19,5 @@ type Member struct {
 	ValidUntil string `json:"validUntil" db:"valid_until"`	
 	SubscriptionStartDate string `json:"subscriptionStartDate" db:"created_at"`
 	MembershipPlan MembershipPlanJSON `json:"membershipPlan" db:"membership_plan"`
+	MembershipSnapshot MembershipPlanJSON `json:"membershipSnapshot" db:"membership_plan_snaphot"`
 }
