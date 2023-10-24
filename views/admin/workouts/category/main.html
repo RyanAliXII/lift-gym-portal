@@ -17,6 +17,8 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "WorkoutCategory.Create"
+              .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 type="button"
@@ -26,6 +28,7 @@
                 <i class="fas fa-plus"></i>
                 New Category
               </button>
+              {{end}}
             </div>
 
             <!-- DataTables Example -->
@@ -56,6 +59,8 @@
                         <tr>
                           <td>{category.name}</td>
                           <td>
+                            {{if hasPermission "WorkoutCategory.Edit"
+                            .currentUser.Permissions}}
                             <button
                               class="btn btn-outline-primary"
                               data-toggle="tooltip"
@@ -66,6 +71,8 @@
                             >
                               <i class="fas fa-edit"></i>
                             </button>
+                            {{end}} {{if hasPermission "WorkoutCategory.Delete"
+                            .currentUser.Permissions}}
                             <button
                               class="btn btn-outline-danger ml-2"
                               data-toggle="tooltip"
@@ -76,6 +83,7 @@
                             >
                               <i class="fas fa-trash"></i>
                             </button>
+                            {{end}}
                           </td>
                         </tr>
                       </template>
@@ -85,8 +93,10 @@
               </div>
             </div>
           </div>
-          {{template "admin/workouts/category/add-category-modal" . }}
-          {{template "admin/workouts/category/edit-category-modal" . }}
+          {{if hasPermission "WorkoutCategory.Create" .currentUser.Permissions}}
+          {{template "admin/workouts/category/add-category-modal" . }} {{end}}
+          {{if hasPermission "WorkoutCategory.Edit" .currentUser.Permissions}}
+          {{template "admin/workouts/category/edit-category-modal" . }} {{end}}
         </div>
         <!-- End of Main Content -->
       </div>

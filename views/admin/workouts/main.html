@@ -17,6 +17,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Workout.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 type="button"
@@ -26,6 +27,7 @@
                 <i class="fas fa-plus"></i>
                 New Workout
               </button>
+              {{end}}
             </div>
 
             <!-- DataTables Example -->
@@ -57,6 +59,8 @@
                           <td>{workout.name}</td>
                           <td>
                             <div style="display: flex">
+                              {{if hasPermission "Workout.Read"
+                              .currentUser.Permissions}}
                               <button
                                 class="btn btn-outline-primary"
                                 data-toggle="tooltip"
@@ -66,6 +70,8 @@
                               >
                                 <i class="fas fa-eye"></i>
                               </button>
+                              {{end}} {{if hasPermission "Workout.Edit"
+                              .currentUser.Permissions}}
                               <button
                                 class="btn btn-outline-secondary ml-1"
                                 data-toggle="tooltip"
@@ -75,6 +81,8 @@
                               >
                                 <i class="fas fa-edit"></i>
                               </button>
+                              {{end}} {{if hasPermission "Workout.Create"
+                              .currentUser.Permissions}}
                               <button
                                 class="btn btn-outline-danger ml-1"
                                 data-toggle="tooltip"
@@ -84,6 +92,7 @@
                               >
                                 <i class="fas fa-trash"></i>
                               </button>
+                              {{end}}
                             </div>
                           </td>
                         </tr>

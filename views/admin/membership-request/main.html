@@ -83,6 +83,8 @@
                             request.remarks }
                           </td>
                           <td>
+                            {{if hasPermission "MembershipRequest.Edit"
+                            .currentUser.Permissions}}
                             <div class="d-flex" style="gap: 5px">
                               <button
                                 v-if="request.statusId === Status.Pending"
@@ -116,6 +118,7 @@
                                 <i class="fas fa-trash"></i>
                               </button>
                             </div>
+                            {{end}}
                           </td>
                         </tr>
                       </template>

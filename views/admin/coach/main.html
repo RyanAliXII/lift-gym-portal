@@ -17,10 +17,12 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Coach.Create" .currentUser.Permissions}}
               <a class="btn btn-primary" href="/app/coaches/registration">
                 <i class="fas fa-plus"></i>
                 New Coach
               </a>
+              {{end}}
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -53,12 +55,15 @@
                         <td>{{.MiddleName}}</td>
                         <td>{{.Surname}}</td>
                         <td>
+                          {{if hasPermission "Coach.Edit"
+                          $.currentUser.Permissions}}
                           <a
                             href="/app/coaches/{{.Id}}"
                             class="btn btn-outline-primary"
                           >
                             <i class="fas fa-edit"></i>
                           </a>
+                          {{end}}
                         </td>
                       </tr>
                       {{end}}
