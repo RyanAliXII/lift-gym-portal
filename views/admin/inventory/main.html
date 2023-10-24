@@ -17,6 +17,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Inventory.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 type="button"
@@ -26,6 +27,7 @@
                 <i class="fas fa-plus"></i>
                 New Equipment
               </button>
+              {{end}}
             </div>
             <div class="card-body shadow mb-2" style="width: fit-content">
               <div class="row no-gutters align-items-center">
@@ -78,6 +80,8 @@
                           <td>{equipment.dateReceived}</td>
                           <td>
                             <div>
+                              {{if hasPermission "Inventory.Edit"
+                              .currentUser.Permissions}}
                               <button
                                 class="btn btn-outline-primary"
                                 data-toggle="tooltip"
@@ -88,6 +92,8 @@
                               >
                                 <i class="fas fa-edit"></i>
                               </button>
+                              {{end}} {{if hasPermission "Inventory.Delete"
+                              .currentUser.Permissions}}
                               <button
                                 class="btn btn-outline-danger ml-1"
                                 data-toggle="tooltip"
@@ -98,6 +104,7 @@
                               >
                                 <i class="fas fa-trash"></i>
                               </button>
+                              {{end}}
                             </div>
                           </td>
                         </tr>
@@ -108,9 +115,10 @@
               </div>
             </div>
           </div>
-
-          {{template "admin/inventory/add-equipment-modal" .}} {{template
-          "admin/inventory/edit-equipment-modal" .}}
+          {{if hasPermission "Inventory.Create" .currentUser.Permissions}}
+          {{template "admin/inventory/add-equipment-modal" .}} {{end}} {{if
+          hasPermission "Inventory.Edit" .currentUser.Permissions}} {{template
+          "admin/inventory/edit-equipment-modal" .}} {{end}}
         </div>
         <!-- End of Main Content -->
       </div>

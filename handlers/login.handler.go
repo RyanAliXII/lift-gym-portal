@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/acl"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
@@ -15,6 +17,7 @@ import (
 
 type LoginHandler struct {
 	userRepository  repository.UserRepository
+	roleRepository repository.RoleRepository
 }
 func (h *LoginHandler) RenderAdminLoginPage(c echo.Context) error{
 	csrf := c.Get("csrf")
@@ -45,6 +48,7 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		})
 	}
 	dbUser, getUserErr  := h.userRepository.GetUserByEmail(user.Email)
+	
 	if getUserErr != nil {
 		logger.Error(getUserErr.Error(), zap.String("error", getUserErr.Error()))
 		return c.JSON(http.StatusBadRequest, Data{
@@ -73,6 +77,23 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		MaxAge:   3600 * 24, // 1 day
 		HttpOnly: true,
 	}
+	permissions := []string{}
+
+	if dbUser.IsRoot {
+		permissions = acl.Permissions
+	}else{
+		role, err := h.roleRepository.GetRoleByUserId(dbUser.Id)
+		if err != nil {
+			if err != sql.ErrNoRows{
+				logger.Error(err.Error(), zap.String("error", "getRoleByUserIdErr"))
+				return c.JSON(http.StatusInternalServerError, Data{
+					"status": http.StatusInternalServerError,
+				   "message": "Unknown error occured",
+			   })
+			}
+		}
+		permissions = role.Permissions
+	}
 	sessionData := mysqlsession.SessionData{
 		User: mysqlsession.SessionUser{
 			Id: dbUser.Id,
@@ -80,6 +101,7 @@ func (h * LoginHandler) Login (c echo.Context) error {
 			MiddleName: dbUser.MiddleName,
 			Surname: dbUser.Surname,
 			Email: dbUser.Email,
+			Permissions: permissions,
 		},
 	}
 	bytesSessionData, _ := sessionData.ToBytes()
@@ -223,6 +245,7 @@ func (h * LoginHandler) LoginCoach(c echo.Context)error{
 func NewLoginHandler() LoginHandler{
 	return LoginHandler{
 		userRepository:  repository.NewUserRepository(),
+		roleRepository: repository.NewRoleRepository(),
 	}
 }
 

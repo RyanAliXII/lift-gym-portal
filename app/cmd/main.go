@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"io/fs"
@@ -11,6 +12,7 @@ import (
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/handlers"
 	"path/filepath"
+	"slices"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
@@ -26,12 +28,17 @@ type TemplateRegistry struct {
   
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
-	sessionData.Bind(c.Get("sessionData"))
+	 sessionData.Bind(c.Get("sessionData"))
 	mapData, ok := data.(handlers.Data)
 	if ok {      
 		mapData["currentUser"] = sessionData.User
+
 	}
-	return t.templates.ExecuteTemplate(w, name, mapData)
+	err := t.templates.ExecuteTemplate(w, name, mapData)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return err
 }
 
 func main() {
@@ -65,7 +72,13 @@ func loadTemplates(path string) * template.Template{
 		}
 		return nil
 	})
-	tmpls, err := template.ParseFiles(templateList...)
+	
+	tmpls, err := template.New("views").Funcs(template.FuncMap{
+		"hasPermission": func(requiredPermission string, permissions []string )bool {
+			return slices.Contains(permissions, requiredPermission)
+		},
+	}).ParseFiles(templateList...)
+	
 	if err != nil {
         panic(err)
     }

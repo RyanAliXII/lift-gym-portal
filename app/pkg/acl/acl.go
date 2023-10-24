@@ -1,5 +1,6 @@
 package acl
 
+import "slices"
 var Permissions = []string{
 	"Package.Read",
 	"Package.Delete",
@@ -15,12 +16,28 @@ var Permissions = []string{
 	"Client.Create",
 	"Member.Read",
 	"Member.Delete",
+	"Member.Create",
+	"ClientLog.Read",
+	"ClientLog.Delete",
+	"ClientLog.Edit",
+	"ClientLog.Create",
+	"MembershipPlan.Read",
+	"MembershipPlan.Delete",
+	"MembershipPlan.Edit",
+	"MembershipPlan.Create",
 	"MembershipRequest.Read",
 	"MembershipRequest.Edit",
+	"PackageRequest.Read",
+	"PackageRequest.Edit",
+	"PackageRequest.Create",
 	"Coach.Read",
 	"Coach.Delete",
 	"Coach.Edit",
 	"Coach.Create",
+	"WorkoutCategory.Read",
+	"WorkoutCategory.Edit",
+	"WorkoutCategory.Create",
+	"WorkoutCategory.Delete",
 	"Workout.Read",
 	"Workout.Delete",
 	"Workout.Edit",
@@ -29,4 +46,17 @@ var Permissions = []string{
 	"Inventory.Edit",
 	"Inventory.Delete",
 	"Inventory.Create",
+	"Staff.Edit",
+	"Staff.Create",
+	"Staff.Read",
+	"Staff.Delete",
+	"Role.Read",
+	"Role.Edit",
+	"Role.Delete",
+	"Role.Create",
+}
+
+
+func HasPermission(requiredPermission string, permissions []string) bool {
+		return slices.Contains(permissions, requiredPermission)
 }

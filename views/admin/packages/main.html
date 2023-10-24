@@ -18,6 +18,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Package.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 data-toggle="modal"
@@ -26,6 +27,7 @@
                 <i class="fas fa-plus"></i>
                 New Package
               </button>
+              {{end}}
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -56,15 +58,20 @@
                         <td>{package.price}</td>
                         <td>
                           <div class="d-flex" style="gap: 5px">
+                            {{if hasPermission "Package.Edit"
+                            .currentUser.Permissions}}
                             <button
                               class="btn btn-outline-primary"
                               @click="initializeEditForm(package)"
                             >
                               <i class="fas fa-edit"></i>
                             </button>
+                            {{end}} {{if hasPermission "Package.Delete"
+                            .currentUser.Permissions}}
                             <button class="btn btn-outline-danger">
                               <i class="fas fa-trash"></i>
                             </button>
+                            {{end}}
                           </div>
                         </td>
                       </tr>
@@ -85,8 +92,11 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    {{template "admin/packages/add-package-modal" .}} {{template
-    "admin/packages/edit-package-modal" .}} {{template "partials/sb-scripts"}}
+    {{if hasPermission "Package.Create" .currentUser.Permissions}} {{template
+    "admin/packages/add-package-modal" .}} {{end}} {{if hasPermission
+    "Package.Edit" .currentUser.Permissions}} {{template
+    "admin/packages/edit-package-modal" .}} {{end}} {{template
+    "partials/sb-scripts"}}
   </body>
   <script>
     const { createApp, ref, onMounted } = Vue;

@@ -17,10 +17,12 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Client.Create" .currentUser.Permissions}}
               <a class="btn btn-primary" href="/app/clients/registration">
                 <i class="fas fa-plus"></i>
                 New Client
               </a>
+              {{end}}
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -52,13 +54,17 @@
                         <td>{{.GivenName}}</td>
                         <td>{{.MiddleName}}</td>
                         <td>{{.Surname}}</td>
+
                         <td>
+                          {{if hasPermission "Client.Edit"
+                          $.currentUser.Permissions}}
                           <a
                             href="/app/clients/{{.Id}}"
                             class="btn btn-outline-primary"
                           >
                             <i class="fas fa-edit"></i>
                           </a>
+                          {{end}}
                         </td>
                       </tr>
                       {{end}}

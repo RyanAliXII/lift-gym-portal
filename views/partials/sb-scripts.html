@@ -12,6 +12,16 @@
 <script src="/js/swal/swal2.all.min.js"></script>
 <script src="/js/vue/vue.global.prod.js"></script>
 <script>
+  const navItems = document.querySelectorAll(".nav-item");
+  for (const item of navItems) {
+    const collapse = item.querySelector(".collapse");
+    if (!collapse) continue;
+
+    const collapseInner = collapse.querySelector(".collapse-inner");
+    if (!collapseInner) continue;
+
+    if (collapseInner.children.length === 0) item.remove();
+  }
   const collapsesInitial = [];
   const loadCollapses = () => {
     try {

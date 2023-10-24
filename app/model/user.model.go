@@ -6,6 +6,7 @@ type User struct {
 	MiddleName string `json:"middleName" db:"middle_name"`
 	Surname    string `json:"surname" db:"surname"`
 	Email      string `json:"email" db:"email"`
+	IsRoot 		bool `json:"isRoot,omitempty" db:"is_root"`
 	Password   string `json:"password" db:"password"`
 	RoleId     int `json:"roleId" db:"role_id"`
 	Role 	  string `json:"role" db:"role"`

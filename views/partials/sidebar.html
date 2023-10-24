@@ -30,7 +30,7 @@
   <hr class="sidebar-divider" />
 
   <!-- Heading -->
-  <div class="sidebar-heading">Modules</div>
+  <div class="sidebar-heading" id="modulesHeading">Modules</div>
 
   <!-- Nav Item - Pages Collapse Menu -->
   <li class="nav-item">
@@ -53,8 +53,13 @@
     >
       <div class="bg-white py-2 collapse-inner rounded">
         <!-- <h6 class="collapse-header">Custom Components:</h6> -->
+
+        {{if hasPermission "Package.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/packages">Packages</a>
+        {{end}} {{if hasPermission "MembershipPlan.Read"
+        .currentUser.Permissions}}
         <a class="collapse-item" href="/app/memberships">Membership Plans</a>
+        {{end}}
       </div>
     </div>
   </li>
@@ -79,8 +84,13 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "Client.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/clients">Clients</a>
+        {{end}} {{if hasPermission "Client.Create" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/clients/registration">New Client</a>
+        {{end}} {{if hasPermission "ClientLog.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/client-logs">Client Logs</a>
+        {{end}}
       </div>
     </div>
   </li>
@@ -103,19 +113,25 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "Member.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/members">Members</a>
+        {{end}} {{if hasPermission "MembershipRequest.Read"
+        .currentUser.Permissions}}
         <a class="collapse-item" href="/app/membership-requests"
           >Membership Requests</a
         >
+        {{end}}
       </div>
     </div>
   </li>
+  {{if hasPermission "PackageRequest.Read" .currentUser.Permissions}}
   <li class="nav-item">
     <a class="nav-link" href="/app/package-requests">
       <i class="fas fa-box-open"></i>
       <span>Package Requests</span></a
     >
   </li>
+  {{end}}
   <li class="nav-item">
     <a
       class="nav-link collapsed"
@@ -135,8 +151,11 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "Coach.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/coaches">Coaches</a>
+        {{end}} {{if hasPermission "Coach.Create" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/coaches/registration">New Coach</a>
+        {{end}}
       </div>
     </div>
   </li>
@@ -159,17 +178,22 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "WorkoutCategory.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/workouts/categories">Categories</a>
+        {{end}} {{if hasPermission "Workout.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/workouts">Workouts</a>
+        {{end}}
       </div>
     </div>
   </li>
+  {{if hasPermission "Inventory.Read" .currentUser.Permissions}}
   <li class="nav-item">
     <a class="nav-link" href="/app/inventory">
       <i class="fas fa-box"></i>
       <span>Inventory</span></a
     >
   </li>
+  {{end}}
 
   <li class="nav-item">
     <a
@@ -190,8 +214,11 @@
       data-parent="#accordionSidebar"
     >
       <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "Staff.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/staffs">Staffs</a>
+        {{end}} {{if hasPermission "Role.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/roles">Roles</a>
+        {{end}}
       </div>
     </div>
   </li>

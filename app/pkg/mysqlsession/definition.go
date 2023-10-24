@@ -14,6 +14,7 @@ type SessionUser struct {
 	MiddleName string `json:"middleName" db:"middle_name"`
 	Surname    string `json:"surname" db:"surname"`
 	Email      string `json:"email" db:"email"`
+	Permissions []string `json:"permissions" db:"permissions"`
 }
 func(s SessionData) ToBytes() ([]byte, error) {
 	sessionDataBytes,err := json.Marshal(s)

@@ -145,6 +145,7 @@ createApp({
             `Password reset successful. The password for the staff account is <strong>${data?.password} </strong>`,
             "success"
           );
+          $("#editStaffModal").modal("hide");
           fetchStaffs();
         }
       } catch (error) {

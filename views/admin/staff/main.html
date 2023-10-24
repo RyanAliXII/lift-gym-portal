@@ -17,6 +17,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "Staff.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 type="button"
@@ -26,6 +27,7 @@
                 <i class="fas fa-plus"></i>
                 New Staff
               </button>
+              {{end}}
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -60,6 +62,8 @@
                           <td>{staff.surname}</td>
                           <td>{staff.email}</td>
                           <td>
+                            {{if hasPermission "Staff.Edit"
+                            .currentUser.Permissions}}
                             <button
                               type="button"
                               class="btn btn-outline-primary"
@@ -70,6 +74,7 @@
                             >
                               <i class="fas fa-edit"></i>
                             </button>
+                            {{end}}
                           </td>
                         </tr>
                       </template>
@@ -79,6 +84,7 @@
               </div>
             </div>
           </div>
+
           {{template "admin/staff/new-staff-modal" .}} {{template
           "admin/staff/edit-staff-modal" .}}
         </div>

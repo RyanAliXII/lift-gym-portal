@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
@@ -97,10 +96,20 @@ func (repo *RoleRepository) UpdateRole(role model.Role) error {
 	query, args, _ := ds.ToSQL()
 	_, err = transaction.Exec(query, args...)
 	if err != nil{
-		fmt.Print("HERE")
 	     transaction.Rollback()
 		 return err
 	}
 	transaction.Commit()
 	return nil;
+}
+func (repo * RoleRepository)GetRoleByUserId(userId int)(model.Role, error){
+	role := model.Role{}
+	err := repo.db.Get(&role, `
+	SELECT role.id, role.name, CONCAT('[',GROUP_CONCAT('"',permission.value,'"'),']') as permissions from user 
+	INNER JOIN role on  user.role_id = role.id
+	INNER JOIN permission on role.id =permission.role_id 
+	where user.id = ?
+	GROUP BY user.id, role.id;
+	`, userId)
+	return role, err
 }
