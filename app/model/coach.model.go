@@ -7,6 +7,8 @@ import (
 	"lift-fitness-gym/app/db"
 	"time"
 
+	_ "time/tzdata"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/nyaruka/phonenumbers"
@@ -148,7 +150,7 @@ type HiredCoach struct {
 	Status string `json:"status" db:"status"`
 	StatusId int `json:"statusId" db:"status_id"`
 	Remarks string `json:"remarks" db:"remarks"`
-	Datetime string `json:"datetime" db:"datetime"`
+	MeetingTime string `json:"meetingTime" db:"meeting_time"`
 	Model
 }
 
@@ -159,13 +161,22 @@ func(m HiredCoach) Validate() (error, map[string]string) {
 		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
 }
 
-func(m HiredCoach) ValidateDatetime() (error, map[string]string) {
+func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
 	return m.Model.ValidationRules(&m,
-		 validation.Field(&m.Datetime, validation.Required.Error("Datetime is required."), validation.By(func(value interface{}) error {
-			_, err := time.Parse(time.RFC3339, value.(string))
-
+		 validation.Field(&m.MeetingTime, validation.Required.Error("Datetime is required."), validation.By(func(value interface{}) error {
+			t, err := time.Parse(time.RFC3339, value.(string))
 			if err != nil {
-				return fmt.Errorf("Datetime is required.")
+				return fmt.Errorf("Meeting time is required.")
+			}
+			location, err := time.LoadLocation("Asia/Manila")
+			if err != nil {
+				return fmt.Errorf("Unknown error occured")
+			}
+			now := time.Now().In(location)
+			t = t.In(location)
+
+			if t.Before(now) {
+				return fmt.Errorf("Date cannot be past current date.")
 			}
 			return nil
 		 })))
