@@ -55,6 +55,7 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([
 	hired_coach.rate_id, 
 	hired_coach.rate_snapshot_id,
 	hired_coach.client_id,
+	COALESCE(hired_coach.meeting_time, "") as meeting_time,
 	remarks,
 	hired_coach.status_id,
 	hcs.description as status,
@@ -95,6 +96,7 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 		hired_coach.client_id,
 		hired_coach.status_id,
 		hcs.description as status,
+		COALESCE(hired_coach.meeting_time, "") as meeting_time,
 		remarks,
 		JSON_OBJECT(
 			'id', client.id,
@@ -129,6 +131,6 @@ func(repo * HiredCoachRepository)CancelAppointmentByClient(appointment model.Hir
 }
 
 func(repo * HiredCoachRepository)MarkAppointmentAsApproved(appointment model.HiredCoach) error {
-	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and client_id = ? and status_id = ?", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.ClientId, status.CoachAppointmentStatusPending)
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, meeting_time = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusApproved,appointment.MeetingTime,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusPending)
 	return err
 }

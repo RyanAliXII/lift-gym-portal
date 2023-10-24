@@ -163,7 +163,7 @@ func(m HiredCoach) Validate() (error, map[string]string) {
 
 func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
 	return m.Model.ValidationRules(&m,
-		 validation.Field(&m.MeetingTime, validation.Required.Error("Datetime is required."), validation.By(func(value interface{}) error {
+		 validation.Field(&m.MeetingTime, validation.Required.Error("Meeting time is required."), validation.By(func(value interface{}) error {
 			t, err := time.Parse(time.RFC3339, value.(string))
 			if err != nil {
 				return fmt.Errorf("Meeting time is required.")
@@ -176,7 +176,7 @@ func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
 			t = t.In(location)
 
 			if t.Before(now) {
-				return fmt.Errorf("Date cannot be past current date.")
+				return fmt.Errorf("Meeting time cannot be past current date.")
 			}
 			return nil
 		 })))

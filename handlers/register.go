@@ -142,5 +142,5 @@ func coachRoutes(router * echo.Group) {
 	router.PUT("/rates/:id", coachRateHandler.UpdateRate)
 	router.DELETE("/rates/:id", coachRateHandler.DeleteRate)
 	router.GET("/appointments", hiredCoachHandler.RenderCoachAppointments)
-	
+	router.PATCH("/appointments/:id/status", hiredCoachHandler.UpdateStatus)
 }
