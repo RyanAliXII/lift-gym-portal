@@ -33,7 +33,7 @@ func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	return members, selectErr
 }
 func (repo * MemberRepository)GetMemberById(id int)(model.Member, error){
-	member  := model.Member {}
+	member  := model.Member{}
 	query := `SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, 
 	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
 	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
@@ -71,18 +71,20 @@ func (repo *MemberRepository)Subscribe(sub model.Subscribe) error {
 		transaction.Rollback()
 		return getErr
 	}
-	
-	result , err := transaction.Exec("INSERT INTO membership_plan_snapshot(description,months, price) VALUES(?, ?, ?)", plan.Description, plan.Months, plan.Price)
-	if err != nil {
-		return err
-	}
-	snapshotId, err := result.LastInsertId()
-	if err != nil {
-		return err
+	if (sub.MembershipSnapshotId == 0) {
+		result , err := transaction.Exec("INSERT INTO membership_plan_snapshot(description,months, price) VALUES(?, ?, ?)", plan.Description, plan.Months, plan.Price)
+		if err != nil {
+			return err
+		}
+		snapshotId, err := result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		sub.MembershipSnapshotId = int(snapshotId)
 	}
 	insertQuery := `INSERT INTO subscription (client_id, membership_plan_id, valid_until, membership_plan_snapshot_id)
 	VALUES (?, ?, DATE_ADD(CAST(NOW() AS DATE), INTERVAL ? MONTH), ?)`
-	_, insertErr := transaction.Exec(insertQuery, sub.ClientId, sub.MembershipPlanId, plan.Months, snapshotId)
+	_, insertErr := transaction.Exec(insertQuery, sub.ClientId, sub.MembershipPlanId, plan.Months, sub.MembershipSnapshotId)
 
 	if insertErr != nil {
 		transaction.Rollback()

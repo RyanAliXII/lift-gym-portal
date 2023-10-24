@@ -33,7 +33,10 @@ func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
 	   })
 	}
 	client, getClientErr := h.clientRepo.GetById(sessionData.User.Id)
-	member , _ := h.memberRepo.GetMemberById(sessionData.User.Id)
+	member , err := h.memberRepo.GetMemberById(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetMemberByIdErr"))
+	}
 	var emailVerification model.EmailVerification
 
 	if !client.IsVerified {

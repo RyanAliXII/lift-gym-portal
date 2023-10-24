@@ -71,8 +71,8 @@
                       <template v-for="request of membershipRequests">
                         <tr>
                           <td>{formatDate(request.createdAt)}</td>
-                          <td>{request.membershipPlan.description}</td>
-                          <td>{request.membershipPlan.price}</td>
+                          <td>{request.membershipSnapshot.description}</td>
+                          <td>{request.membershipSnapshot.price}</td>
                           <td
                             class="font-weight-bold"
                             :class="{'text-warning': request.statusId === Status.Pending, 

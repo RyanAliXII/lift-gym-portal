@@ -44,9 +44,12 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
 	WHERE mbr.client_id = ? ORDER BY mbr.updated_at
@@ -60,9 +63,12 @@ func (repo MembershipRequestRepository)GetMembershipRequestById(id int) (model.M
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
 	WHERE mbr.id = ? ORDER BY mbr.updated_at
@@ -75,12 +81,15 @@ func (repo MembershipRequestRepository)GetMembershipRequests() ([]model.Membersh
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
-	ORDER BY mbr.updated_at
+	ORDER BY mbr.updated_at;
 	`)
 	return requests, err
 }

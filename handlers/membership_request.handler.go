@@ -287,6 +287,8 @@ func (h * MembershipRequestHandler)handleMarkAsReceive(c echo.Context, id int) e
 	err = h.memberRepo.Subscribe(model.Subscribe{
 		ClientId: request.ClientId,
 		MembershipPlanId: request.MembershipPlanId,
+		MembershipSnapshotId: request.MembershipSnapshot.Id,
+		
 	})
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "SubscribeErr"))

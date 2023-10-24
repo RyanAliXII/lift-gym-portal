@@ -7,6 +7,7 @@ import (
 type Subscribe struct {
 	ClientId         int `json:"clientId"`
 	MembershipPlanId int `json:"membershipPlanId"`
+	MembershipSnapshotId int `json:"membershipSnapshotId"`
 	Model
 }
 func (m *Subscribe) Validate() (error, map[string]string) {
