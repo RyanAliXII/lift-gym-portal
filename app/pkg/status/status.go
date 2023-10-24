@@ -12,3 +12,10 @@ const (
 	PackageRequestStatusReceived  = 3
 	PackageRequestStatusCancelled = 4
 )
+
+const (
+	CoachAppointmentStatusPending   = 1
+	CoachAppointmentStatusApproved  = 2
+	CoachAppointmentStatusPaid  = 3
+	CoachAppointmentStatusCancelled = 4
+)

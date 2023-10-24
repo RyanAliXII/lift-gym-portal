@@ -38,8 +38,13 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 }
 func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 	coaches := make([]model.Coach , 0)
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id, description from coach
-	INNER JOIN account on coach.account_id = account.id ORDER BY coach.updated_at DESC`
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, 
+	coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, 
+	account.email, account.id as account_id, description, COALESCE(CONCAT('[',GROUP_CONCAT('"',coach_image.path,'"'),']'), '[]') as images from coach
+	INNER JOIN account on coach.account_id = account.id
+	LEFT JOIN coach_image on coach.id = coach_image.coach_id
+	GROUP BY coach.id
+	ORDER BY coach.updated_at DESC`
 	selectErr := repo.db.Select(&coaches, selectQuery)
 	return coaches, selectErr 
 }

@@ -1,9 +1,13 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/db"
 	"time"
+
+	_ "time/tzdata"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
@@ -16,14 +20,15 @@ type Coach struct {
 	MiddleName       string `json:"middleName" db:"middle_name"`
 	Surname          string `json:"surname" db:"surname"`
 	Email            string `json:"email" db:"email"`
-	Password         string `json:"password" db:"password"`
+	Password         string `json:"password,omitempty" db:"password"`
 	Address          string `json:"address" db:"address"`
 	Description 	 string `json:"description" db:"description"`
 	MobileNumber     string `json:"mobileNumber" db:"mobile_number"`
 	DateOfBirth      string `json:"dateOfBirth" db:"date_of_birth"`
-	AccountId 		 string `json:"accountId" db:"account_id"`
+	AccountId 		 int `json:"accountId" db:"account_id"`
 	IsVerified		 bool `json:"isVerified" db:"is_verified"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
+	Images 			 CoachImages `json:"images" db:"images"`
 	Model
 }
 func (m Coach) Validate() (error, map[string]string) {
@@ -110,3 +115,70 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil})))
 }
+
+
+type CoachJSON struct {
+	Coach
+}
+func (instance *CoachJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = CoachJSON{}
+		}
+	} else {
+		*instance = CoachJSON{}
+	}
+	return nil
+
+}
+func (copy CoachJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
+}
+
+type HiredCoach struct {
+	Id int `json:"id" db:"id"`
+	CoachId int `json:"coachId" db:"coach_id"`
+	RateId int `json:"rateId" db:"rate_id"`
+	RateSnapshotId int `json:"rateSnapshotId" db:"rate_snapshot_id"`
+	ClientId int `json:"clientId" db:"client_id"`
+	Coach CoachJSON `json:"coach" db:"coach"`
+	Client ClientJSON `json:"client" db:"client"`
+	Rate CoachRateJSON `json:"rate" db:"rate"`
+	RateSnapshot CoachRateJSON `json:"rateSnapshot" db:"rate_snapshot"`
+	Status string `json:"status" db:"status"`
+	StatusId int `json:"statusId" db:"status_id"`
+	Remarks string `json:"remarks" db:"remarks"`
+	MeetingTime string `json:"meetingTime" db:"meeting_time"`
+	Model
+}
+
+
+func(m HiredCoach) Validate() (error, map[string]string) {
+	return m.Model.ValidationRules(&m,
+		 validation.Field(&m.CoachId, validation.Required.Error("Coach is required."), validation.Min(1).Error("Coach is required.")), 
+		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
+}
+
+func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
+	return m.Model.ValidationRules(&m,
+		 validation.Field(&m.MeetingTime, validation.Required.Error("Meeting time is required."), validation.By(func(value interface{}) error {
+			t, err := time.Parse(time.RFC3339, value.(string))
+			if err != nil {
+				return fmt.Errorf("Meeting time is required.")
+			}
+			location, err := time.LoadLocation("Asia/Manila")
+			if err != nil {
+				return fmt.Errorf("Unknown error occured")
+			}
+			now := time.Now().In(location)
+			t = t.In(location)
+
+			if t.Before(now) {
+				return fmt.Errorf("Meeting time cannot be past current date.")
+			}
+			return nil
+		 })))
+}
+

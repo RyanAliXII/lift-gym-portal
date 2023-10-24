@@ -36,4 +36,12 @@ module.exports = {
       __VUE_PROD_DEVTOOLS__: true,
     }),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
 };

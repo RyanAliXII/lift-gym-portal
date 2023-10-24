@@ -7,3 +7,9 @@ type JSONResponse struct {
 	Data    map[string]interface{} `json:"data"`
 	Message string                 `json:"message"`
 }
+
+
+
+type UpdateStatusBody struct {
+	Remarks string `json:"remarks"`
+}

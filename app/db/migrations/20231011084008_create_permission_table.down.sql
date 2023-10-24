@@ -1,1 +1,1 @@
-DROP TABLE IF EXIST permission;
+DROP TABLE IF EXISTS permission;

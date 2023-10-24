@@ -34,6 +34,7 @@ func main() {
 	db.GetConnection()
 	db.CreateRootAccount()
 	e := echo.New()
+	defer e.Shutdown(context.Background())
 	logger := applog.Get()
 	defer logger.Sync()
 	e.Use(middlewares.LoggerMiddleware)
@@ -44,9 +45,7 @@ func main() {
 		templates: loadTemplates("./views"),
 	}
 	handlers.RegisterHandlers(e)
-	e.Logger.Fatal(	e.Start(":5000"))
-	defer e.Shutdown(context.Background())
-	
+	e.Logger.Fatal(e.Start(":5000"))	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}

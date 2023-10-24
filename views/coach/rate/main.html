@@ -1,0 +1,105 @@
+{{define "coach/rate/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/client/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          {{template "partials/client/dashboard-topbar"}}
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid" id="CoachingRate">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="mb-3 ml-2">
+              <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#newRateModal"
+              >
+                <i class="fas fa-plus"></i>
+                New Rate
+              </button>
+            </div>
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Your Coaching Rates
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="rate of rates">
+                        <tr>
+                          <td>{rate.description}</td>
+                          <td>{rate.price}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-primary"
+                              @click="initEdit(rate)"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="btn btn-outline-danger ml-2"
+                              @click="initDelete(rate.id)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {{template "coach/rate/new-rate-modal" . }} {{template
+              "coach/rate/edit-rate-modal" . }}
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
+  {{template "partials/sb-scripts"}}
+  <script src="/js/coach/rate/main.js"></script>
+</html>
+{{end}}

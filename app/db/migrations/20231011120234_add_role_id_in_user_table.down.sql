@@ -1,0 +1,3 @@
+ALTER TABLE user
+DROP FOREIGN KEY IF EXISTS fk_user_role,
+DROP COLUMN IF EXISTS role_id;

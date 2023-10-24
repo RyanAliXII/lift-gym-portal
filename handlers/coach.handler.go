@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -14,16 +16,90 @@ import (
 
 type CoachHandler struct {
 	coachRepo repository.CoachRepository
+	hiredCoachRepo repository.HiredCoachRepository
 }
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 	csrf := c.Get("csrf")
+
+
 	coaches,_ := h.coachRepo.GetCoaches()
 	return c.Render(http.StatusOK, "admin/coach/main", Data{
 		"title": "Coaches",
 		"module": "Coaches",
 		"csrf": csrf,
 		"coaches": coaches,
+	})
+}
+
+func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		coaches, err := h.coachRepo.GetCoaches()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
+		}
+		
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"coaches": coaches,
+			},
+			Message: "Coaches fetched.",
+		})
+	}
+	return c.Render(http.StatusOK, "client/hire-a-coach/main", Data{
+		"csrf": c.Get("csrf"),
+		"title": "Hire a Coach",
+		"module": "Coaches",
+		"objstorePublicUrl": objstore.PublicURL,		
+ 	})
+}
+
+func (h * CoachHandler) HireCoach (c echo.Context ) error {
+	hiredCoach := model.HiredCoach{}
+	err := c.Bind(&hiredCoach)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := hiredCoach.Validate()
+
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validateErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	sessionData := c.Get("sessionData")
+	session := mysqlsession.SessionData{}
+	err = session.Bind(sessionData)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "sessionErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	hiredCoach.ClientId  = session.User.Id
+	err = h.hiredCoachRepo.Hire(hiredCoach)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "HireErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Coach has been hired.",
 	})
 }
 func (h * CoachHandler)RenderCoachRegistrationPage(c echo.Context) error {
@@ -183,5 +259,6 @@ func (h  *CoachHandler)ResetPassword(c echo.Context) error {
 func NewCoachHandler() CoachHandler{
 	return CoachHandler{
 		coachRepo: repository.NewCoachRepository(),
+		hiredCoachRepo: repository.NewHiredCoachRepository(),
 	}
 }

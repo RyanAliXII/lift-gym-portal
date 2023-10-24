@@ -1,0 +1,2 @@
+ALTER TABLE coaching_rate
+ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL;
