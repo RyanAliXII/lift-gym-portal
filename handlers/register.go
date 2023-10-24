@@ -35,6 +35,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/packages", packageHandler.RenderPackagePage, middlewares.ValidatePermissions("Package.Read"))
 	router.POST("/packages", packageHandler.NewPackage, middlewares.ValidatePermissions("Package.Create"))
 	router.PUT("/packages/:id", packageHandler.UpdatePackage, middlewares.ValidatePermissions("Package.Edit"))
+	router.DELETE("/packages/:id", packageHandler.DeletePackage, middlewares.ValidatePermissions("Package.Delete"))
 	router.GET("/clients", clientHandler.RenderClientPage, middlewares.ValidatePermissions("Client.Read"))
 	router.GET("/clients/:id", clientHandler.RenderClientUpdatePage, middlewares.ValidatePermissions("Client.Edit"))
 	router.PUT("/clients/:id", clientHandler.UpdateClient, middlewares.ValidatePermissions("Client.Edit"))
