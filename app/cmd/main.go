@@ -25,7 +25,13 @@ type TemplateRegistry struct {
 }
   
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	mapData, ok := data.(handlers.Data)
+	if ok {      
+		mapData["currentUser"] = sessionData.User
+	}
+	return t.templates.ExecuteTemplate(w, name, mapData)
 }
 
 func main() {

@@ -83,6 +83,11 @@ createApp({
           }
           return;
         }
+        form.value = {
+          coachId: 0,
+          rateId: 0,
+        };
+        $("#hireModal").modal("hide");
         swal.fire("Hire Coach", "Coach has been hired.", "success");
       } catch (error) {
         console.error(error);
