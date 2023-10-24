@@ -1,5 +1,4 @@
 package acl
-
 var Permissions = []string{
 	"Package.Read",
 	"Package.Delete",
@@ -17,6 +16,9 @@ var Permissions = []string{
 	"Member.Delete",
 	"MembershipRequest.Read",
 	"MembershipRequest.Edit",
+	"PackageRequest.Read",
+	"PackageRequest.Edit",
+	"PackageRequest.Create",
 	"Coach.Read",
 	"Coach.Delete",
 	"Coach.Edit",

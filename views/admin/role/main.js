@@ -23,9 +23,13 @@ createApp({
     });
 
     const handleFormInput = (event) => {
-      const name = event.target.name;
-      errors.value = { ...errors.value, name: undefined };
-      form.value = { ...form, [name]: event.target.value };
+      let value = event.target.value;
+      let name = event.target.name;
+      if (event.target.type === "number") {
+        value = Number(value);
+      }
+      form.value[name] = value;
+      delete errors.value[name];
     };
 
     const fetchRoles = async () => {
@@ -66,7 +70,7 @@ createApp({
         fetchRoles();
         editSelect.value.removeActiveItems();
         $("#editRoleModal").modal("hide");
-        swal.fire("New Role", "Role has been created.", "success");
+        swal.fire("New Role", "Role has updated.", "success");
       } catch (err) {
         console.error(err);
       }
