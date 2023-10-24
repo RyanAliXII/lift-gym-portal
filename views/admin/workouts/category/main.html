@@ -93,10 +93,9 @@
               </div>
             </div>
           </div>
-          {{if hasPermission "WorkoutCategory.Create" .currentUser.Permissions}}
-          {{template "admin/workouts/category/add-category-modal" . }} {{end}}
-          {{if hasPermission "WorkoutCategory.Edit" .currentUser.Permissions}}
-          {{template "admin/workouts/category/edit-category-modal" . }} {{end}}
+
+          {{template "admin/workouts/category/add-category-modal" . }}
+          {{template "admin/workouts/category/edit-category-modal" . }}
         </div>
         <!-- End of Main Content -->
       </div>
