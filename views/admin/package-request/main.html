@@ -55,8 +55,8 @@
                           <td>
                             {request.client.givenName} {request.client.surname}
                           </td>
-                          <td>{request.package.description}</td>
-                          <td>{request.package.price}</td>
+                          <td>{request.packageSnapshot.description}</td>
+                          <td>{request.packageSnapshot.price}</td>
                           <td
                             class="font-weight-bold"
                             :class="{'text-warning': request.statusId === Status.Pending, 
