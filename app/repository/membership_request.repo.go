@@ -12,8 +12,30 @@ type MembershipRequestRepository struct {
 	db *sqlx.DB
 }
 func(repo *MembershipRequestRepository)NewRequest(request model.MembershipRequest) error {
-	_, err := repo.db.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id)VALUES(?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId)
-	return err
+	transaction, err := repo.db.Beginx()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	plan := model.MembershipPlan{}
+	getErr := transaction.Get(&plan, "SELECT price, description, months from membership_plan where id = ?", request.MembershipPlanId)
+	if getErr != nil {
+		transaction.Rollback()
+		return getErr
+	}
+	result , err := transaction.Exec("INSERT INTO membership_plan_snapshot(description,months, price) VALUES(?, ?, ?)", plan.Description, plan.Months, plan.Price)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	snapshotId, err := result.LastInsertId()
+	_, err = transaction.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id, membership_plan_snapshot_id )VALUES(?, ?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId, snapshotId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
+	return nil
 }
 
 func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId int) ([]model.MembershipRequest, error) {
