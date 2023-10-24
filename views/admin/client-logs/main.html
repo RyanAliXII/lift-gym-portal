@@ -15,8 +15,9 @@
           {{template "partials/dashboard-topbar" .}}
 
           <div class="container-fluid">
-            {{template "partials/dashboar d-page-heading" .}}
+            {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
+              {{if hasPermission "ClientLog.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 data-toggle="modal"
@@ -25,6 +26,7 @@
                 <i class="fas fa-plus"></i>
                 Log Client
               </button>
+              {{end}}
             </div>
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -61,6 +63,8 @@
                           <td>{log.isMember ? "Yes" : "No"}</td>
                           <td>₱ {toMoney(log.amountPaid)}</td>
                           <td>
+                            {{if hasPermission "ClientLog.Edit"
+                            .currentUser.Permissions}}
                             <button
                               class="btn btn-outline-primary"
                               data-toggle="tooltip"
@@ -69,6 +73,8 @@
                             >
                               <i class="fas fa-edit"></i>
                             </button>
+                            {{end}} {{if hasPermission "ClientLog.Delete"
+                            .currentUser.Permissions}}
                             <button
                               class="btn btn-outline-danger ml-2"
                               data-toggle="tooltip"
@@ -77,6 +83,7 @@
                             >
                               <i class="fas fa-trash"></i>
                             </button>
+                            {{end}}
                           </td>
                         </tr>
                       </template>

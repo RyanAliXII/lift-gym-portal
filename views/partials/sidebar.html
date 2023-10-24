@@ -88,6 +88,8 @@
         <a class="collapse-item" href="/app/clients">Clients</a>
         {{end}} {{if hasPermission "Client.Create" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/clients/registration">New Client</a>
+        {{end}} {{if hasPermission "ClientLog.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/client-logs">Client Logs</a>
         {{end}}
       </div>
     </div>
