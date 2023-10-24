@@ -134,3 +134,7 @@ func(repo * HiredCoachRepository)MarkAppointmentAsApproved(appointment model.Hir
 	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, meeting_time = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusApproved,appointment.MeetingTime,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusPending)
 	return err
 }
+func(repo * HiredCoachRepository)MarkAppointmentAsPaid(appointment model.HiredCoach) error {
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusPaid,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusApproved)
+	return err
+}

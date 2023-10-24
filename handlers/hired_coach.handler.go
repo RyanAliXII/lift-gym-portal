@@ -154,6 +154,8 @@ func (h *HiredCoachHandler) UpdateStatus(c echo.Context) error {
 	switch(statusId){
 		case status.CoachAppointmentStatusApproved:
 			 return h.handleApproval(c, id, statusId, sessionData.User.Id)
+		case status.CoachAppointmentStatusPaid:
+			 return h.handleMarkingAsPaid(c, id, statusId, sessionData.User.Id)
 	}
 	return c.JSON(http.StatusBadRequest, JSONResponse{
 		Status: http.StatusBadRequest,
@@ -186,6 +188,26 @@ func (h *HiredCoachHandler)handleApproval(c echo.Context, id int, statusId int, 
 	body.StatusId = statusId
 	body.CoachId = coachId
 	err = h.hiredCoach.MarkAppointmentAsApproved(body)
+	if err != nil{ 
+		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsApproved"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Status updated.",
+	})
+}
+
+
+func (h *HiredCoachHandler)handleMarkingAsPaid(c echo.Context, id int, statusId int, coachId int) error {
+	body := model.HiredCoach{}
+	body.Id = id
+	body.StatusId = statusId
+	body.CoachId = coachId
+	err := h.hiredCoach.MarkAppointmentAsPaid(body)
 	if err != nil{ 
 		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsApproved"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{

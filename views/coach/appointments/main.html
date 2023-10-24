@@ -60,7 +60,11 @@
                     <tbody>
                       <template v-for="appointment of appointments">
                         <tr>
-                          <td>No Date Set</td>
+                          <td>
+                            { (appointment?.meetingTime?.length ?? 0) === 0 ?
+                            "No date set" : formatDate(appointment.meetingTime)
+                            }
+                          </td>
                           <td>
                             {appointment.client.givenName}
                             {appointment.client.surname}
@@ -91,6 +95,15 @@
                                 @click="initApproval(appointment.id)"
                               >
                                 <i class="fas fa-thumbs-up"></i>
+                              </button>
+                              <button
+                                v-if="appointment.statusId === 2"
+                                class="btn btn-outline-success"
+                                data-toggle="tooltip"
+                                title="Mark as Paid"
+                                @click="initMarkAsPaid(appointment.id)"
+                              >
+                                <i class="fas fa-money-check-alt"></i>
                               </button>
                               <button
                                 v-if="appointment.statusId === 1"

@@ -70,6 +70,41 @@ createApp({
         console.error(error);
       }
     };
+
+    const onSubmitPaid = async (id) => {
+      try {
+        errors.value = {};
+        const response = await fetch(
+          `/coaches/appointments/${id}/status?statusId=3`,
+          {
+            method: "PATCH",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+
+        swal.fire(
+          "Appointment Status Update",
+          "Appointment status has been mark as paid.",
+          "success"
+        );
+        fetchAppointments();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const formatDate = (date) => {
+      if (!date) return "";
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
     const toMoney = (money) => {
       if (!money) return 0;
       return money.toLocaleString(undefined, {
@@ -81,6 +116,20 @@ createApp({
     const initApproval = (id) => {
       form.value.id = id;
       $("#meetingDateModal").modal("show");
+    };
+    const initMarkAsPaid = async (id) => {
+      form.value = id;
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, this is already paid.",
+        title: "Mark as Paid",
+        text: "Are you that you want this appointment to mark as paid?",
+        cancelButtonText: "This is not paid.",
+        icon: "question",
+      });
+      if (result.isConfirmed) {
+        onSubmitPaid(id);
+      }
     };
     onMounted(() => {
       fetchAppointments();
@@ -94,6 +143,8 @@ createApp({
       handleFormInput,
       onSubmitApproval,
       errors,
+      formatDate,
+      initMarkAsPaid,
     };
   },
 }).mount("#Appointments");
