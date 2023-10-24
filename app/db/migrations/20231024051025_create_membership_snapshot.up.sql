@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS membership_plan_snapshot(
+    id INT NOT NULL AUTO_INCREMENT  PRIMARY KEY,
+    description TEXT NOT NULL,
+    months INT NOT NULL, 
+    price DECIMAL(13, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
