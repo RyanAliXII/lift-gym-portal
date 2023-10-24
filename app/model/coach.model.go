@@ -159,4 +159,15 @@ func(m HiredCoach) Validate() (error, map[string]string) {
 		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
 }
 
+func(m HiredCoach) ValidateDatetime() (error, map[string]string) {
+	return m.Model.ValidationRules(&m,
+		 validation.Field(&m.Datetime, validation.Required.Error("Datetime is required."), validation.By(func(value interface{}) error {
+			_, err := time.Parse(time.RFC3339, value.(string))
+
+			if err != nil {
+				return fmt.Errorf("Datetime is required.")
+			}
+			return nil
+		 })))
+}
 
