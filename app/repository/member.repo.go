@@ -18,24 +18,30 @@ type MemberRepository struct {
 func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	members := make([]model.Member, 0)
 	selectQuery := `
-	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, 
+	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
 	subscription.created_at FROM subscription
 	INNER JOIN client on subscription.client_id = client.id
 	INNER JOIN account on client.account_id = account.id
 	INNER JOIN membership_plan on subscription.membership_plan_id = membership_plan.id
+	INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
 	where subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
-	ORDER BY subscription.created_at DESC
+	ORDER BY subscription.created_at DESC;
 	`
 	selectErr := repo.db.Select(&members, selectQuery)
 	return members, selectErr
 }
 func (repo * MemberRepository)GetMemberById(id int)(model.Member, error){
-	member  := model.Member {}
-	query := `SELECT client.id, subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	member  := model.Member{}
+	query := `SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, 
+	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
+	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
 	subscription.created_at FROM subscription
 	INNER JOIN client on subscription.client_id = client.id
 	INNER JOIN account on client.account_id = account.id
 	INNER JOIN membership_plan on subscription.membership_plan_id = membership_plan.id
+	INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
 	where subscription.valid_until >= NOW() and subscription.cancelled_at is NULL and client.id = ?
 	ORDER BY subscription.created_at DESC
 	`
@@ -60,14 +66,25 @@ func (repo *MemberRepository)Subscribe(sub model.Subscribe) error {
 		transaction.Rollback()
 		return fmt.Errorf("client has an active subscription.")
 	}
-	getErr := transaction.Get(&plan, "SELECT months from membership_plan where id = ?", sub.MembershipPlanId)
+	getErr := transaction.Get(&plan, "SELECT price, description, months from membership_plan where id = ?", sub.MembershipPlanId)
 	if getErr != nil {
 		transaction.Rollback()
 		return getErr
 	}
-	insertQuery := `INSERT INTO subscription (client_id, membership_plan_id, valid_until)
-	VALUES (?, ?, DATE_ADD(CAST(NOW() AS DATE), INTERVAL ? MONTH))`
-	_, insertErr := transaction.Exec(insertQuery, sub.ClientId, sub.MembershipPlanId, plan.Months)
+	if (sub.MembershipSnapshotId == 0) {
+		result , err := transaction.Exec("INSERT INTO membership_plan_snapshot(description,months, price) VALUES(?, ?, ?)", plan.Description, plan.Months, plan.Price)
+		if err != nil {
+			return err
+		}
+		snapshotId, err := result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		sub.MembershipSnapshotId = int(snapshotId)
+	}
+	insertQuery := `INSERT INTO subscription (client_id, membership_plan_id, valid_until, membership_plan_snapshot_id)
+	VALUES (?, ?, DATE_ADD(CAST(NOW() AS DATE), INTERVAL ? MONTH), ?)`
+	_, insertErr := transaction.Exec(insertQuery, sub.ClientId, sub.MembershipPlanId, plan.Months, sub.MembershipSnapshotId)
 
 	if insertErr != nil {
 		transaction.Rollback()

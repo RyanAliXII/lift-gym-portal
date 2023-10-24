@@ -9,6 +9,7 @@ type PackageRequest struct {
 	Client    ClientJSON  `json:"client" db:"client"`
 	Remarks   string      `json:"remarks" db:"remarks"`
 	Package   PackageJSON `json:"package" db:"package"`
+	PackageSnapshot   PackageJSON `json:"packageSnapshot" db:"package_snapshot"`
 	CreatedAt string 	  `json:"createdAt" db:"created_at"`
 	Model
 }

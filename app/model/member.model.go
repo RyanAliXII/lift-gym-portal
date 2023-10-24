@@ -7,6 +7,7 @@ import (
 type Subscribe struct {
 	ClientId         int `json:"clientId"`
 	MembershipPlanId int `json:"membershipPlanId"`
+	MembershipSnapshotId int `json:"membershipSnapshotId"`
 	Model
 }
 func (m *Subscribe) Validate() (error, map[string]string) {
@@ -19,4 +20,5 @@ type Member struct {
 	ValidUntil string `json:"validUntil" db:"valid_until"`	
 	SubscriptionStartDate string `json:"subscriptionStartDate" db:"created_at"`
 	MembershipPlan MembershipPlanJSON `json:"membershipPlan" db:"membership_plan"`
+	MembershipSnapshot MembershipPlanJSON `json:"membershipSnapshot" db:"membership_plan_snaphot"`
 }

@@ -12,8 +12,30 @@ type MembershipRequestRepository struct {
 	db *sqlx.DB
 }
 func(repo *MembershipRequestRepository)NewRequest(request model.MembershipRequest) error {
-	_, err := repo.db.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id)VALUES(?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId)
-	return err
+	transaction, err := repo.db.Beginx()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	plan := model.MembershipPlan{}
+	getErr := transaction.Get(&plan, "SELECT price, description, months from membership_plan where id = ?", request.MembershipPlanId)
+	if getErr != nil {
+		transaction.Rollback()
+		return getErr
+	}
+	result , err := transaction.Exec("INSERT INTO membership_plan_snapshot(description,months, price) VALUES(?, ?, ?)", plan.Description, plan.Months, plan.Price)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	snapshotId, err := result.LastInsertId()
+	_, err = transaction.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id, membership_plan_snapshot_id )VALUES(?, ?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId, snapshotId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
+	return nil
 }
 
 func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId int) ([]model.MembershipRequest, error) {
@@ -22,9 +44,12 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
 	WHERE mbr.client_id = ? ORDER BY mbr.updated_at
@@ -38,9 +63,12 @@ func (repo MembershipRequestRepository)GetMembershipRequestById(id int) (model.M
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
 	WHERE mbr.id = ? ORDER BY mbr.updated_at
@@ -53,12 +81,15 @@ func (repo MembershipRequestRepository)GetMembershipRequests() ([]model.Membersh
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
 	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
-	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan, mbr.created_at
+	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
+    JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
+    mbr.created_at
 	FROM membership_request as mbr 
 	INNER JOIN membership_request_status as mbrs on mbr.status_id = mbrs.id
+    INNER JOIN membership_plan_snapshot on mbr.membership_plan_snapshot_id = membership_plan_snapshot.id
 	INNER JOIN client on mbr.client_id = client.id
 	INNER JOIN membership_plan as mp on mbr.membership_plan_id = mp.id
-	ORDER BY mbr.updated_at
+	ORDER BY mbr.updated_at;
 	`)
 	return requests, err
 }
