@@ -28,7 +28,7 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 		return lastInsertedIdErr
 	}
 	insertCoachQuery := `INSERT INTO coach(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id, description) VALUES(?, ? ,? , ?, ? , ?, ?, ?, ?)`
-	_, insertCoachErr := transaction.Exec(insertCoachQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId, "" )
+	_, insertCoachErr := transaction.Exec(insertCoachQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId,  )
 	if insertCoachErr != nil {
 		transaction.Rollback()
 		return insertCoachErr
