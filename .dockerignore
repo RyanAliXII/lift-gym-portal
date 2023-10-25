@@ -1,3 +1,6 @@
 docker-compose.yaml
 .env
 /mysql
+/node_modules
+dockerfile
+dockerfile.prod
