@@ -13,7 +13,15 @@ func NewPasswordHandler() PasswordHandler {
 }
 func (h * PasswordHandler) RenderResetPasswordPage( c echo.Context) error {
 
-	return c.Render(http.StatusOK, "public/password/reset-password",Data{
+	return c.Render(http.StatusOK, "public/password/reset-password", Data{
 		"csrf" : c.Get("csrf"),
 	})
 }
+func (h * PasswordHandler) ResetPassword( c echo.Context) error {
+	// findA
+	// return c.Render(http.StatusOK, "public/password/reset-password", Data{
+	// 	"csrf" : c.Get("csrf"),
+	// })
+	return nil
+}
+
