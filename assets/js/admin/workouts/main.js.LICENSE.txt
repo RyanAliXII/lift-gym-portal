@@ -1,0 +1,17 @@
+/*!
+ * FilePond 4.30.4
+ * Licensed under MIT, https://opensource.org/licenses/MIT/
+ * Please visit https://pqina.nl/filepond/ for details.
+ */
+
+/*!
+ * FilePondPluginFileValidateType 1.2.8
+ * Licensed under MIT, https://opensource.org/licenses/MIT/
+ * Please visit https://pqina.nl/filepond/ for details.
+ */
+
+/**
+  * vee-validate v4.11.3
+  * (c) 2023 Abdelrahman Awad
+  * @license MIT
+  */
