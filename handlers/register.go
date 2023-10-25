@@ -17,6 +17,9 @@ func RegisterHandlers(router *echo.Echo) {
 			return nil
 		}
 	})
+
+	passwordHandler := NewPasswordHandler()
+	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))
