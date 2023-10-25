@@ -55,7 +55,7 @@ func main() {
 		templates: loadTemplates("./views"),
 	}
 	handlers.RegisterHandlers(e)
-	e.Logger.Fatal(e.Start(":5000"))	
+	e.Logger.Fatal(e.Start(":80"))	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}

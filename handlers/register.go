@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/http/middlewares"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,7 +20,12 @@ func RegisterHandlers(router *echo.Echo) {
 	})
 
 	passwordHandler := NewPasswordHandler()
+	router.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "public/landing", nil)
+	})
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
+
+
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))
