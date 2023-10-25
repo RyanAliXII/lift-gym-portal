@@ -1,6 +1,7 @@
 version: "3.1"
 services:
   db:
+    container_name: mysql
     image: mysql:8.1.0
     restart: always
     environment:
@@ -10,3 +11,26 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
+  lift_gym_app:
+    container_name: web-app
+    image: ryanali12/lift-gym-app
+    environment:
+      DB_USER: ${DB_USER}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ROOT_USER_EMAIL: ${ROOT_USER_EMAIL}
+      ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD}
+      ROOT_USER_GIVEN_NAME: ${ROOT_USER_GIVEN_NAME}
+      ROOT_USER_SURNAME: ${ROOT_USER_SURNAME}
+      ROOT_USER_MIDDLE_NAME: ${ROOT_USER_MIDDLE_NAME}
+      SESSION_SECRET: ${SESSION_SECRET}
+      SMTP_EMAIL: ${SMTP_EMAIL}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      APP_URL: ${APP_URL}
+      CLOUDINARY_NAME: ${CLOUDINARY_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    ports:
+      - "80:80"

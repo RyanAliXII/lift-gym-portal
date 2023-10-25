@@ -32,7 +32,6 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 	mapData, ok := data.(handlers.Data)
 	if ok {      
 		mapData["currentUser"] = sessionData.User
-
 	}
 	err := t.templates.ExecuteTemplate(w, name, mapData)
 	if err != nil {
@@ -58,7 +57,7 @@ func main() {
 		templates: loadTemplates("./views"),
 	}
 	handlers.RegisterHandlers(e)
-	e.Logger.Fatal(e.Start(":5000"))	
+	e.Logger.Fatal(e.Start(":80"))	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}
