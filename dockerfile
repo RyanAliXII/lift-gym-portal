@@ -12,6 +12,6 @@ RUN go mod download && \
     mv migrate /usr/local/bin/migrate &&\
     rm migrate.linux-amd64.tar.gz
 
-EXPOSE 80
+EXPOSE 5000
 
 CMD ["air"]

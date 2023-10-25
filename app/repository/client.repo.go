@@ -11,7 +11,6 @@ import (
 type ClientRepository struct {
 	db *sqlx.DB
 }
-
 func (repo *ClientRepository) New(client model.Client)(error) {
 		transaction, transactErr := repo.db.Begin()
 		if transactErr != nil {

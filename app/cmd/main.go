@@ -20,8 +20,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-
-
 type TemplateRegistry struct {
 	templates *template.Template
 }
@@ -52,12 +50,12 @@ func main() {
 	e.Use(middlewares.LoggerMiddleware)
 	e.Use(session.Middleware(store))
 	e.Use(middleware.CSRF())
-	e.Static("/", "/assets")
+	e.Static("/", "./assets")
 	e.Renderer = &TemplateRegistry{
 		templates: loadTemplates("./views"),
 	}
 	handlers.RegisterHandlers(e)
-	e.Logger.Fatal(e.Start(":80"))	
+	e.Logger.Fatal(e.Start(":5000"))	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}
