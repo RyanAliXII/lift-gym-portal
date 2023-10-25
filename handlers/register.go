@@ -7,6 +7,16 @@ import (
 )
 
 func RegisterHandlers(router *echo.Echo) {
+	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			contentType := c.Request().Header.Get("Content-Type")
+			if contentType == "application/json" {
+				c.Response().Header().Set("Vary", "Accept")
+			}
+			next(c)
+			return nil
+		}
+	})
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))
@@ -44,10 +54,11 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm, middlewares.ValidatePermissions("Client.Create"))
 	router.GET("/members", membersHandler.RenderMembersPage, middlewares.ValidatePermissions("Member.Read"))
 	router.POST("/members", membersHandler.Subscribe, middlewares.ValidatePermissions("Member.Create"))
-	router.DELETE("/subscriptions/:subscriptionId", membersHandler.CancelSubscription, middlewares.ValidatePermissions("Member.Edit"))
+	router.DELETE("/subscriptions/:subscriptionId", membersHandler.CancelSubscription, middlewares.ValidatePermissions("Member.Delete"))
 	router.GET("/memberships", membershipPlanHandler.RenderMembershipPlanPage, middlewares.ValidatePermissions("Plan.Read"))
 	router.POST("/memberships", membershipPlanHandler.NewMembershipPlan, middlewares.ValidatePermissions("Plan.Create"))
 	router.PUT("/memberships/:id", membershipPlanHandler.UpdatePlan, middlewares.ValidatePermissions("Plan.Edit"))
+	router.DELETE("/memberships/:id", membershipPlanHandler.DeletePlan, middlewares.ValidatePermissions("Plan.Delete"))
 	router.GET("/coaches", coachHandler.RenderCoachPage, middlewares.ValidatePermissions("Coach.Read"))
 	router.GET("/coaches/registration", coachHandler.RenderCoachRegistrationPage,  middlewares.ValidatePermissions("Coach.Create"))
 	router.GET("/coaches/:id", coachHandler.RenderCoachUpdatePage, middlewares.ValidatePermissions("Coach.Edit"))

@@ -19,9 +19,12 @@ func (repo * MembershipPlanRepository) New(plan model.MembershipPlan) error{
 
 func (repo  *MembershipPlanRepository)Get() ([]model.MembershipPlan, error) {
 	plans := make([]model.MembershipPlan, 0)
-	selectErr := repo.db.Select(&plans, "SELECT id, description, price, months from membership_plan order by updated_at desc")
+	selectErr := repo.db.Select(&plans, "SELECT id, description, price, months from membership_plan where deleted_at is null order by updated_at desc")
 	return plans, selectErr
-
+}
+func(repo * MembershipPlanRepository)Delete(id int)error {
+	_,err := repo.db.Exec("UPDATE membership_plan SET deleted_at = now() where id = ?", id)
+	return err
 }
 func (repo  *MembershipPlanRepository)Update(plan model.MembershipPlan)(error) {
 	_, updateErr := repo.db.Exec(`UPDATE membership_plan SET description = ?, price = ?, months = ? WHERE id = ?`, plan.Description, plan.Price, plan.Months, plan.Id )
@@ -30,7 +33,7 @@ func (repo  *MembershipPlanRepository)Update(plan model.MembershipPlan)(error) {
 func (repo * MembershipPlanRepository)GetUnrequestedPlansOfClient(clientId int)([]model.MembershipPlan, error){
 	plans := make([]model.MembershipPlan, 0)
 	err := repo.db.Select(&plans, `SELECT  id, description, price, months FROM membership_plan as mp 
-	where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ? AND (membership_request.status_id = ? OR membership_request.status_id = ?));`, 
+	where mp.id NOT IN(SELECT membership_request.membership_plan_id FROM membership_request where membership_request.client_id = ? AND (membership_request.status_id = ? OR membership_request.status_id = ?)) AND deleted_at is null;`, 
 	clientId, status.MembershipRequestStatusPending, status.MembershipRequestStatusApproved)
 	return plans, err
 }

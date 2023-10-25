@@ -210,6 +210,28 @@
             console.error(error);
           }
         };
+        const deleteMembershipPlan = async (id) => {
+          try {
+            const response = await fetch(`/app/memberships/${id}`, {
+              headers: new Headers({
+                "content-type": "application/json",
+                "X-CSRF-Token": csrf,
+              }),
+              method: "DELETE",
+            });
+            const { data } = await response.json();
+            if (response.status === 200) {
+              fetchMembershipPlans();
+              Swal.fire(
+                "Delete Membership Plan",
+                "Membership plan has been deleted.",
+                "success"
+              );
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
         const initDelete = async (id) => {
           const result = await Swal.fire({
             showCancelButton: true,
