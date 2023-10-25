@@ -9929,18 +9929,21 @@ a:focus {
   }
 }
 .bg-login-image {
-  background: url("https://scontent.fmnl17-3.fna.fbcdn.net/v/t39.30808-6/308681973_521837516619746_4118948623805070377_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeHo2JzZCFXezyOWzywoUncilsOou6PqsTeWw6i7o-qxN0EJONz2QMN2JbzxCb972ewmlH6ltUcaFCMs2BEaM1iE&_nc_ohc=DlDXtDcP_lwAX-nGcvk&_nc_ht=scontent.fmnl17-3.fna&oh=00_AfBHrWqnsfMozZncAh0I75NY9_5tcECj0g5BqGz-iwpm2g&oe=64EE0854");
+  background: url("../../images/login-image.png");
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
 }
 .bg-register-image {
-  background: url(https://source.unsplash.com/Mv9hjnEUHR4/600x800);
+  background: url("../../images/login-image.png");
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
 }
 .bg-password-image {
-  background: url(https://source.unsplash.com/oWTW-jNGl9I/600x800);
+  background: url("../../images/login-image.png");
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
 }
 form.user .custom-checkbox.small label {
