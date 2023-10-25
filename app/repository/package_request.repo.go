@@ -34,7 +34,7 @@ func (repo *PackageRequestRepository) NewPackageRequest(pkgRequest model.Package
 		transaction.Rollback()
 		return err
 	}
-	query := `INSERT INTO package_request(client_id, package_id, status_id, package_snapshot_id) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO package_request(client_id, package_id, status_id, package_snapshot_id, remarks) VALUES (?, ?, ?, ?, "")`
 	_, err = transaction.Exec(query, pkgRequest.ClientId, pkgRequest.PackageId, pkgRequest.StatusId, snapshotId)
 	if err != nil {
 		transaction.Rollback()
