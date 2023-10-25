@@ -115,6 +115,27 @@ func (h *MembershipPlanHandler) UpdatePlan(c echo.Context) error{
 		Message: "Membership plan updated.",
 	})
 }
+func(h * MembershipPlanHandler) DeletePlan(c echo.Context )error {
+	planId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest,JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured",
+		})
+	}
+	err = h.membershipPlanRepo.Delete(planId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError,JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Membership plan deleted.",
+	})
+}
 
 
 

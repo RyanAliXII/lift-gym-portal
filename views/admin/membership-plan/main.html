@@ -69,7 +69,10 @@
                             </button>
                             {{end}} {{if hasPermission "MembershipPlan.Delete"
                             .currentUser.Permissions}}
-                            <button class="btn btn-outline-danger">
+                            <button
+                              class="btn btn-outline-danger"
+                              @click="initDelete(plan.id)"
+                            >
                               <i class="fas fa-trash"></i>
                             </button>
                             {{end}}
@@ -207,7 +210,42 @@
             console.error(error);
           }
         };
-
+        const deleteMembershipPlan = async (id) => {
+          try {
+            const response = await fetch(`/app/memberships/${id}`, {
+              headers: new Headers({
+                "content-type": "application/json",
+                "X-CSRF-Token": csrf,
+              }),
+              method: "DELETE",
+            });
+            const { data } = await response.json();
+            if (response.status === 200) {
+              fetchMembershipPlans();
+              Swal.fire(
+                "Delete Membership Plan",
+                "Membership plan has been deleted.",
+                "success"
+              );
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        const initDelete = async (id) => {
+          const result = await Swal.fire({
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it",
+            title: "Delete Membership Plan",
+            text: "Are you sure you want to delete membership plan?",
+            confirmButtonColor: "#d9534f",
+            cancelButtonText: "I don't want to delete this membership plan",
+            icon: "warning",
+          });
+          if (result.isConfirmed) {
+            deleteMembershipPlan(id);
+          }
+        };
         onMounted(() => {
           fetchMembershipPlans();
           $("#addMembershipPlanModal").on("hidden.bs.modal", function () {
@@ -226,6 +264,7 @@
           addMembershipPlanErrors,
           editMembershipPlanErrors,
           membershipPlans,
+          initDelete,
         };
       },
       compilerOptions: {

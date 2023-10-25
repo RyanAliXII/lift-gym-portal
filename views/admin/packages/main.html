@@ -68,7 +68,10 @@
                             </button>
                             {{end}} {{if hasPermission "Package.Delete"
                             .currentUser.Permissions}}
-                            <button class="btn btn-outline-danger">
+                            <button
+                              class="btn btn-outline-danger"
+                              @click="initDelete(package.id)"
+                            >
                               <i class="fas fa-trash"></i>
                             </button>
                             {{end}}
@@ -208,7 +211,42 @@
             console.error(err);
           }
         };
-
+        const deletePackage = async (id) => {
+          try {
+            const response = await fetch(`/app/packages/${id}`, {
+              headers: new Headers({
+                "content-type": "application/json",
+                "X-CSRF-Token": csrf,
+              }),
+              method: "DELETE",
+            });
+            const { data } = await response.json();
+            if (response.status === 200) {
+              fetchPackages();
+              Swal.fire(
+                "Delete package",
+                "Package has been deleted.",
+                "success"
+              );
+            }
+          } catch {
+            console.error(err);
+          }
+        };
+        const initDelete = async (id) => {
+          const result = await Swal.fire({
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it",
+            title: "Delete  Package",
+            text: "Are you sure you want to delete package?",
+            confirmButtonColor: "#d9534f",
+            cancelButtonText: "I don't want to delete the package",
+            icon: "warning",
+          });
+          if (result.isConfirmed) {
+            deletePackage(id);
+          }
+        };
         onMounted(() => {
           fetchPackages();
           $("#addPackageModal").on("hidden.bs.modal", () => {
@@ -226,6 +264,7 @@
           onSubmitUpdatePackage,
           onSubmitNewPackage,
           initializeEditForm,
+          initDelete,
           errors,
         };
       },

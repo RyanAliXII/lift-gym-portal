@@ -120,6 +120,32 @@ func (h  PackageHandler) UpdatePackage(c echo.Context) error {
 	})
 
 }
+
+func (h * PackageHandler) DeletePackage(c echo.Context) error {
+	id, err :=  strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "atoiErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	err = h.packageRepo.DeletePackage(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Package deleted.",
+	})
+
+}
 func NewPackageHandler() PackageHandler {
 	return PackageHandler{
 		packageRepo: repository.NewPackageRepository(),
