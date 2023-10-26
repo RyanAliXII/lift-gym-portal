@@ -1,19 +1,28 @@
-import { createApp, ref } from "vue";
+import { createApp, onMounted, ref } from "vue";
 
 createApp({
   setup() {
-    const form = ref({ email: "" });
-    const handleFormInput = (event) => {
-      let value = event.target.value;
-      let name = event.target.name;
-      if (event.target.type === "number") {
-        value = Number(value);
+    const errors = ref({});
+
+    const onSubmit = async (event) => {
+      const form = new FormData(event.target);
+      try {
+        const response = await fetch("/app/reset-password", {
+          method: "POST",
+          body: form,
+          headers: new Headers({
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+      } catch (error) {
+        console.log(error);
       }
-      form.value[name] = value;
     };
+    onMounted(() => {
+      console.log("test");
+    });
     return {
-      form,
-      handleFormInput,
+      onSubmit,
     };
   },
 }).mount("#ResetPassword");

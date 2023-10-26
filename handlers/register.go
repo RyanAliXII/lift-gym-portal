@@ -8,6 +8,7 @@ import (
 )
 
 func RegisterHandlers(router *echo.Echo) {
+	passwordHandler := NewPasswordHandler()
 	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			contentType := c.Request().Header.Get("Content-Type")
@@ -18,14 +19,10 @@ func RegisterHandlers(router *echo.Echo) {
 			return nil
 		}
 	})
-
-	
 	router.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
-	
-
-
+	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))
@@ -47,10 +44,11 @@ func adminRoutes (router  * echo.Group){
 	workoutHandler := NewWorkoutHandler()
 	rolesPermissionHandler := NewRoleHandler()
 	clientLogHandler := NewClientLogHandler()
+	passwordHandler := NewPasswordHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
-	passwordHandler := NewPasswordHandler()
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
+	router.POST("/reset-password", passwordHandler.ResetPassword)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage, middlewares.ValidatePermissions("Package.Read"))

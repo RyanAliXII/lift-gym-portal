@@ -45,12 +45,12 @@ func SendEmailPasswordReset(to []string, recieverName string, publicId string) e
 	SMTPPassword := os.Getenv("SMTP_PASSWORD")
 	SMTPHost := "smtp.gmail.com"
 	AppURL := os.Getenv("APP_URL")
-	t, err := template.ParseFiles("app/pkg/mailer/templates/account-verify.html")
+	t, err := template.ParseFiles("app/pkg/mailer/templates/password-reset.html")
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	link := fmt.Sprintf("%s/reset-password?key=%s", AppURL, publicId)
+	link := fmt.Sprintf("%s/change-password?key=%s", AppURL, publicId)
 	var body bytes.Buffer;
 	subject := "Subject: Password Reset of LIFT Fitness Gym Account\n"
 	headers := "MIME-version: 1.0;\nContent-Type: text/html;"
