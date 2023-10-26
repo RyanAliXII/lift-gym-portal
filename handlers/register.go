@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/http/middlewares"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 func RegisterHandlers(router *echo.Echo) {
+	passwordHandler := NewPasswordHandler()
 	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			contentType := c.Request().Header.Get("Content-Type")
@@ -17,6 +19,11 @@ func RegisterHandlers(router *echo.Echo) {
 			return nil
 		}
 	})
+	router.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "public/landing", nil)
+	})
+	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
+	router.POST("/change-password", passwordHandler.ChangePassword)
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))
@@ -38,8 +45,11 @@ func adminRoutes (router  * echo.Group){
 	workoutHandler := NewWorkoutHandler()
 	rolesPermissionHandler := NewRoleHandler()
 	clientLogHandler := NewClientLogHandler()
+	passwordHandler := NewPasswordHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
+	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
+	router.POST("/reset-password", passwordHandler.ResetPassword)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage, middlewares.ValidatePermissions("Package.Read"))
@@ -109,6 +119,9 @@ func clientRoutes(router * echo.Group){
 	coachHandler := NewCoachHandler()
 	coachRateHandler := NewCoachRateHandler()
 	hiredCoachHandler := NewHiredCoachHandler()
+	passwordHandler := NewPasswordHandler()
+	router.GET("/reset-password", passwordHandler.RenderResetClientPasswordPage)
+	router.POST("/reset-password", passwordHandler.ResetClientPassword)
 	router.GET("/login", loginHandler.RenderClientLoginPage)
 	router.POST("/login", loginHandler.LoginClient)
 	router.GET("/verification/:id",  verificationHandler.VerifyEmail)
@@ -142,8 +155,11 @@ func coachRoutes(router * echo.Group) {
 	coachProfileHandler :=  NewCoachProfileHandler()
 	coachRateHandler := NewCoachRateHandler()
 	hiredCoachHandler := NewHiredCoachHandler()
+	passwordHandler := NewPasswordHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
+	router.GET("/reset-password", passwordHandler.RenderResetCoachPasswordPage)
+	router.POST("/reset-password", passwordHandler.ResetCoachPassword)
 	router.Use(middlewares.AuthMiddleware("coach_sid", "/coaches/login"))
 	router.GET("/dashboard", dashboardHandler.RenderCoachDashboard)
 	router.GET("/profile", coachProfileHandler.RenderProfilePage)

@@ -38,7 +38,7 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 		transaction.Rollback()
 		return err
 	}
-	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id) VALUES(?, ?, ?, ?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId)
+	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id, remarks) VALUES(?, ?, ?, ?, ?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId, hiredCoach.Remarks)
 	if err != nil {
 		transaction.Rollback()
 		return err
