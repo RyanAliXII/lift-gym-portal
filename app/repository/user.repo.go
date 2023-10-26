@@ -17,7 +17,6 @@ func (repo *UserRepository) GetUserByEmail(email string)(model.User, error) {
 	selectQuery := `SELECT user.id, given_name, middle_name, surname, email, password, account.id as account_id, account.is_root FROM user INNER JOIN account on user.account_id = account.id where UPPER(email) = UPPER(?) LIMIT 1`
 	getErr := repo.db.Get(&user, selectQuery, email)
 	return user, getErr
-
 }
 func (repo *UserRepository) GetClientUserByEmail (email string) (model.User, error){
 	user := model.User{}
@@ -34,7 +33,18 @@ func (repo  * UserRepository) GetCoachUserByEmail(email string)(model.Coach, err
 	err := repo.db.Get(&coach, query, email)
 	return coach, err
 }
+func (repo *UserRepository) GetUserById(id int)(model.User, error) {
+	user := model.User{}
+	selectQuery := `SELECT user.id, given_name, middle_name, surname, email, password, account.id as account_id, account.is_root FROM user INNER JOIN account on user.account_id = account.id where user.id = ? LIMIT 1`
+	getErr := repo.db.Get(&user, selectQuery, id)
+	return user, getErr
+}
 
+
+func (repo *UserRepository) UpdateAdminPasswordByAccountId (id int, newPassword string) error {
+	_, err := repo.db.Exec("UPDATE account SET password = ? WHERE id = ?", newPassword, id)
+	return err
+}
 func (repo  * UserRepository) GetUserTypeByAccountId(accountId int)(string , error){
 		query := `
 			SELECT user_type FROM (SELECT account_id , 'admin' as user_type FROM user

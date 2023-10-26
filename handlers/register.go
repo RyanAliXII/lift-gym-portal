@@ -108,6 +108,7 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/client-logs/:id", clientLogHandler.UpdateLog, middlewares.ValidatePermissions("ClientLog.Edit"))
 	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog, middlewares.ValidatePermissions("ClientLog.Delete"))
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
+	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
 }
 
 
