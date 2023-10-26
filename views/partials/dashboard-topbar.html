@@ -259,6 +259,7 @@
           href="#"
           data-toggle="modal"
           data-target="#logoutModal"
+          id="logoutBtn"
         >
           <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
           Logout
@@ -267,5 +268,14 @@
     </li>
   </ul>
 </nav>
+<!-- <script>
+  const logoutBtn = document.querySelector("#logoutBtn");
+  console.log(logoutBtn);
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (event) => {
+      console.log(event);
+    });
+  }
+</script> -->
 
 {{end}}

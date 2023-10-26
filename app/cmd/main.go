@@ -26,10 +26,15 @@ type TemplateRegistry struct {
   
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	sessionData := mysqlsession.SessionData{}
-	 sessionData.Bind(c.Get("sessionData"))
+	sessionData.Bind(c.Get("sessionData"))
 	mapData, ok := data.(handlers.Data)
 	if ok {      
-		mapData["currentUser"] = sessionData.User
+		mapData["currentUser"] = sessionData.User	
+	}
+	_, hasCSRFToken := mapData["csrf"]
+	
+	if !hasCSRFToken {
+		mapData["csrf"] = c.Get("csrf")
 	}
 	err := t.templates.ExecuteTemplate(w, name, mapData)
 	if err != nil {

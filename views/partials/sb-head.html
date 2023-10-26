@@ -42,5 +42,40 @@
   <link href="/css/sb-admin/sb-admin-2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/swal/swal2.min.css" />
   <link rel="stylesheet" href="/css/choices/choices.min.css" />
+  <script defer>
+    window.addEventListener("load", () => {
+      const logoutBtn = document.querySelector("#logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", (event) => {
+          const url = new URL(window.location.href);
+          let logoutUrl = "";
+          if (url.pathname.startsWith("/app")) {
+            logoutUrl = "/app/logout";
+          }
+          if (url.pathname.startsWith("/clients")) {
+            logoutUrl = "/clients/logout";
+          }
+          if (url.pathname.startsWith("/coaches")) {
+            logoutUrl = "/coaches/logout";
+          }
+          logout(logoutUrl);
+        });
+      }
+
+      const logout = async (url) => {
+        try {
+          const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+              "X-CSRF-Token": "{{.csrf}}",
+            },
+          });
+          location.reload();
+        } catch (err) {
+          console.error(err);
+        }
+      };
+    });
+  </script>
 </head>
 {{end}}

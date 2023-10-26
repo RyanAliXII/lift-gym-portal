@@ -26,7 +26,8 @@ COPY --from=node-builder /node/prod ./
 RUN wget -q https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz && \
     tar -xf migrate.linux-amd64.tar.gz  && \
     mv migrate /usr/local/bin/migrate &&\
-    rm migrate.linux-amd64.tar.gz
+    rm migrate.linux-amd64.tar.gz && \ 
+    rm -r node_modules
 
 
 EXPOSE 80
