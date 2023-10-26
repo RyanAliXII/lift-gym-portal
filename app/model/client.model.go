@@ -49,7 +49,7 @@ func (m Client) Validate() (error, map[string]string) {
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
-			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) and deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered")
@@ -94,7 +94,7 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
-			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) and client.id != ? LIMIT 1;`
+			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) and client.id != ?  and deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email, m.Id)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered.")
@@ -137,7 +137,7 @@ func (m Client) ValidateRegistration () (error, map[string]string){
 	validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
-			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) and deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered")

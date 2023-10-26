@@ -19,8 +19,13 @@
 
           <!-- Begin Page Content -->
           <div class="container-fluid" id="PackageRequest">
-            {{template "partials/dashboard-page-heading" .}}
-
+            {{template "partials/dashboard-page-heading" .}} {{if or (not
+            .isVerified) (not .isInfoComplete)}}
+            <div class="alert alert-warning" role="alert">
+              To access full feature of the portal, Please verify your account
+              and make sure that your information is complete.
+            </div>
+            {{end}} {{if and .isVerified .isInfoComplete }}
             <div class="mb-3 ml-2">
               <button
                 class="btn btn-primary"
@@ -32,6 +37,7 @@
                 Request Package
               </button>
             </div>
+            {{end}}
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -101,8 +107,8 @@
                 </div>
               </div>
             </div>
-
-            {{template "client/package-request/request-modal" .}}
+            {{if and .isVerified .isInfoComplete }} {{template
+            "client/package-request/request-modal" .}} {{end}}
           </div>
           <!-- /.container-fluid -->
         </div>

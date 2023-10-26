@@ -10,6 +10,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/labstack/echo/v4"
+	"github.com/nyaruka/phonenumbers"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,7 +20,6 @@ type ProfileHandler struct {
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
 	coachRepo repository.CoachRepository
-
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -153,6 +153,95 @@ func (h  * ProfileHandler)ChangePassword (c echo.Context) error {
 		Message: "Password has been changed.",
 	})
 }
+
+func(h * ProfileHandler) UpdateProfile (c echo.Context) error {
+	mobileNumber := c.FormValue("mobileNumber")
+	emergencyContact := c.FormValue("emergencyContact")
+	address := c.FormValue("address")
+	session := mysqlsession.SessionData{}
+	session.Bind(c.Get("sessionData"))
+	if len(mobileNumber) > 0 {
+		return h.handleMobileNumber(c, mobileNumber, session)
+	}
+	if len(emergencyContact) > 0 {
+		return h.handleEmergencyContact(c, emergencyContact, session)
+	}
+	if len(address) > 0 {
+		return h.handleAddress(c, address, session)
+	}
+	return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Message: "OK"})
+}
+
+
+func(h * ProfileHandler) handleMobileNumber(c echo.Context, mobileNumber string, session mysqlsession.SessionData) error{
+	err := validation.Validate(mobileNumber, validation.By(ValidateMobile))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": Data{
+					"mobileNumber": err.Error(),
+				},
+			},
+		})
+	}
+	err = h.clientRepo.UpdateMobileNumberOnce(session.User.Id, mobileNumber)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "UpdateMobileNumber"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Message: "Mobile number updated."})
+}
+func(h * ProfileHandler) handleEmergencyContact(c echo.Context, emergencyContact string, session mysqlsession.SessionData) error{
+	err := validation.Validate(emergencyContact, validation.By(ValidateMobile))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": Data{
+					"emergencyContact": err.Error(),
+				},
+			},
+		})
+	}
+	err = h.clientRepo.UpdateEmergencyContactOnce(session.User.Id, emergencyContact)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "UpdateEmergencyContact"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Message: "Emergency contact updated."})
+}
+
+
+func(h * ProfileHandler) handleAddress(c echo.Context, address string, session mysqlsession.SessionData) error{
+	err := h.clientRepo.UpdateAddressOnce(session.User.Id, address)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "UpdateAddress"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Message: "Emergency contact updated."})
+}
+
+func ValidateMobile (value interface {}) error {
+	mobileNumber, _ := value.(string)
+	fmt.Println(mobileNumber)
+	p, _ := phonenumbers.Parse(mobileNumber, "PH")
+	isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+	if !isValid {
+		return fmt.Errorf("Invalid number")
+	}
+	return nil
+}
+
 func NewProfileHandler()ProfileHandler {
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),

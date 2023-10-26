@@ -45,6 +45,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Appointment Date</th>
                         <th>Coach</th>
                         <th>Email</th>
                         <th>Mobile Number</th>
@@ -58,6 +59,7 @@
                     <tbody>
                       <template v-for="hiredCoach of hiredCoaches">
                         <tr>
+                          <td>{ formatDate(hiredCoach.meetingTime) }</td>
                           <td>
                             {hiredCoach.coach.givenName}
                             {hiredCoach.coach.surname}

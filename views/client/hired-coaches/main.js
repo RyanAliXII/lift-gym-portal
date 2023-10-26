@@ -60,6 +60,17 @@ createApp({
         maximumFractionDigits: 2,
       });
     };
+    const formatDate = (date) => {
+      if (!date) return "Date not set";
+      if (date.length === 0) return "Date not set";
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
     onMounted(() => {
       fetchHiredCoaches();
     });
@@ -67,6 +78,7 @@ createApp({
       hiredCoaches,
       toMoney,
       initCancel,
+      formatDate,
     };
   },
 }).mount("#HiredCoaches");

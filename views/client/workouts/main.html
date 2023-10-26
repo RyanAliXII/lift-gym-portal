@@ -21,11 +21,11 @@
           <div class="container-fluid">
             <!-- Page Heading -->
             {{template "partials/dashboard-page-heading" .}} {{ if or (not
-            .client.IsMember) (not .client.IsVerified) }}
+            .client.IsMember) (not .client.IsVerified) (not .isInfoComplete) }}
             <div class="alert alert-warning" role="alert">
               <i class="fas fa-exclamation-triangle"></i>
-              Workouts can only be viewed if your account is verified and a
-              member.
+              Workouts can only be viewed if your account is verified, member
+              and has complete information.
             </div>
             {{end}}
             <!-- Content Row -->
@@ -51,8 +51,8 @@
                     </thead>
 
                     <tbody>
-                      {{if and .client.IsMember .client.IsVerified }} {{range
-                      $category := .categories}}
+                      {{if and .client.IsMember .client.IsVerified
+                      .isInfoComplete }} {{range $category := .categories}}
                       <tr>
                         <td>{{$category.Name}}</td>
                         <td>

@@ -20,7 +20,14 @@
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
-            {{template "partials/dashboard-page-heading" .}}
+            {{template "partials/dashboard-page-heading" .}} {{if or (eq (len
+            .profile.Address) 0) (eq (len .profile.MobileNumber) 0) (eq (len
+            .profile.EmergencyContact) 0) (not .profile.IsVerified)}}
+            <div class="alert alert-warning" role="alert">
+              To access full feature of the portal, Please verify your account
+              and make sure that your information is complete.
+            </div>
+            {{end}}
             <div class="card shadow mb-4 p-5">
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
@@ -81,6 +88,8 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+    {{template "client/profile/edit-modal" .}} {{template
+    "client/profile/edit-address-modal" .}}
   </body>
 
   {{template "partials/sb-scripts"}}
@@ -186,6 +195,93 @@
         }
       }
     });
+  </script>
+
+  <script>
+    const editMobileNumberButton = document.querySelector(
+      "#editMobileNumberBtn"
+    );
+    const emergencyContactButton = document.querySelector(
+      "#editEmergencyContactBtn"
+    );
+    const editAddressBtn = document.querySelector("#editAddressBtn");
+    const editForm = document.querySelector("#editModal").querySelector("form");
+    const editAddressForm = document
+      .querySelector("#editAddressModal")
+      .querySelector("form");
+    const label = editForm.querySelector("label");
+    const input = editForm.querySelector("input");
+    const addressTextarea = editAddressForm.querySelector("textarea");
+    const addressFeedback = editAddressForm.querySelector(".invalid-feedback");
+    const feedback = editForm.querySelector(".invalid-feedback");
+    editForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = new FormData(event.target);
+      sendUpdate(form);
+    });
+    editAddressForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = new FormData(event.target);
+      sendUpdate(form);
+    });
+
+    const sendUpdate = async (formData) => {
+      input.classList.remove("is-invalid");
+      feedback.classList.remove("d-block");
+      try {
+        const response = await fetch("/clients/profile", {
+          method: "PATCH",
+          body: formData,
+          headers: new Headers({ "X-CSRF-Token": "{{.csrf}}" }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            if (data?.errors?.mobileNumber) {
+              input.classList.add("is-invalid");
+              feedback.classList.add("d-block");
+              feedback.innerText = data?.errors?.mobileNumber;
+            }
+            if (data?.errors?.emergencyContact) {
+              input.classList.add("is-invalid");
+              feedback.classList.add("d-block");
+              feedback.innerText = data?.errors?.emergencyContact;
+            }
+          }
+          return;
+        }
+        $("#editModal").modal("hide");
+        $("#editAddressModal").modal("hide");
+        await Swal.fire(
+          "Profile Updated",
+          "Profile has been updated.",
+          "success"
+        );
+
+        location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (editMobileNumberButton) {
+      editMobileNumberButton.addEventListener("click", () => {
+        $("#editModal").modal("show");
+        label.innerText = "Mobile number";
+        input.name = "mobileNumber";
+      });
+    }
+    if (emergencyContactButton) {
+      emergencyContactButton.addEventListener("click", () => {
+        $("#editModal").modal("show");
+        label.innerText = "Emergency contact";
+        input.name = "emergencyContact";
+      });
+    }
+    if (editAddressBtn) {
+      editAddressBtn.addEventListener("click", () => {
+        $("#editAddressModal").modal("show");
+      });
+    }
   </script>
 </html>
 {{end}}

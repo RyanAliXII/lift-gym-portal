@@ -58,12 +58,14 @@ func (h *WorkoutCategoryHandler) RenderClientWorkoutPage(c echo.Context)  error 
 		   "message": "Unknown error occured",
 	   })
 	}
+	isInfoComplete := ((len(client.EmergencyContact) > 0) && (len(client.MobileNumber) > 0) && (len(client.Address) > 0))
 	workoutCategories, _ := h.workoutCategoryRepo.GetCategories()
 	return c.Render(http.StatusOK, "client/workouts/main", Data{
 		"title": "Workouts",
 		"module": "Workouts",
 		"categories": workoutCategories,
 		"client": client,
+		"isInfoComplete": isInfoComplete,
 	})
 
 }

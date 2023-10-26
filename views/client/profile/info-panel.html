@@ -24,7 +24,24 @@
   <hr />
   <div class="row">
     <div class="col-sm-12 col-md-6 font-weight-bold">Address</div>
-    <div class="col-sm-12 col-md-6">{{.profile.Address}}</div>
+    {{if eq (len .profile.Address) 0}}
+    <div class="col-sm-12 col-md-4 d-flex align-items-center">
+      <small class="text-danger">Please provide your address.</small>
+    </div>
+    {{else}}
+    <div class="col-sm-12 col-md-4">{{.profile.Address}}</div>
+    {{end}} {{if eq (len .profile.Address) 0}}
+    <div class="col-sm-12 col-md-2">
+      <button
+        id="editAddressBtn"
+        class="btn btn-outline-primary"
+        data-toggle="tooltip"
+        title="Edit Address"
+      >
+        <i class="fas fa-edit"></i>
+      </button>
+    </div>
+    {{end}}
   </div>
 </div>
 <hr />
@@ -53,14 +70,48 @@
   <hr />
   <div class="row">
     <div class="col-sm-12 col-md-6 font-weight-bold">Mobile number</div>
-    <div class="col-sm-12 col-md-6">{{.profile.MobileNumber}}</div>
+    {{if eq (len .profile.MobileNumber) 0}}
+    <div class="col-sm-12 col-md-4 d-flex align-items-center">
+      <small class="text-danger">Please provide your mobile number.</small>
+    </div>
+    {{else}}
+    <div class="col-sm-12 col-md-4">{{.profile.MobileNumber}}</div>
+    {{end}} {{if eq (len .profile.MobileNumber) 0}}
+    <div class="col-sm-12 col-md-2">
+      <button
+        id="editMobileNumberBtn"
+        class="btn btn-outline-primary"
+        data-toggle="tooltip"
+        title="Edit Mobile Number"
+      >
+        <i class="fas fa-edit"></i>
+      </button>
+    </div>
+    {{end}}
   </div>
   <hr />
   <div class="row">
     <div class="col-sm-12 col-md-6 font-weight-bold">
       Emergency contact number
     </div>
-    <div class="col-sm-12 col-md-6">{{.profile.EmergencyContact}}</div>
+    {{if eq (len .profile.EmergencyContact) 0}}
+    <div class="col-sm-12 col-md-4 d-flex align-items-center">
+      <small class="text-danger">Please provide your emergency contact.</small>
+    </div>
+    {{else}}
+    <div class="col-sm-12 col-md-4">{{.profile.EmergencyContact}}</div>
+    {{end}} {{if eq (len .profile.EmergencyContact) 0}}
+    <div class="col-sm-12 col-md-2">
+      <button
+        id="editEmergencyContactBtn"
+        class="btn btn-outline-primary"
+        data-toggle="tooltip"
+        title="Edit Emergency Contact"
+      >
+        <i class="fas fa-edit"></i>
+      </button>
+    </div>
+    {{end}}
   </div>
   <hr />
 </div>

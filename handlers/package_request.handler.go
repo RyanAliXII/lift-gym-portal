@@ -15,14 +15,15 @@ import (
 type PackageRequestHandler struct {
 	packageRepo repository.PackageRepository
 	packageRequestRepo repository.PackageRequestRepository
+	clientRepo repository.ClientRepository
 }
 
 func (h *PackageRequestHandler) RenderClientPackageRequestPage(c echo.Context) error {
 
 	contentType := c.Request().Header.Get("content-type")
-	if contentType == "application/json" {
-		sessionData := mysqlsession.SessionData{}
+	sessionData := mysqlsession.SessionData{}
 		sessionData.Bind(c.Get("sessionData"))
+	if contentType == "application/json" {
 		pkgRequests, err := h.packageRequestRepo.GetPackageRequestsByClientId(sessionData.User.Id)
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "getPackageRequestsByClientIdErr"))
@@ -39,10 +40,17 @@ func (h *PackageRequestHandler) RenderClientPackageRequestPage(c echo.Context) e
 			},
 		})
 	}
+	client, err := h.clientRepo.GetById(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","GetById"))
+	}
+	isInfoComplete := ((len(client.EmergencyContact) > 0) && (len(client.MobileNumber) > 0) && (len(client.Address) > 0))
 	return c.Render(http.StatusOK, "client/package-request/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Client | Package Request",
 		"module": "Package Requests",
+		"isInfoComplete" : isInfoComplete,
+		"isVerified": client.IsVerified,
 	})
 }
 func (h * PackageRequestHandler) RenderAdminPackageRequestPage(c echo.Context) error {
@@ -230,5 +238,6 @@ func NewPackageRequestHandler() PackageRequestHandler {
 	return PackageRequestHandler{
 		 packageRepo: repository.NewPackageRepository(),
 		 packageRequestRepo: repository.NewPackageRequestRepository(),
+		 clientRepo: repository.NewClientRepository(),
 	}
 }

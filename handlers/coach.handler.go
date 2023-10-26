@@ -17,6 +17,7 @@ import (
 type CoachHandler struct {
 	coachRepo repository.CoachRepository
 	hiredCoachRepo repository.HiredCoachRepository
+	clientRepo repository.ClientRepository
 }
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
@@ -34,11 +35,14 @@ func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 
 func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 	contentType := c.Request().Header.Get("Content-Type")
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
 	if contentType == "application/json"{
 		coaches, err := h.coachRepo.GetCoaches()
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
 		}
+		
 		
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
@@ -48,11 +52,19 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 			Message: "Coaches fetched.",
 		})
 	}
+	client, err := h.clientRepo.GetById(sessionData.User.Id)
+
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","GetById"))
+	}
+	isInfoComplete := ((len(client.EmergencyContact) > 0) && (len(client.MobileNumber) > 0) && (len(client.Address) > 0))
 	return c.Render(http.StatusOK, "client/hire-a-coach/main", Data{
 		"csrf": c.Get("csrf"),
 		"title": "Hire a Coach",
 		"module": "Coaches",
-		"objstorePublicUrl": objstore.PublicURL,		
+		"objstorePublicUrl": objstore.PublicURL,
+		"isInfoComplete": isInfoComplete,
+		"isVerified": client.IsVerified,		
  	})
 }
 
@@ -260,5 +272,6 @@ func NewCoachHandler() CoachHandler{
 	return CoachHandler{
 		coachRepo: repository.NewCoachRepository(),
 		hiredCoachRepo: repository.NewHiredCoachRepository(),
+		clientRepo: repository.NewClientRepository(),
 	}
 }

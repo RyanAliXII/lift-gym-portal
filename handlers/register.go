@@ -141,6 +141,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/profile", profileHandler.RenderClientProfilePage)
 	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
 	router.PATCH("/profile/password", profileHandler.ChangePassword)
+	router.PATCH("/profile", profileHandler.UpdateProfile)
 	router.GET("/membership-requests", membershipRequestHandler.RenderClientMembershipRequest)
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
@@ -156,7 +157,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
-	
+
 }
 
 func coachRoutes(router * echo.Group) {

@@ -161,10 +161,11 @@ func(m HiredCoach) Validate() (error, map[string]string) {
 		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
 }
 
-func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
-	return m.Model.ValidationRules(&m,
+func(m * HiredCoach) ValidateMeetingTime() (error, map[string]string) {
+	return m.Model.ValidationRules(m,
 		 validation.Field(&m.MeetingTime, validation.Required.Error("Meeting time is required."), validation.By(func(value interface{}) error {
 			t, err := time.Parse(time.RFC3339, value.(string))
+		
 			if err != nil {
 				return fmt.Errorf("Meeting time is required.")
 			}
@@ -178,6 +179,7 @@ func(m HiredCoach) ValidateMeetingTime() (error, map[string]string) {
 			if t.Before(now) {
 				return fmt.Errorf("Meeting time cannot be past current date.")
 			}
+			m.MeetingTime = t.Format(time.DateTime)
 			return nil
 		 })))
 }

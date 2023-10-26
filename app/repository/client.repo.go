@@ -155,6 +155,18 @@ func (repo * ClientRepository) GetClientById (id int) (model.Client, error) {
 	getErr := repo.db.Get(&client, getQuery, id)
 	return client, getErr
 }
+func (repo * ClientRepository)UpdateMobileNumberOnce(clientId int, mobileNumber string) error {
+	_, err := repo.db.Exec("UPDATE client set mobile_number = ? WHERE LENGTH(mobile_number) = 0 AND id = ?", mobileNumber, clientId)
+	return err
+}
+func (repo * ClientRepository)UpdateEmergencyContactOnce(clientId int, mobileNumber string) error {
+	_, err := repo.db.Exec("UPDATE client set emergency_contact = ? WHERE LENGTH(emergency_contact) = 0 AND id = ?", mobileNumber, clientId)
+	return err
+}
+func (repo * ClientRepository)UpdateAddressOnce(clientId int, address string) error {
+	_, err := repo.db.Exec("UPDATE client set address = ? WHERE LENGTH(address) = 0 AND id = ?", address, clientId)
+	return err
+}
 func NewClientRepository () ClientRepository{
 	return ClientRepository{
 		db: db.GetConnection(),
