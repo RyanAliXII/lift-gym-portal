@@ -29,7 +29,7 @@ func(repo *MembershipRequestRepository)NewRequest(request model.MembershipReques
 		return err
 	}
 	snapshotId, err := result.LastInsertId()
-	_, err = transaction.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id, membership_plan_snapshot_id )VALUES(?, ?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId, snapshotId)
+	_, err = transaction.Exec("INSERT INTO membership_request(client_id, membership_plan_id, status_id, membership_plan_snapshot_id, remarks )VALUES(?, ?, ?, ?, ?)", request.ClientId, request.MembershipPlanId, request.StatusId, snapshotId, "")
 	if err != nil {
 		transaction.Rollback()
 		return err
