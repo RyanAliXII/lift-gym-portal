@@ -27,6 +27,11 @@ func (h * PasswordHandler) RenderResetPasswordPage( c echo.Context) error {
 		"csrf" : c.Get("csrf"),
 	})
 }
+func (h * PasswordHandler) RenderResetClientPasswordPage( c echo.Context) error {
+	return c.Render(http.StatusOK, "public/password/client/reset-password", Data{
+		"csrf" : c.Get("csrf"),
+	})
+}
 func (h * PasswordHandler)RenderChangePasswordPage(c echo.Context) error {
 	key := c.QueryParam("key")
 
@@ -49,6 +54,44 @@ func (h * PasswordHandler) ResetPassword( c echo.Context) error {
 		})
 	}
 	user, err := h.userRepo.GetUserByEmail(email)
+	
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetUserByEmail"))
+		if err != sql.ErrNoRows {
+			return c.JSON(http.StatusInternalServerError,  JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured.",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+		    Message: "OK",
+		})
+	}
+	passwordReset, err := h.passwordReset.New(user.AccountId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewPasswordReset"))
+	}
+	go mailer.SendEmailPasswordReset([]string{user.Email}, user.GivenName,  passwordReset.PublicId)
+	return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+		    Message: "OK",
+	})
+
+}
+
+
+func (h * PasswordHandler) ResetClientPassword( c echo.Context) error {
+	email := c.FormValue("email")
+	err := validation.Validate(&email, validation.Required.Error("Email is required."), is.Email.Error("Email is not valid."))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "validation error"))
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+		    Message: "OK",
+		})
+	}
+	user, err := h.userRepo.GetClientUserByEmail(email)
 	
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetUserByEmail"))
