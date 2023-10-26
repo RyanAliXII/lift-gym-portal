@@ -15,13 +15,14 @@ func RegisterHandlers(router *echo.Echo) {
 			if contentType == "application/json" {
 				c.Response().Header().Set("Vary", "Accept")
 			}
-			next(c)
-			return nil
+			return next(c)
 		}
 	})
+	
 	router.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
+
 	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
 	router.POST("/change-password", passwordHandler.ChangePassword)
 	adminRoutes(router.Group("/app"))

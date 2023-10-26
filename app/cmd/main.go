@@ -11,6 +11,7 @@ import (
 	"lift-fitness-gym/app/pkg/applog"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/handlers"
+	"net/http"
 	"path/filepath"
 	"slices"
 
@@ -63,6 +64,7 @@ func main() {
 		templates: loadTemplates("./views"),
 	}
 	handlers.RegisterHandlers(e)
+	registerNotFoundHandler(e)
 	e.Logger.Fatal(e.Start(":80"))	
 }
 func loadTemplates(path string) * template.Template{
@@ -88,4 +90,24 @@ func loadTemplates(path string) * template.Template{
         panic(err)
     }
 	return tmpls
+}
+
+func registerNotFoundHandler(router *  echo.Echo) {
+	router.RouteNotFound("/*", noRouteFunc)
+	router.RouteNotFound("/app/*", noRouteFunc)
+	router.RouteNotFound("/clients/*", noRouteFunc)
+	router.RouteNotFound("/coaches/*", noRouteFunc)
+	
+}
+
+func noRouteFunc (c echo.Context) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		return c.JSON(http.StatusNotFound, handlers.JSONResponse{
+			Status: http.StatusNotFound,
+			Message: "Not found",
+		})
+	}
+	
+	return c.Render(http.StatusNotFound,"partials/error/404-page", nil)
 }
