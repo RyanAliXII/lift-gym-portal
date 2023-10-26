@@ -40,12 +40,25 @@ func (h * PasswordHandler) RenderResetCoachPasswordPage( c echo.Context) error {
 func (h * PasswordHandler)RenderChangePasswordPage(c echo.Context) error {
 	key := c.QueryParam("key")
 
-	_, err := h.passwordReset.GetByPublicKey(key)
+	passwordReset, err := h.passwordReset.GetByPublicKey(key)
 	if err != nil {
 		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
 	}
+	userType, err := h.userRepo.GetUserTypeByAccountId(passwordReset.AccountId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getUserTypeError"))
+		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
+	}
+	redirectUrl := "/app/login"
+	switch(userType){
+	case "coach":
+		redirectUrl = "/coaches/login"
+	case "client": 
+		redirectUrl = "/clients/login"
+	}
 	return c.Render(http.StatusOK,"public/password/change-password", Data{
 		"csrf" : c.Get("csrf"),
+		"redirectUrl": redirectUrl,
 	})
 }
 

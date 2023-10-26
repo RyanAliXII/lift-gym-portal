@@ -11,6 +11,7 @@ type UserRepository struct {
 	db *sqlx.DB
 }
 
+	
 func (repo *UserRepository) GetUserByEmail(email string)(model.User, error) {
 	user := model.User{}
 	selectQuery := `SELECT user.id, given_name, middle_name, surname, email, password, account.id as account_id, account.is_root FROM user INNER JOIN account on user.account_id = account.id where UPPER(email) = UPPER(?) LIMIT 1`
@@ -32,6 +33,19 @@ func (repo  * UserRepository) GetCoachUserByEmail(email string)(model.Coach, err
 	INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) ORDER BY coach.updated_at DESC`
 	err := repo.db.Get(&coach, query, email)
 	return coach, err
+}
+
+func (repo  * UserRepository) GetUserTypeByAccountId(accountId int)(string , error){
+		query := `
+			SELECT user_type FROM (SELECT account_id , 'admin' as user_type FROM user
+			UNION ALL 
+			SELECT account_id , 'client' as user_type FROM client
+			UNION ALL
+			SELECT account_id , 'coach' as user_type FROM  coach) as user where account_id = ? LIMIT 1
+		`
+		userType := ""
+		err := repo.db.Get(&userType, query, accountId)
+		return userType, err
 }
 
 func NewUserRepository () UserRepository{
