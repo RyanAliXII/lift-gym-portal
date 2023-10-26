@@ -13,7 +13,7 @@ type UserRepository struct {
 
 func (repo *UserRepository) GetUserByEmail(email string)(model.User, error) {
 	user := model.User{}
-	selectQuery := `SELECT user.id, given_name, middle_name, surname, email, password, account.is_root FROM user INNER JOIN account on user.account_id = account.id where UPPER(email) = UPPER(?) LIMIT 1`
+	selectQuery := `SELECT user.id, given_name, middle_name, surname, email, password, account.id as account_id, account.is_root FROM user INNER JOIN account on user.account_id = account.id where UPPER(email) = UPPER(?) LIMIT 1`
 	getErr := repo.db.Get(&user, selectQuery, email)
 	return user, getErr
 
