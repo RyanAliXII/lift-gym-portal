@@ -72,7 +72,30 @@ func (h * ClientHandler) handleJSONContent( c echo.Context ) error {
 		Message: "Clients fetched.",
 	})
 }
+func (h * ClientHandler) DeleteClient( c echo.Context) error {
+	id := c.Param("id")
+	clientId, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
 
+	err := h.clientRepo.Delete(clientId)
+	if err != nil{
+		logger.Error(err.Error(), zap.String("error","deleteErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",	
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client deleted.",
+	})
+}
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
 	csrf := c.Get("csrf")
 

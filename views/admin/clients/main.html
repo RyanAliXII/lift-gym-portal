@@ -72,7 +72,7 @@
                               client-id="{{.Id}}"
                               @click="initDelete"
                             >
-                              <i class="fas fa-trash"></i>
+                              <i class="fas fa-trash" client-id="{{.Id}}"></i>
                             </button>
                             {{end}}
                           </div>
@@ -98,6 +98,9 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
   <script src="/js/admin/clients/main.js"></script>
 </html>
 {{end}}

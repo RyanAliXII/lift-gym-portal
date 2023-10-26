@@ -63,6 +63,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/clients/:id", clientHandler.RenderClientUpdatePage, middlewares.ValidatePermissions("Client.Edit"))
 	router.PUT("/clients/:id", clientHandler.UpdateClient, middlewares.ValidatePermissions("Client.Edit"))
 	router.POST("/clients", clientHandler.NewClient, middlewares.ValidatePermissions("Client.Create"))
+	router.DELETE("/clients/:id", clientHandler.DeleteClient, middlewares.ValidatePermissions("Client.Delete") )
 	router.PATCH("/clients/:id/password", clientHandler.ResetPassword, middlewares.ValidatePermissions("Client.Edit"))
 	router.GET("/clients/registration", clientHandler.RenderClientRegistrationForm, middlewares.ValidatePermissions("Client.Create"))
 	router.GET("/members", membersHandler.RenderMembersPage, middlewares.ValidatePermissions("Member.Read"))

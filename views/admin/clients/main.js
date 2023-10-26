@@ -5,6 +5,24 @@ createApp({
     delimiters: ["{", "}"],
   },
   setup() {
+    const deleteClient = async (id) => {
+      try {
+        const response = await fetch(`/app/clients/${id}`, {
+          method: "DELETE",
+          headers: new Headers({ "X-CSRF-Token": window.csrf }),
+        });
+        if (response.status === 200) {
+          await swal.fire(
+            "Client Delete",
+            "Client has been deleted.",
+            "success"
+          );
+          location.reload();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const initDelete = async (event) => {
       const id = event.target.getAttribute("client-id");
       const result = await swal.fire({
@@ -17,6 +35,7 @@ createApp({
         icon: "warning",
       });
       if (result.isConfirmed) {
+        deleteClient(id);
       }
     };
     return {
