@@ -19,11 +19,11 @@ func RegisterHandlers(router *echo.Echo) {
 		}
 	})
 
-	passwordHandler := NewPasswordHandler()
+	
 	router.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
-	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
+	
 
 
 	adminRoutes(router.Group("/app"))
@@ -49,6 +49,8 @@ func adminRoutes (router  * echo.Group){
 	clientLogHandler := NewClientLogHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
+	passwordHandler := NewPasswordHandler()
+	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
 	router.GET("/packages", packageHandler.RenderPackagePage, middlewares.ValidatePermissions("Package.Read"))
