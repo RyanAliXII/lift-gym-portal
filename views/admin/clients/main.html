@@ -14,7 +14,7 @@
         <div>
           {{template "partials/dashboard-topbar" .}}
 
-          <div class="container-fluid">
+          <div class="container-fluid" id="ClientPage">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
               {{if hasPermission "Client.Create" .currentUser.Permissions}}
@@ -56,15 +56,26 @@
                         <td>{{.Surname}}</td>
 
                         <td>
-                          {{if hasPermission "Client.Edit"
-                          $.currentUser.Permissions}}
-                          <a
-                            href="/app/clients/{{.Id}}"
-                            class="btn btn-outline-primary"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
-                          {{end}}
+                          <div class="d-flex" style="gap: 5px">
+                            {{if hasPermission "Client.Edit"
+                            $.currentUser.Permissions}}
+                            <a
+                              href="/app/clients/{{.Id}}"
+                              class="btn btn-outline-primary"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            {{end}} {{if hasPermission "Client.Delete"
+                            $.currentUser.Permissions}}
+                            <button
+                              class="btn btn-outline-danger"
+                              client-id="{{.Id}}"
+                              @click="initDelete"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                            {{end}}
+                          </div>
                         </td>
                       </tr>
                       {{end}}
@@ -87,5 +98,6 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
+  <script src="/js/admin/clients/main.js"></script>
 </html>
 {{end}}
