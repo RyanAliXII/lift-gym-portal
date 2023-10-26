@@ -25,6 +25,9 @@ type TemplateRegistry struct {
 }
   
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	if data == nil {
+		data = handlers.Data{}
+	}
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
 	mapData, ok := data.(handlers.Data)

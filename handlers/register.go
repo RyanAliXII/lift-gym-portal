@@ -47,6 +47,7 @@ func adminRoutes (router  * echo.Group){
 	clientLogHandler := NewClientLogHandler()
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
+	adminProfileHandler := NewAdminProfileHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -106,6 +107,7 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/client-logs", clientLogHandler.NewLog, middlewares.ValidatePermissions("ClientLog.Create"))
 	router.PUT("/client-logs/:id", clientLogHandler.UpdateLog, middlewares.ValidatePermissions("ClientLog.Edit"))
 	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog, middlewares.ValidatePermissions("ClientLog.Delete"))
+	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 }
 
 
@@ -151,6 +153,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
+	
 }
 
 func coachRoutes(router * echo.Group) {
