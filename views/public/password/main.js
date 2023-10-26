@@ -1,9 +1,9 @@
+import { tr } from "date-fns/locale";
 import { createApp, onMounted, ref } from "vue";
 
 createApp({
   setup() {
-    const errors = ref({});
-
+    const displaySuccessMessage = ref(false);
     const onSubmit = async (event) => {
       const form = new FormData(event.target);
       try {
@@ -14,15 +14,17 @@ createApp({
             "X-CSRF-Token": window.csrf,
           }),
         });
+        if (response.status === 200) {
+          displaySuccessMessage.value = true;
+        }
       } catch (error) {
         console.log(error);
       }
     };
-    onMounted(() => {
-      console.log("test");
-    });
+
     return {
       onSubmit,
+      displaySuccessMessage,
     };
   },
 }).mount("#ResetPassword");

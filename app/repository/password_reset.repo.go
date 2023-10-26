@@ -53,3 +53,29 @@ func (repo * PasswordReset) GetByPublicKey(publicKey string) (model.PasswordRese
 	return passwordReset, err
 }
 
+func (repo  * PasswordReset) ChangePasswordByPublicKey( newPassword string, publicKey string)(error){
+	passwordReset, err := repo.GetByPublicKey(publicKey)
+	if err != nil {
+		return err
+	}
+	transaction, err := repo.db.Beginx()
+
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	_, err = transaction.Exec("UPDATE account set password = ? where id = ?", newPassword,  passwordReset.AccountId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	_, err = transaction.Exec("UPDATE password_reset set completed_at = now() where id = ?", passwordReset.Id)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+
+	transaction.Commit()
+	return nil
+}
+

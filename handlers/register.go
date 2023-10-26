@@ -23,6 +23,7 @@ func RegisterHandlers(router *echo.Echo) {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
 	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
+	router.POST("/change-password", passwordHandler.ChangePassword)
 	adminRoutes(router.Group("/app"))
 	clientRoutes(router.Group("/clients"))
 	coachRoutes(router.Group("/coaches"))

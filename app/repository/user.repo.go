@@ -33,6 +33,7 @@ func (repo  * UserRepository) GetCoachUserByEmail(email string)(model.Coach, err
 	err := repo.db.Get(&coach, query, email)
 	return coach, err
 }
+
 func NewUserRepository () UserRepository{
 	return UserRepository{
 		db: db.GetConnection(),
