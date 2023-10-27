@@ -4,7 +4,7 @@ import swal from "sweetalert2";
 import { object } from "yup";
 createApp({
   setup() {
-    const { errors, defineInputBinds, values, setErrors } = useForm({
+    const { errors, defineInputBinds, values, setErrors, resetForm } = useForm({
       initialValues: {
         givenName: "",
         middleName: "",
@@ -31,6 +31,7 @@ createApp({
 
         const { data } = await response.json();
         if (response.status === 200) {
+          resetForm();
           swal.fire(
             "Coach Registered",
             `Coach has been registered. <br> The password for the account is <strong>${data?.password}</strong>.<br>Please keep the password this will be the only time it will be shown.`,
