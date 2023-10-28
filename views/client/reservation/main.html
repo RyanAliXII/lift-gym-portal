@@ -31,73 +31,57 @@
                 Request Package
               </button> -->
             </div>
-            {{end}}
+        
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Your Requests</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Your Reservations</h6>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
-                  <!-- <table
-                    class="table table-bordered"
-                    id="dataTable"
-                    width="100%"
-                    cellspacing="0"
+                      <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    id="reserve-tab"
+                    data-toggle="tab"
+                    href="#reserve-panel"
+                    role="tab"
+                    aria-controls="reserve"
+                    aria-selected="true"
+                    >Reserve </a
                   >
-                    <thead>
-                      <tr>
-                        <th>Created At</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <template v-for="request of packageRequests">
-                        <tr>
-                          <td>{formatDate(request.createdAt)}</td>
-                          <td>{request.packageSnapshot.description}</td>
-                          <td>{request.packageSnapshot.price}</td>
-                          <td
-                            class="font-weight-bold"
-                            :class="{'text-warning': request.statusId === Status.Pending, 
-                            'text-primary': request.statusId === Status.Approved,
-                             'text-success': request.statusId === Status.Received, 
-                             'text-danger': request.statusId === Status.Cancelled}"
-                          >
-                            <div>{request.status}</div>
-
-                            <small v-if="request.statusId === Status.Pending"
-                              >Waiting for approval.</small
-                            >
-                            <small v-if="request.statusId === Status.Approved"
-                              >Your request has been approved. You can now pay
-                              the package fee in the gym.</small
-                            >
-                            <small v-if="request.statusId === Status.Received"
-                              >You have received the package.</small
-                            >
-                          </td>
-                          <td>
-                            <button
-                              v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
-                              type="button"
-                              class="btn btn-outline-danger"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Cancel Membership Request"
-                              @click="initCancellation(request.id)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr> -->
-                      </template>
-                    </tbody>
-                  </table>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="reservation-tab"
+                    data-toggle="tab"
+                    href="#reservation-panel"
+                    role="tab"
+                    aria-controls="reservation"
+                    aria-selected="false"
+                    >Reservations</a
+                  >
+                </li>
+              </ul>
+              <div class="tab-content" id="profileTabContent">
+                <div
+                  class="tab-pane fade show active"
+                  id="reserve-panel"
+                  role="tabpanel"
+                  aria-labelledby="info-tab"
+                >
+               
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="reservation-panel"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab"
+                >
+                  
+                </div>
+              </div>
                 </div>
               </div>
             </div>

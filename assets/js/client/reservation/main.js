@@ -86,7 +86,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm-bundler.js\");\n\n\n\n//# sourceURL=webpack:///./views/client/reservation/main.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.esm-bundler.js\");\n\n\n(0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({\n  setup() {\n    (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(() => {});\n  },\n}).mount(\"#ReservationPage\");\n\n\n//# sourceURL=webpack:///./views/client/reservation/main.js?");
 
 /***/ })
 
