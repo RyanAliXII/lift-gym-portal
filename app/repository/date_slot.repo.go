@@ -22,6 +22,6 @@ func (repo * DateSlot) NewSlots(slots []model.DateSlot) error {
 }
 func (repo * DateSlot) GetSlots() ( []model.DateSlot, error) {
     slots :=   make([]model.DateSlot, 0)
-	repo.db.Select(&slots, "SELECT id, date from date_slot where date >= CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila')")
+	repo.db.Select(&slots, "SELECT id, date from date_slot where date >= CAST(CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila') as date)")
 	return slots, nil
 }

@@ -61,6 +61,16 @@ createApp({
         console.error(error);
       }
     };
+
+    const formatDate = (date) => {
+      if (!date) return "No Date";
+      if (date.length === 0) return "No Date";
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      });
+    };
     onMounted(() => {
       fetchSlots();
     });
@@ -70,6 +80,8 @@ createApp({
       onSubmit,
       errors,
       today,
+      formatDate,
+      slots,
     };
   },
 }).mount("#DateSlot");

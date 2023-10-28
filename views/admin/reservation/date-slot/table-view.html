@@ -1,5 +1,5 @@
 {{define "admin/reservation/date-slot/table-view"}}
-<div class="table-responsive">
+<div class="table-responsive mt-3">
   <table
     class="table table-bordered"
     id="dataTable"
@@ -14,7 +14,16 @@
     </thead>
 
     <tbody>
-      <template> </template>
+      <template v-for="slot of slots">
+        <tr>
+          <td>{formatDate(slot.date)}</td>
+          <td>
+            <button class="btn btn-outline-danger">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </template>
     </tbody>
   </table>
 </div>
