@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { createApp, ref } from "vue";
-
+import swal from "sweetalert2";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -44,6 +44,7 @@ createApp({
         }
         form.value = { ...initialFormValue };
         $("#newSlotModal").modal("hide");
+        swal.fire("New Slot", "Date slot/s has been added.", "success");
       } catch (error) {
         console.error(error);
       }

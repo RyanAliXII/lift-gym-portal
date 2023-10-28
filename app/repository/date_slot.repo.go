@@ -17,6 +17,6 @@ func NewDateSlotRepository () DateSlot{
 	}
 }
 func (repo * DateSlot) NewSlots(slots []model.DateSlot) error {
-	_, err := repo.db.Exec("INSERT INTO date_slot(date) VALUES(:date)", slots)
+	_, err := repo.db.NamedExec("INSERT INTO date_slot(date) VALUES(:date) ON DUPLICATE KEY UPDATE date = date", slots)
 	return err
 }
