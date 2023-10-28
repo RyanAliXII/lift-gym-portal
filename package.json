@@ -11,12 +11,15 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@fullcalendar/interaction": "^6.1.9",
+    "@fullcalendar/timegrid": "^6.1.9",
     "@vorms/core": "^1.1.0",
     "@vueuse/core": "^10.5.0",
     "choices.js": "^10.2.0",
     "date-fns": "^2.30.0",
     "filepond": "^4.30.4",
     "filepond-plugin-file-validate-type": "^1.2.8",
+    "fullcalendar": "^6.1.9",
     "sweetalert2": "^11.7.27",
     "swiper": "^10.3.1",
     "uuid": "^9.0.0",
