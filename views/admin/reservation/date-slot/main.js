@@ -71,6 +71,38 @@ createApp({
         year: "numeric",
       });
     };
+    const deleteSlot = async (id) => {
+      try {
+        const response = await fetch(`/app/date-slots/${id}`, {
+          method: "DELETE",
+          headers: new Headers({ "X-CSRF-Token": window.csrf }),
+        });
+        if (response.status === 200) {
+          swal.fire(
+            "Delete Date Slot",
+            "Date slot has been deleted.",
+            "success"
+          );
+          fetchSlots();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Date Slot",
+        text: "Are you sure you want to delete slot",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete this slot",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteSlot(id);
+      }
+    };
     onMounted(() => {
       fetchSlots();
     });
@@ -82,6 +114,7 @@ createApp({
       today,
       formatDate,
       slots,
+      initDelete,
     };
   },
 }).mount("#DateSlot");

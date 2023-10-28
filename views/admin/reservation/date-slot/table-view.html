@@ -18,7 +18,7 @@
         <tr>
           <td>{formatDate(slot.date)}</td>
           <td>
-            <button class="btn btn-outline-danger">
+            <button class="btn btn-outline-danger" @click="initDelete(slot.id)">
               <i class="fas fa-trash"></i>
             </button>
           </td>
