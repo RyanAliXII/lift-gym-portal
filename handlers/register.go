@@ -49,6 +49,7 @@ func adminRoutes (router  * echo.Group){
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
 	adminProfileHandler := NewAdminProfileHandler()
+	dateSlotHandler := NewDateSlotHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -111,6 +112,8 @@ func adminRoutes (router  * echo.Group){
 	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog, middlewares.ValidatePermissions("ClientLog.Delete"))
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
+	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage)
+	
 }
 
 
