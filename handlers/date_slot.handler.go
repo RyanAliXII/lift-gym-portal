@@ -21,6 +21,19 @@ func NewDateSlotHandler () DateSlotHandler{
 	}
 }
 func(h * DateSlotHandler) RenderDateSlotPage (c echo.Context) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		slots, err := h.dateSlotRepo.GetSlots()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "getSlotsErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"slots":  slots,
+			},
+		})
+	}
 	return c.Render(http.StatusOK, "admin/reservation/date-slot/main", Data{
 		"title": "Date Slots",
 		"module": "Reservation Date Slots",

@@ -26,6 +26,7 @@
           <div class="form-group">
             <label for="name" class="col-form-label">From</label>
             <input
+              :min="today"
               type="date"
               name="from"
               @input="handleFormInput"
@@ -43,6 +44,7 @@
             <input
               type="date"
               name="to"
+              :min="today"
               @input="handleFormInput"
               :value="form.to"
               class="form-control"

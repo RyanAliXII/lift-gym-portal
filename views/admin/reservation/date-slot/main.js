@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { createApp, ref } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
 createApp({
   compilerOptions: {
@@ -14,6 +14,7 @@ createApp({
     const form = ref({
       ...initialFormValue,
     });
+    const slots = ref([]);
     const errors = ref({});
     const handleFormInput = (event) => {
       let value = event.target.value;
@@ -49,11 +50,26 @@ createApp({
         console.error(error);
       }
     };
+    const fetchSlots = async () => {
+      try {
+        const response = await fetch("/app/date-slots", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        slots.value = data?.slots ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    onMounted(() => {
+      fetchSlots();
+    });
     return {
       form,
       handleFormInput,
       onSubmit,
       errors,
+      today,
     };
   },
 }).mount("#DateSlot");
