@@ -114,10 +114,8 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage)
 	router.POST("/date-slots", dateSlotHandler.NewSlot)
-	
+	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot)
 }
-
-
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
 	dashboardHandler := NewDashboardHandler()

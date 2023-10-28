@@ -22,6 +22,10 @@ func (repo * DateSlot) NewSlots(slots []model.DateSlot) error {
 }
 func (repo * DateSlot) GetSlots() ( []model.DateSlot, error) {
     slots :=   make([]model.DateSlot, 0)
-	repo.db.Select(&slots, "SELECT id, date from date_slot where date >= CAST(CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila') as date)")
+	repo.db.Select(&slots, "SELECT id, date from date_slot where date >= CAST(CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila') as date) and deleted_at is null")
 	return slots, nil
+}
+func (repo * DateSlot) DeleteSlot(id int) (error) {
+	_, err := repo.db.Exec("UPDATE set deleted_at = now() where id = ?", id)
+	return err
 }

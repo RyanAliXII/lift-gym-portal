@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -74,6 +75,28 @@ func(h * DateSlotHandler) NewSlot (c echo.Context) error {
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Date slot/s has been added.",
+	})
+}
+func (h * DateSlotHandler)DeleteSlot(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err !=nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.dateSlotRepo.DeleteSlot(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","DeleteSlotErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Date slot/s has been deleted.",
 	})
 }
 func (h * DateSlotHandler) toDateSlotModel (from time.Time, to time.Time) []model.DateSlot{

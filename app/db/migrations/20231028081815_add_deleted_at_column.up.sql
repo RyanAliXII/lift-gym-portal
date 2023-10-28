@@ -1,0 +1,2 @@
+ALTER TABLE date_slot
+ADD COLUMN deleted_at TIMESTAMP NULL;
