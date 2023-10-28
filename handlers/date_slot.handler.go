@@ -36,7 +36,17 @@ func(h * DateSlotHandler) NewSlot (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	
+	err, fields := body.Validate()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","validationErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fields,
+			},
+			Message: "Validation error.",
+		})
+	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Date slot/s has been added.",

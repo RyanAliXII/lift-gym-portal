@@ -22,25 +22,36 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="name" class="col-form-label">From</label>
             <input
               type="date"
               name="from"
+              @input="handleFormInput"
               :value="form.from"
               class="form-control"
               placeholder="Open slot starting on this date"
+              :class="{'is-invalid': errors?.from }"
             />
+            <div class="invalid-feedback" :class="{'d-block': errors?.from}">
+              {errors?.from}
+            </div>
           </div>
           <div class="form-group">
             <label for="name" class="col-form-label">To</label>
             <input
               type="date"
+              name="to"
+              @input="handleFormInput"
               :value="form.to"
               class="form-control"
+              :class="{'is-invalid': errors?.to }"
               placeholder="Open slot ending on this date"
             />
+            <div class="invalid-feedback" :class="{'d-block': errors?.to}">
+              {errors?.to}
+            </div>
           </div>
 
           <div class="d-flex" style="gap: 5px">

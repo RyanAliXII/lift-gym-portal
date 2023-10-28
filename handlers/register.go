@@ -113,6 +113,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage)
+	router.POST("/date-slots", dateSlotHandler.NewSlot)
 	
 }
 

@@ -29,8 +29,12 @@ func (m DateRangeBody) Validate() (error, map[string]string){
 		if err != nil {
 			return fmt.Errorf("invalid date format")
 		}
-		
+		//use philippines time
 		today := time.Now().In(location)
+		from = from.In(location)
+		//remove time, compare only date
+		today = today.Truncate(24 * time.Hour)
+		from = from.Truncate(24 * time.Hour)
 		if(from.Before(today)){
 			return fmt.Errorf("field shoud be greater than or equal date today")
 		}
@@ -46,12 +50,17 @@ func (m DateRangeBody) Validate() (error, map[string]string){
 		if err != nil {
 			return fmt.Errorf("invalid date format")
 		}
-		
+		//use philippines time
 		today := time.Now().In(location)
+		to = to.In(location)
+		//remove time, compare only date
+		today = today.Truncate(24 * time.Hour)
+		to = to.Truncate(24 * time.Hour)
+		
+		
 		if(to.Before(today)){
 			return fmt.Errorf("field should be greater than or equal date today")
 		}
-
 		from, _ := time.Parse(time.DateOnly, m.From)
 		if(to.Before(from)){
 			return fmt.Errorf("field should be greater than 'from' field")
