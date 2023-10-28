@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"slices"
 
+	_ "time/tzdata"
+
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
