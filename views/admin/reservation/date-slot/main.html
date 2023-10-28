@@ -43,7 +43,7 @@
                   <li class="nav-item">
                     <a
                       class="nav-link active"
-                      id="reserve-tab"
+                      id="table-view-tab"
                       data-toggle="tab"
                       href="#table-view-panel"
                       role="tab"
@@ -55,7 +55,7 @@
                   <li class="nav-item">
                     <a
                       class="nav-link"
-                      id="reservation-tab"
+                      id="calendar-view-tab"
                       data-toggle="tab"
                       href="#calendar-view-panel"
                       role="tab"
@@ -79,7 +79,9 @@
                     id="calendar-view-panel"
                     role="tabpanel"
                     aria-labelledby="calendar-view-tab"
-                  ></div>
+                  >
+                    {{template "admin/reservation/date-slot/calendar-view" .}}
+                  </div>
                 </div>
               </div>
             </div>

@@ -3,7 +3,6 @@ import { Calendar } from "fullcalendar";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { format } from "date-fns";
-import { da } from "date-fns/locale";
 createApp({
   setup() {
     const reservationCalendarElement = ref(null);
