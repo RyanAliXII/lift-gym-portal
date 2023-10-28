@@ -26,6 +26,7 @@ createApp({
     };
     const onSubmit = async () => {
       try {
+        errors.value = {};
         const response = await fetch("/app/date-slots", {
           method: "POST",
           body: JSON.stringify(form.value),
@@ -41,6 +42,8 @@ createApp({
           }
           return;
         }
+        form.value = { ...initialFormValue };
+        $("#newSlotModal").modal("hide");
       } catch (error) {
         console.error(error);
       }

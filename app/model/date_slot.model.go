@@ -68,3 +68,25 @@ func (m DateRangeBody) Validate() (error, map[string]string){
 		return nil
 	})) )
 }
+
+func (m DateRangeBody) ToTime() ( time.Time,  time.Time, error){
+	from, err := time.Parse(time.DateOnly, m.From)
+	if err != nil {
+		 return time.Time{}, time.Time{}, err
+	}
+	location, err := time.LoadLocation("Asia/Manila")
+	if err != nil {
+		return time.Time{}, time.Time{}, err
+	}
+	from = from.In(location)
+	from = from.Truncate(24 * time.Hour)
+
+	to, err := time.Parse(time.DateOnly, m.To)
+    if err != nil {
+		return  time.Time{}, time.Time{}, err
+	}
+	to = to.In(location)
+	to = to.Truncate(24 * time.Hour)
+		
+	return from, to, err
+}

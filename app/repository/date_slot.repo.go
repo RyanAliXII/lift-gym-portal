@@ -16,6 +16,7 @@ func NewDateSlotRepository () DateSlot{
 		db: db.GetConnection(),
 	}
 }
-func (repo * DateSlot) NewSlots([]model.DateSlot) error {
-	return nil
+func (repo * DateSlot) NewSlots(slots []model.DateSlot) error {
+	_, err := repo.db.Exec("INSERT INTO date_slot(date) VALUES(:date)", slots)
+	return err
 }
