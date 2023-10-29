@@ -50,6 +50,7 @@ func adminRoutes (router  * echo.Group){
 	logoutHandler := NewLogoutHandler()
 	adminProfileHandler := NewAdminProfileHandler()
 	dateSlotHandler := NewDateSlotHandler()
+	timeSlotHandler := NewTimeSlotHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -115,6 +116,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage)
 	router.POST("/date-slots", dateSlotHandler.NewSlot)
 	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot)
+	router.GET("/time-slots", timeSlotHandler.RenderTimeSlotPage)
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
