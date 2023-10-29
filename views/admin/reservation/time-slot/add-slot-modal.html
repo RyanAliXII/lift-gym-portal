@@ -22,7 +22,40 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form @submit.prevent="onSubmit">
+          <div class="form-group">
+            <label>Start Time</label>
+            <input
+              type="time"
+              class="form-control"
+              name="startTime"
+              :value="form.startTime"
+              @input="handleFormInput"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <input
+              type="time"
+              class="form-control"
+              name="endTime"
+              :value="form.endTime"
+              @input="handleFormInput"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+          <div class="form-group">
+            <label>Maximum Capacity</label>
+            <input
+              type="number"
+              class="form-control"
+              :value="form.maxCapacity"
+              name="maxCapacity"
+              @input="handleFormInput"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
           <div class="d-flex" style="gap: 5px">
             <button
               type="button"
