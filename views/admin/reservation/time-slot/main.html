@@ -38,7 +38,43 @@
                   List of Time Slot
                 </h6>
               </div>
-              <div class="card-body"></div>
+              <div class="card-body">
+                <div class="table-responsive mt-3">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Maximum Capacity</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="slot of timeSlots">
+                        <tr>
+                          <td>{formatTime(slot.startTime)}</td>
+                          <td>{formatTime(slot.endTime)}</td>
+                          <td>{slot.maxCapacity}</td>
+                          <td>
+                            <button
+                              class="btn btn-outline-danger"
+                              @click="initDelete(slot.id)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
             {{template "admin/reservation/time-slot/add-slot-modal" .}}
           </div>

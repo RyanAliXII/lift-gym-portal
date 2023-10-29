@@ -23,6 +23,6 @@ func (repo * TimeSlot)NewTimeSlot(timeSlot model.TimeSlot) error {
 }
 func (repo * TimeSlot)GetTimeSlots() ([]model.TimeSlot, error) {
 	slots := make([]model.TimeSlot, 0)
-	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slots where deleted_at is null")
+	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null")
 	return slots, err
 }
