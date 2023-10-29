@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS time_slot (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
+    max_capacity INT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL
 );
