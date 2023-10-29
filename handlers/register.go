@@ -118,6 +118,7 @@ func adminRoutes (router  * echo.Group){
 	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot)
 	router.GET("/time-slots", timeSlotHandler.RenderTimeSlotPage)
 	router.POST("/time-slots", timeSlotHandler.NewTimeSlot)
+	router.DELETE("/time-slots/:id", timeSlotHandler.DeleteTimeSlot)
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
@@ -164,6 +165,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
 	router.GET("/reservations", reservationHandler.RenderClientReservationPage)
+	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
 }
 
 func coachRoutes(router * echo.Group) {

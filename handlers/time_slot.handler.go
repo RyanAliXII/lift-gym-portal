@@ -4,6 +4,7 @@ import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -65,4 +66,28 @@ func (h *TimeSlotHandler) NewTimeSlot(c echo.Context) error {
 		Status: http.StatusOK,
 		Message: "Time slot added.",
 	})
+}
+
+func (h * TimeSlotHandler) DeleteTimeSlot (c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "conveErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		} )
+	}
+	err = h.timeSlotRepo.DeleteTimeSlot(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteTimeSlotErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Time slot deleted.",
+	})
+
 }

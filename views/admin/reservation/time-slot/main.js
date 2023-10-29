@@ -1,7 +1,7 @@
 import swal from "sweetalert2";
-
 import { createApp, onMounted, ref } from "vue";
 import { parse, format } from "date-fns";
+import { times } from "./times";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -46,6 +46,7 @@ createApp({
         }
         $("#newSlotModal").modal("hide");
         form.value = { ...initialValues };
+        fetchTimeSlots();
         swal.fire("New Time Slot", "Time slot has been created.", "success");
       } catch (error) {
         console.error(error);
@@ -68,7 +69,6 @@ createApp({
     const formatTime = (time) => {
       if (!time) return "";
       try {
-        console.log(time);
         const parsedTime = parse(time, "HH:mm:ss", new Date());
         const formattedTime = format(parsedTime, "h:mm a");
         return formattedTime;
@@ -78,6 +78,18 @@ createApp({
       }
     };
 
+    const deleteTimeSlot = async (id) => {
+      const response = await fetch(`/app/time-slots/${id}`, {
+        method: "DELETE",
+        headers: new Headers({
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+      if (response.status === 200) {
+        swal.fire("Delete Time Slot", "Time slot has been deleted.", "success");
+        fetchTimeSlots();
+      }
+    };
     const initDelete = async (id) => {
       const result = await swal.fire({
         showCancelButton: true,
@@ -88,8 +100,9 @@ createApp({
         cancelButtonText: "I don't want to delete this slot",
         icon: "warning",
       });
-      // if (result.isConfirmed) {
-      // }
+      if (result.isConfirmed) {
+        deleteTimeSlot(id);
+      }
     };
     onMounted(() => {
       fetchTimeSlots();
@@ -106,6 +119,7 @@ createApp({
       timeSlots,
       errors,
       initDelete,
+      times,
     };
   },
 }).mount("#TimeSlot");

@@ -26,3 +26,7 @@ func (repo * TimeSlot)GetTimeSlots() ([]model.TimeSlot, error) {
 	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null")
 	return slots, err
 }
+func (repo * TimeSlot)DeleteTimeSlot(id int)(error) {
+	_, err :=repo.db.Exec("UPDATE time_slot set deleted_at = now() where id = ?", id )
+	return err
+}

@@ -1,50 +1,55 @@
 import { createApp, onMounted, ref } from "vue";
 import { Calendar } from "fullcalendar";
-import timeGridPlugin from "@fullcalendar/timegrid";
+
 import interactionPlugin from "@fullcalendar/interaction";
 import { format } from "date-fns";
 createApp({
   setup() {
     const reservationCalendarElement = ref(null);
     const reservationCalendar = ref(null);
-    onMounted(() => {
+    const dateSlots = ref([]);
+
+    const fetchDateSlots = async () => {
+      try {
+        const response = await fetch("/clients/reservations/date-slots");
+        const { data } = await response.json();
+        dateSlots.value = data?.slots ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    onMounted(async () => {
       const today = new Date();
       const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
       const startDate = format(nextThreeDays, "yyyy-MM-dd");
-      const allowedDates = ["2023-11-05", "2023-11-02"];
+      await fetchDateSlots();
       reservationCalendar.value = new Calendar(
         reservationCalendarElement.value,
         {
           initialView: "dayGridMonth",
-          plugins: [timeGridPlugin, interactionPlugin],
+          plugins: [interactionPlugin],
           height: "650px",
           selectable: true,
           allDaySlot: false,
-
-          headerToolbar: {
-            left: "prev,next",
-            center: "title",
-            right: "dayGridMonth", // user can switch between the two
-          },
           validRange: {
             start: startDate,
           },
           dateClick: (info) => {
             const date = info.dateStr;
-            if (allowedDates.includes(date)) {
-              reservationCalendar.value.changeView("timeGridDay");
-            }
+            // if (allowedDates.includes(date)) {
+            //   reservationCalendar.value.changeView("timeGridDay");
+            // }
           },
           eventClick: (info) => {
-            reservationCalendar.value.changeView(
-              "timeGridDay",
-              info.event.startStr
-            );
+            // reservationCalendar.value.changeView(
+            //   "timeGridDay",
+            //   info.event.startStr
+            // );
           },
-          events: allowedDates.map((d) => ({
+          events: dateSlots.value.map((slot) => ({
             title: "This date is open for reservation.",
-            start: d,
-            className: "p-2  bg-success",
+            start: slot.date,
+            className: "p-2  bg-success cursor-pointer",
           })),
         }
       );
