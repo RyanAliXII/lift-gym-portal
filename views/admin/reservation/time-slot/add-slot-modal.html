@@ -29,10 +29,16 @@
               type="time"
               class="form-control"
               name="startTime"
+              :class="{'is-invalid': errors?.startTime}"
               :value="form.startTime"
               @input="handleFormInput"
             />
-            <div class="invalid-feedback"></div>
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.startTime}"
+            >
+              {errors?.startTime}
+            </div>
           </div>
           <div class="form-group">
             <label>End Time</label>
@@ -42,8 +48,11 @@
               name="endTime"
               :value="form.endTime"
               @input="handleFormInput"
+              :class="{'is-invalid': errors?.endTime}"
             />
-            <div class="invalid-feedback"></div>
+            <div class="invalid-feedback" :class="{'d-block': errors?.endTime}">
+              {errors?.endTime}
+            </div>
           </div>
           <div class="form-group">
             <label>Maximum Capacity</label>
@@ -52,10 +61,17 @@
               class="form-control"
               :value="form.maxCapacity"
               name="maxCapacity"
+              :class="{'is-invalid': errors?.maxCapacity}"
               @input="handleFormInput"
             />
-            <div class="invalid-feedback"></div>
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.maxCapacity}"
+            >
+              {errors?.maxCapacity}
+            </div>
           </div>
+
           <div class="d-flex" style="gap: 5px">
             <button
               type="button"

@@ -18,6 +18,11 @@ func NewTimeSlotRepository() TimeSlot {
 	}
 }
 func (repo * TimeSlot)NewTimeSlot(timeSlot model.TimeSlot) error {
-	_, err :=repo.db.Exec("INSERT INTO time_slot(start_time, end_time) VALUES(?, ?)", timeSlot.StartTime, timeSlot.EndTime )
+	_, err :=repo.db.Exec("INSERT INTO time_slot(start_time, end_time, max_capacity) VALUES(?, ?, ?)", timeSlot.StartTime, timeSlot.EndTime, timeSlot.MaxCapacity )
 	return err
+}
+func (repo * TimeSlot)GetTimeSlots() ([]model.TimeSlot, error) {
+	slots := make([]model.TimeSlot, 0)
+	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slots where deleted_at is null")
+	return slots, err
 }
