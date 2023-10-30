@@ -1,4 +1,4 @@
-import { createApp, onMounted, ref } from "vue";
+import { computed, createApp, onMounted, ref } from "vue";
 import { Calendar } from "fullcalendar";
 import interactionPlugin from "@fullcalendar/interaction";
 import { format, parse } from "date-fns";
@@ -13,6 +13,7 @@ createApp({
     const dateSlots = ref([]);
     const timeSlots = ref([]);
     const selectedDate = ref("");
+    const reservations = ref([]);
     const initialValues = {
       dateSlotId: 0,
       timeSlotId: 0,
@@ -20,6 +21,13 @@ createApp({
     const errors = ref({});
     const form = ref({
       ...initialValues,
+    });
+    const reservationCache = computed(() => {
+      const map = new Map();
+      reservations.value.forEach((reservation) => {
+        map.set(reservation.date, reservation);
+      });
+      return map;
     });
     const handleFormInput = (event) => {
       let value = event.target.value;
@@ -38,6 +46,17 @@ createApp({
         const response = await fetch("/clients/reservations/date-slots");
         const { data } = await response.json();
         dateSlots.value = data?.slots ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const fetchReservations = async () => {
+      try {
+        const response = await fetch("/clients/reservations", {
+          headers: new Headers({ "Content-Type": "application/json" }),
+        });
+        const { data } = await response.json();
+        reservations.value = data?.reservations ?? [];
       } catch (error) {
         console.error(error);
       }
@@ -69,6 +88,7 @@ createApp({
       const today = new Date();
       const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
       const startDate = format(nextThreeDays, "yyyy-MM-dd");
+      await fetchReservations();
       await fetchDateSlots();
 
       const formatDate = (date) => {
@@ -94,6 +114,7 @@ createApp({
           eventClick: async (info) => {
             const slot = info.event.extendedProps;
             if (slot.available <= 0) return;
+            if (reservationCache.value.has(slot.date)) return;
             selectedDate.value = formatDate(info.event.start);
             await fetchTimeSlotsBasedOnDateSlot(info.event.id);
             form.value.dateSlotId = parseInt(info.event.id);
@@ -114,7 +135,15 @@ createApp({
       });
       dateSlots.value.forEach((slot) => {
         let event = {};
-        if (slot.available <= 0) {
+        if (reservationCache.value.has(slot.date)) {
+          event = {
+            id: slot.id,
+            title: "Already Reserved",
+            start: slot.date,
+            className: "p-2 border border-none",
+            extendedProps: slot,
+          };
+        } else if (slot.available <= 0) {
           event = {
             id: slot.id,
             title: "Fully Booked",
@@ -160,6 +189,7 @@ createApp({
           "success"
         );
         await fetchDateSlots();
+        await fetchReservations();
         repopulateEvents();
         $("#reserveModal").modal("hide");
       } catch (error) {
@@ -175,6 +205,7 @@ createApp({
       form,
       handleFormInput,
       errors,
+      reservations,
     };
   },
 }).mount("#ReservationPage");

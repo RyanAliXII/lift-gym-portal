@@ -38,8 +38,8 @@
                 :disabled="timeSlot.available <= 0"
               >
                 {formatTime(timeSlot.startTime)} -
-                {formatTime(timeSlot.endTime)} | Available :
-                {timeSlot.available}
+                {formatTime(timeSlot.endTime)} | {timeSlot.available > 0 ?
+                "Available: " + timeSlot.available: "Fully Booked"}
               </option>
             </select>
             <div class="invalid-feedback">{errors?.timeSlotId}</div>

@@ -7,6 +7,11 @@ type Reservation struct {
 	DateSlotId int `json:"dateSlotId" db:"date_slot_id"`
 	TimeSlotId int `json:"timeSlotId" db:"time_slot_id"`
 	ClientId int `json:"clientId" db:"client_id"`
+	IsCancelled bool `json:"isCancelled" db:"is_cancelled"`
+	HasAttended bool `json:"hasAttended" db:"has_attended"`
+	Date string `json:"date" db:"date"`
+	Time string `json:"time" db:"time"`
+	ReservationId string `json:"reservationId" db:"reservation_id"`
 	Model
 }
 

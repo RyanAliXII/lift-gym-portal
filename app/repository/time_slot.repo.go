@@ -23,7 +23,7 @@ func (repo * TimeSlot)NewTimeSlot(timeSlot model.TimeSlot) error {
 }
 func (repo * TimeSlot)GetTimeSlots() ([]model.TimeSlot, error) {
 	slots := make([]model.TimeSlot, 0)
-	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null")
+	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null order by start_time asc")
 	return slots, err
 }
 func (repo * TimeSlot)DeleteTimeSlot(id int)(error) {
@@ -35,7 +35,7 @@ func(repo * TimeSlot) GetTimeSlotsBasedOnDateSlot(dateSlotId int)([]model.TimeSl
 	query := `SELECT time_slot.id, time_slot.start_time, time_slot.end_time, max_capacity, COALESCE(count(reservation.id), 0) as booked, (max_capacity - COALESCE(count(reservation.id), 0)) as available   FROM time_slot 
 	LEFT JOIN reservation on time_slot.id = reservation.time_slot_id and reservation.date_slot_id = ?
 	where time_slot.deleted_at is null 
-	GROUP BY time_slot.id`
+	GROUP BY time_slot.id ORDER BY time_slot. start_time asc`
 	slots := make([]model.TimeSlot, 0)
 	err := repo.db.Select(&slots, query, dateSlotId)
 	return slots, err

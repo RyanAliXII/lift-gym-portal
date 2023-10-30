@@ -25,6 +25,22 @@ func NewReservationHandler () ReservationHandler{
 	}
 }
 func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		sessionData := mysqlsession.SessionData{}
+		sessionData.Bind(c.Get("sessionData"))
+		reservations, err := h.reservation.GetClientReservation(sessionData.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error","GetClientReservationErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"reservations": reservations,
+			},
+			Message: "Fetch client's reservations.",
+		})
+	}
 	return c.Render(http.StatusOK, "client/reservation/main", Data{})
 }
 
@@ -97,7 +113,3 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 		Message: "Reservation created.",
 	})
 }
-func (h * ReservationHandler) GetClientReservations( c echo.Context ) error {
-	return nil
-}
-

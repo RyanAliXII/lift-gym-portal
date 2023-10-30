@@ -168,6 +168,7 @@ func clientRoutes(router * echo.Group){
 	router.POST("/reservations", reservationHandler.NewReservation)
 	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
 	router.GET("/reservations/date-slots/:dateSlotId/time-slots", reservationHandler.GetTimeSlotsBasedOnDateSlotId)
+	
 }
 
 func coachRoutes(router * echo.Group) {

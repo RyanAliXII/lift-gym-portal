@@ -12,7 +12,7 @@ type TimeSlot  struct {
 	StartTime string `json:"startTime" db:"start_time"`
 	EndTime string `json:"endTime" db:"end_time"`
 	MaxCapacity int `json:"maxCapacity" db:"max_capacity"`
-	Available int `json:"available,omitempty" db:"available"`
+	Available int `json:"available" db:"available"`
 	Booked int `json:"booked,omitempty" db:"booked"`
 	Model 
 }
