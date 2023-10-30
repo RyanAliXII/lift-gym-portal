@@ -20,3 +20,20 @@ func (m *Model) ValidationRules(structPtr interface{}, fields ...*validation.Fie
 	}
 	return validationErrs, fieldErrs
 }
+
+
+
+func (m *Model) Validate(structPtr interface{}, fields ...*validation.FieldRules) (map[string]string, error, ) {
+	fieldErrs := make(map[string]string)
+	validationErrs :=  validation.ValidateStruct(structPtr,  fields...)
+	if validationErrs != nil  {
+		_, isValidationErrors:= validationErrs.(validation.Errors)
+		if isValidationErrors{
+			for k, validationErr := range validationErrs.(validation.Errors) {
+				fieldErrs[k] = validationErr.Error()
+			}
+		}
+		
+	}
+	return  fieldErrs, validationErrs
+}

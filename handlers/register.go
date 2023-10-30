@@ -165,6 +165,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
 	router.GET("/reservations", reservationHandler.RenderClientReservationPage)
+	router.POST("/reservations", reservationHandler.NewReservation)
 	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
 	router.GET("/reservations/date-slots/:dateSlotId/time-slots", reservationHandler.GetTimeSlotsBasedOnDateSlotId)
 }

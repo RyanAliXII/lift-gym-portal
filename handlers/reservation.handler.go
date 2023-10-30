@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -13,11 +14,13 @@ import (
 type ReservationHandler struct {
 	dateSlot repository.DateSlot
 	timeSlot repository.TimeSlot
+	reservation repository.Reservation
 }
 func NewReservationHandler () ReservationHandler{
 	return ReservationHandler{
 		dateSlot:  repository.NewDateSlotRepository(),
 		timeSlot: repository.NewTimeSlotRepository(),
+		reservation: repository.NewReservation(),
 	}
 }
 func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
@@ -57,4 +60,38 @@ func (h * ReservationHandler)GetTimeSlotsBasedOnDateSlotId(c echo.Context) error
 		Message: "Time slots fetched.",
 	})
 }
+func (h * ReservationHandler)NewReservation(c echo.Context) error {
+	reservation := model.Reservation{}
+	err := c.Bind(&reservation)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	fields, err := reservation.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors" : fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	err = h.reservation.NewReservation(reservation)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewReservationErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Reservation created.",
+	})
+}
+
 

@@ -84,9 +84,10 @@
               </div>
                 </div>
               </div>
+              {{template
+                "client/reservation/reserve-modal" .}} 
             </div>
-            {{if and .isVerified .isInfoComplete }} {{template
-            "client/package-request/request-modal" .}} {{end}}
+            
           </div>
           <!-- /.container-fluid -->
         </div>

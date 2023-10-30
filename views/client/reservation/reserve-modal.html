@@ -2,16 +2,16 @@
 
 <div
   class="modal fade"
-  id="requestModal"
+  id="reserveModal"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="requestModal"
+  aria-labelledby="reserveModal"
   aria-hidden="true"
 >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Reserve: {selectedDate}</h5>
+        <h5 class="modal-title">{selectedDate}</h5>
         <button
           type="button"
           class="close"
@@ -23,8 +23,22 @@
       </div>
       <div class="modal-body">
         <form @submit.prevent="onSubmit">
-          <div class="form-group"></div>
-          <button type="submit" class="btn btn-primary">Send Request</button>
+          <div class="form-group">
+            <label>Time slot</label>
+            <select name="timeSlotId" class="form-control">
+              <option value="0">Choose time slot</option>
+              <option
+                v-for="timeSlot of timeSlots"
+                :value="timeSlot.id"
+                :disabled="timeSlot.available <= 0"
+              >
+                {formatTime(timeSlot.startTime)} -
+                {formatTime(timeSlot.endTime)} | Available :
+                {timeSlot.available}
+              </option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
     </div>
