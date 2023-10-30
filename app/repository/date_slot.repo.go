@@ -22,7 +22,16 @@ func (repo * DateSlot) NewSlots(slots []model.DateSlot) error {
 }
 func (repo * DateSlot) GetSlots() ( []model.DateSlot, error) {
     slots :=   make([]model.DateSlot, 0)
-	repo.db.Select(&slots, "SELECT id, date from date_slot where date >= CAST(CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila') as date) and deleted_at is null")
+	repo.db.Select(&slots, `SELECT date_slot.id, date, COUNT(reservation.id) as booked,
+	COALESCE(time_slot.total_capacity, 0) as total_capacity,
+	COALESCE(time_slot.total_capacity, 0)  - COUNT(reservation.id) as available
+	 from date_slot
+	LEFT JOIN (
+		SELECT reservation.id, reservation.date_slot_id FROM reservation INNER JOIN time_slot on reservation.time_slot_id = time_slot.id and time_slot.deleted_at is null
+    ) as  reservation on date_slot.id = reservation.date_slot_id
+	INNER JOIN (SELECT SUM(max_capacity) as total_capacity  FROM time_slot where deleted_at is null) as time_slot on true = true
+	where date >= CAST(CONVERT_TZ(CURDATE(), 'UTC', 'Asia/Manila') as date) and date_slot.deleted_at is null
+	GROUP BY date_slot.id, time_slot.total_capacity`)
 	return slots, nil
 }
 func (repo * DateSlot) DeleteSlot(id int) (error) {

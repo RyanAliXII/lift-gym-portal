@@ -30,3 +30,13 @@ func (repo * TimeSlot)DeleteTimeSlot(id int)(error) {
 	_, err :=repo.db.Exec("UPDATE time_slot set deleted_at = now() where id = ?", id )
 	return err
 }
+
+func(repo * TimeSlot) GetTimeSlotsBasedOnDateSlot(dateSlotId int)([]model.TimeSlot, error){
+	query := `SELECT time_slot.id, time_slot.start_time, time_slot.end_time, max_capacity, COALESCE(count(reservation.id), 0) as booked, (max_capacity - COALESCE(count(reservation.id), 0)) as available   FROM time_slot 
+	LEFT JOIN reservation on time_slot.id = reservation.time_slot_id and reservation.date_slot_id = ?
+	where time_slot.deleted_at is null 
+	GROUP BY time_slot.id`
+	slots := make([]model.TimeSlot, 0)
+	err := repo.db.Select(&slots, query, dateSlotId)
+	return slots, err
+}

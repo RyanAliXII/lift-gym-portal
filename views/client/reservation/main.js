@@ -1,6 +1,5 @@
 import { createApp, onMounted, ref } from "vue";
 import { Calendar } from "fullcalendar";
-
 import interactionPlugin from "@fullcalendar/interaction";
 import { format } from "date-fns";
 createApp({
@@ -8,7 +7,8 @@ createApp({
     const reservationCalendarElement = ref(null);
     const reservationCalendar = ref(null);
     const dateSlots = ref([]);
-
+    const timeSlots = ref([]);
+    const selectedDate = ref("");
     const fetchDateSlots = async () => {
       try {
         const response = await fetch("/clients/reservations/date-slots");
@@ -18,11 +18,39 @@ createApp({
         console.error(error);
       }
     };
+    const fetchTimeSlotsBasedOnDateSlot = async (id) => {
+      try {
+        const response = await fetch(
+          `/clients/reservations/date-slots/${id}/time-slots`
+        );
+        const { data } = await response.json();
+        timeSlots.value = data?.slots ?? [];
+      } catch (error) {
+        console.error(error);
+      }
+    };
     onMounted(async () => {
       const today = new Date();
       const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
       const startDate = format(nextThreeDays, "yyyy-MM-dd");
       await fetchDateSlots();
+      const events = dateSlots.value.map((slot) => {
+        if (slot.available <= 0) {
+          return {
+            id: slot.id,
+            title: "Fully Booked",
+            start: slot.date,
+            className: "p-2 bg-danger border border-none",
+          };
+        }
+        return {
+          id: slot.id,
+          title: `Available Slots: ${slot.available ?? 0}`,
+          start: slot.date,
+          className: "p-2  bg-success cursor-pointer border border-none",
+        };
+      });
+
       reservationCalendar.value = new Calendar(
         reservationCalendarElement.value,
         {
@@ -34,23 +62,10 @@ createApp({
           validRange: {
             start: startDate,
           },
-          dateClick: (info) => {
-            const date = info.dateStr;
-            // if (allowedDates.includes(date)) {
-            //   reservationCalendar.value.changeView("timeGridDay");
-            // }
+          eventClick: async (info) => {
+            fetchTimeSlotsBasedOnDateSlot(info.event.id);
           },
-          eventClick: (info) => {
-            // reservationCalendar.value.changeView(
-            //   "timeGridDay",
-            //   info.event.startStr
-            // );
-          },
-          events: dateSlots.value.map((slot) => ({
-            title: "This date is open for reservation.",
-            start: slot.date,
-            className: "p-2  bg-success cursor-pointer",
-          })),
+          events: events,
         }
       );
       reservationCalendar.value.render();

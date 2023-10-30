@@ -10,6 +10,9 @@ import (
 type DateSlot struct {
 	Id int `json:"id" db:"id" `
 	Date string `json:"date" db:"date"`
+	Available int `json:"available" db:"available"`
+	TotalCapacity int `json:"totalCapacity" db:"total_capacity"`
+	Booked int `json:"booked" db:"booked"`
 }
 
 type DateRangeBody struct {
