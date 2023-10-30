@@ -29,8 +29,11 @@
               </div>
               <div class="card-body">
                 <label>Date</label>
-                <select class="form-control">
+                <select class="form-control" @change="handleDateSelect">
                   <option value="0">All</option>
+                  {{range .dateSlots }}
+                  <option value="{{.Id}}">{{.Date}}</option>
+                  {{end}}
                 </select>
                 <div class="table-responsive mt-3">
                   <table

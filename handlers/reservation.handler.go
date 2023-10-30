@@ -41,9 +41,11 @@ func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 			Message: "Fetch client's reservations.",
 		})
 	}
+	
 	return c.Render(http.StatusOK, "client/reservation/main", Data{
 			"title": "Reservations",
 			"module": "Reservations",
+
 	})
 }
 func (h * ReservationHandler)RenderAdminReservationPage(c echo.Context) error {
@@ -61,12 +63,35 @@ func (h * ReservationHandler)RenderAdminReservationPage(c echo.Context) error {
 			Message: "Reservations fetched.",
 		})
 	}
+	dateSlots, err  := h.dateSlot.GetSlots()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetSlotsErr"))
+	}
 	return c.Render(http.StatusOK, "admin/reservation/main", Data{
 		"title": "Reservations",
-		"nmodule": "Reservations",
+		"module": "Reservations",
+		"dateSlots": dateSlots,
 	})
 }
+func (h * ReservationHandler)GetReservationByDateSlot (c echo.Context) error {
+	dateSlotId, err := strconv.Atoi(c.Param("dateSlotId"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "ConvErr"))
+	}
+	reservations, err := h.reservation.GetReservationByDateSlot(dateSlotId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getReservations"))
+	}
 
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"reservations": reservations,
+		},
+		Message: "Fetch reservation by date slot.",
+	})
+
+} 
 func (h * ReservationHandler)GetDateSlots(c echo.Context) error {
 	slots, err := h.dateSlot.GetSlots()
 	if err != nil {
