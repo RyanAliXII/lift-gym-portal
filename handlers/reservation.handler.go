@@ -41,7 +41,30 @@ func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 			Message: "Fetch client's reservations.",
 		})
 	}
-	return c.Render(http.StatusOK, "client/reservation/main", Data{})
+	return c.Render(http.StatusOK, "client/reservation/main", Data{
+			"title": "Reservations",
+			"module": "Reservations",
+	})
+}
+func (h * ReservationHandler)RenderAdminReservationPage(c echo.Context) error {
+	contentType :=  c.Request().Header.Get("Content-Type")
+	if contentType == "application/json" {
+		reservations, err := h.reservation.GetReservations()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "getReservations"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"reservations": reservations,
+			},
+			Message: "Reservations fetched.",
+		})
+	}
+	return c.Render(http.StatusOK, "admin/reservation/main", Data{
+		"title": "Reservations",
+		"nmodule": "Reservations",
+	})
 }
 
 func (h * ReservationHandler)GetDateSlots(c echo.Context) error {

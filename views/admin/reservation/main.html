@@ -27,7 +27,40 @@
                   List of Reservations
                 </h6>
               </div>
-              <div class="card-body"></div>
+              <div class="card-body">
+                <label>Date</label>
+                <select class="form-control">
+                  <option value="0">All</option>
+                </select>
+                <div class="table-responsive mt-3">
+                  <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Reservation Id</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <template v-for="reservation of reservations">
+                        <tr>
+                          <td class="font-weight-bold">
+                            {reservation.reservationId}
+                          </td>
+                          <td>{formatDate(reservation.date)}</td>
+                          <td>{reservation.time}</td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
 
             <!-- {{template "admin/reservation/date-slot/add-slot-modal" .}} -->
@@ -50,6 +83,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <!-- <script src="/js/admin/reservation/date-slot/main.js"></script> -->
+  <script src="/js/admin/reservation/main.js"></script>
 </html>
 {{end}}
