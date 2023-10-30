@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -80,6 +81,9 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 			Message: "Validation error.",
 		})
 	}
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	reservation.ClientId = sessionData.User.Id
 	err = h.reservation.NewReservation(reservation)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "NewReservationErr"))
@@ -93,5 +97,7 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 		Message: "Reservation created.",
 	})
 }
-
+func (h * ReservationHandler) GetClientReservations( c echo.Context ) error {
+	return nil
+}
 

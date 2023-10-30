@@ -25,7 +25,12 @@
         <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label>Time slot</label>
-            <select name="timeSlotId" class="form-control">
+            <select
+              name="timeSlotId"
+              class="form-control"
+              @change="handleFormInput"
+              :class="{'is-invalid': errors?.timeSlotId}"
+            >
               <option value="0">Choose time slot</option>
               <option
                 v-for="timeSlot of timeSlots"
@@ -37,6 +42,7 @@
                 {timeSlot.available}
               </option>
             </select>
+            <div class="invalid-feedback">{errors?.timeSlotId}</div>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
