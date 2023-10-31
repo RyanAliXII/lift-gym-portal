@@ -1,10 +1,52 @@
 import { createApp, onMounted, ref } from "vue";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+import { ta } from "date-fns/locale";
+// import "datatables.net-bs4";
+// import "datatables.net-responsive-dt";
 
+DataTable.use(DataTablesCore);
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
   },
+  components: {
+    DataTable,
+  },
   setup() {
+    const table = ref("");
+    let dt;
+    const options = {
+      lengthMenu: [20],
+      lengthChange: false,
+    };
+    const columns = [
+      {
+        data: "reservationId",
+        title: "Reservation Id",
+        render: (v) => {
+          return `<span class="font-weight-bold">${v}</span>`;
+        },
+      },
+      {
+        data: "date",
+        title: "Date",
+        render: (v) => {
+          return formatDate(v);
+        },
+      },
+      { data: "time", title: "Time" },
+      {
+        data: null,
+        render: (value, row) => {
+          console.log(row);
+          return `<button class='btn btn-outline-success attended-btn' data-toggle="tooltip" title="Mark client as attended">
+          <i class="fa fa-check" aria-hidden="true"></i
+        </button>`;
+        },
+      },
+    ];
     const reservations = ref([]);
     const fetchReservations = async () => {
       const response = await fetch("/app/reservations", {
@@ -40,13 +82,22 @@ createApp({
         reservations.value = data?.reservations ?? [];
       }
     };
+    const search = (event) => {
+      const query = event.target.value;
+      dt.search(query).draw();
+    };
     onMounted(() => {
+      dt = table.value.dt;
       fetchReservations();
     });
     return {
       reservations,
       formatDate,
       handleDateSelect,
+      columns,
+      options,
+      table,
+      search,
     };
   },
 }).mount("#ReservationPage");

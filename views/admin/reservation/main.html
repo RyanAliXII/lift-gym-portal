@@ -2,7 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
-
+  <style>
+    .dataTables_filter {
+      display: none;
+    }
+  </style>
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -35,33 +39,22 @@
                   <option value="{{.Id}}">{{.Date}}</option>
                   {{end}}
                 </select>
+                <input
+                  type="text"
+                  class="form-control mt-3"
+                  placeholder="Search records"
+                  @input="search"
+                />
                 <div class="table-responsive mt-3">
-                  <table
-                    class="table table-bordered"
-                    id="dataTable"
-                    width="100%"
-                    cellspacing="0"
+                  <data-table
+                    ref="table"
+                    :data="reservations"
+                    :columns="columns"
+                    :options="options"
+                    class="table table-bordered rounded"
                   >
-                    <thead>
-                      <tr>
-                        <th>Reservation Id</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <template v-for="reservation of reservations">
-                        <tr>
-                          <td class="font-weight-bold">
-                            {reservation.reservationId}
-                          </td>
-                          <td>{formatDate(reservation.date)}</td>
-                          <td>{reservation.time}</td>
-                        </tr>
-                      </template>
-                    </tbody>
-                  </table>
+                    <table class="table table-bordered w-100"></table>
+                  </data-table>
                 </div>
               </div>
             </div>
