@@ -30,6 +30,13 @@ createApp({
         },
       },
       {
+        data: "client",
+        title: "Client",
+        render: (v) => {
+          return `${v.givenName} ${v.surname}`;
+        },
+      },
+      {
         data: "date",
         title: "Date",
         render: (v) => {
@@ -37,11 +44,11 @@ createApp({
         },
       },
       { data: "time", title: "Time" },
+
       {
         data: null,
-        render: (value, row) => {
-          console.log(row);
-          return `<button class='btn btn-outline-success attended-btn' data-toggle="tooltip" title="Mark client as attended">
+        render: (value, type, row) => {
+          return `<button class='btn btn-outline-success attended-btn' data-toggle="tooltip" title="Mark client as attended" row-id=${row.id}>
           <i class="fa fa-check" aria-hidden="true"></i
         </button>`;
         },
@@ -89,6 +96,7 @@ createApp({
     onMounted(() => {
       dt = table.value.dt;
       fetchReservations();
+      $(dt.table().body()).on("click", "button.attended-btn", (event) => {});
     });
     return {
       reservations,

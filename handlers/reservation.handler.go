@@ -161,3 +161,41 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 		Message: "Reservation created.",
 	})
 }
+
+func (h * ReservationHandler)UpdateReservationStatus(c echo.Context) error {
+	reservation := model.Reservation{}
+	err := c.Bind(&reservation)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	fields, err := reservation.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors" : fields,
+			},
+			Message: "Validation error.",
+		})
+	}
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	reservation.ClientId = sessionData.User.Id
+	err = h.reservation.NewReservation(reservation)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewReservationErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Reservation created.",
+	})
+}
+
