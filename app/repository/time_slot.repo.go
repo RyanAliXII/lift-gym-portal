@@ -30,6 +30,10 @@ func (repo * TimeSlot)DeleteTimeSlot(id int)(error) {
 	_, err :=repo.db.Exec("UPDATE time_slot set deleted_at = now() where id = ?", id )
 	return err
 }
+func (repo * TimeSlot)UpdateTimeSlot(timeSlot model.TimeSlot) error {
+	_, err := repo.db.Exec("UPDATE time_slot set start_time = ?, end_time = ?, max_capacity = ? where id = ?",timeSlot.StartTime, timeSlot.EndTime, timeSlot.MaxCapacity, timeSlot.Id )
+	return err
+}
 
 func(repo * TimeSlot) GetTimeSlotsBasedOnDateSlot(dateSlotId int)([]model.TimeSlot, error){
 	query := `SELECT time_slot.id, time_slot.start_time, time_slot.end_time, max_capacity, COALESCE(count(reservation.id), 0) as booked, (max_capacity - COALESCE(count(reservation.id), 0)) as available   FROM time_slot 

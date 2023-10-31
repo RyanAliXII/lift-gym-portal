@@ -119,6 +119,7 @@ func adminRoutes (router  * echo.Group){
 	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot)
 	router.GET("/time-slots", timeSlotHandler.RenderTimeSlotPage)
 	router.POST("/time-slots", timeSlotHandler.NewTimeSlot)
+	router.PUT("/time-slots/:id", timeSlotHandler.UpdateTimeSlot)
 	router.DELETE("/time-slots/:id", timeSlotHandler.DeleteTimeSlot)
 	router.GET("/reservations", reservationHandler.RenderAdminReservationPage)
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot)

@@ -62,12 +62,20 @@
                           <td>{formatTime(slot.endTime)}</td>
                           <td>{slot.maxCapacity}</td>
                           <td>
-                            <button
-                              class="btn btn-outline-danger"
-                              @click="initDelete(slot.id)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
+                            <div class="d-flex" style="gap: 5px">
+                              <button
+                                class="btn btn-outline-primary"
+                                @click="initEdit(slot)"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button
+                                class="btn btn-outline-danger"
+                                @click="initDelete(slot.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       </template>
@@ -77,6 +85,7 @@
               </div>
             </div>
             {{template "admin/reservation/time-slot/add-slot-modal" .}}
+            {{template "admin/reservation/time-slot/edit-slot-modal" .}}
           </div>
           <!-- /.container-fluid -->
         </div>

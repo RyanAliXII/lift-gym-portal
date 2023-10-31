@@ -8,6 +8,7 @@ createApp({
   },
   setup() {
     const initialValues = {
+      id: 0,
       startTime: "",
       endTime: "",
       maxCapacity: 20,
@@ -48,6 +49,33 @@ createApp({
         form.value = { ...initialValues };
         fetchTimeSlots();
         swal.fire("New Time Slot", "Time slot has been created.", "success");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const onSubmitUpdate = async () => {
+      try {
+        errors.value = {};
+        const response = await fetch(`/app/time-slots/${form.value.id}`, {
+          body: JSON.stringify(form.value),
+          method: "PUT",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data.errors;
+          }
+          return;
+        }
+        $("#editSlotModal").modal("hide");
+        form.value = { ...initialValues };
+        fetchTimeSlots();
+        swal.fire("Update Time Slot", "Time slot has been updated.", "success");
       } catch (error) {
         console.error(error);
       }
@@ -104,6 +132,23 @@ createApp({
         deleteTimeSlot(id);
       }
     };
+    const initEdit = (slot) => {
+      try {
+        const startTime = parse(slot.startTime, "HH:mm:ss", new Date());
+        const endTime = parse(slot.endTime, "HH:mm:ss", new Date());
+        const formattedStart = format(startTime, "HH:mm");
+        const formattedEnd = format(endTime, "HH:mm");
+        form.value = {
+          id: slot.id,
+          startTime: formattedStart,
+          endTime: formattedEnd,
+          maxCapacity: slot.maxCapacity,
+        };
+        $("#editSlotModal").modal("show");
+      } catch (err) {
+        console.error(err);
+      }
+    };
     onMounted(() => {
       fetchTimeSlots();
       $("#newSlotModal").on("hidden.bs.modal", () => {
@@ -119,7 +164,9 @@ createApp({
       timeSlots,
       errors,
       initDelete,
+      initEdit,
       times,
+      onSubmitUpdate,
     };
   },
 }).mount("#TimeSlot");

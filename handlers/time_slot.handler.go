@@ -11,6 +11,7 @@ import (
 )
 
 
+
 type TimeSlotHandler struct {
 	timeSlotRepo repository.TimeSlot
 }
@@ -60,6 +61,44 @@ func (h *TimeSlotHandler) NewTimeSlot(c echo.Context) error {
 	err = h.timeSlotRepo.NewTimeSlot(timeSlot)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "newTimeSlotErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{Status: http.StatusInternalServerError, Message: "Unknown error occured."})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Time slot added.",
+	})
+}
+
+func (h *TimeSlotHandler) UpdateTimeSlot(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "conveErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		} )
+	}
+	timeSlot := model.TimeSlot{}
+	err = c.Bind(&timeSlot)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err, fields := timeSlot.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{Status: http.StatusBadRequest, Data: Data{
+			"errors": fields,
+		},
+		Message: "Validation error.",
+	})
+	}
+	timeSlot.Id = id
+	err = h.timeSlotRepo.UpdateTimeSlot(timeSlot)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "updateTimeSlotErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{Status: http.StatusInternalServerError, Message: "Unknown error occured."})
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
