@@ -36,7 +36,7 @@
               <option class="Select Start time" value="">
                 Select Start Time
               </option>
-              <option v-for="time of times" :value="time.value">
+              <option v-for="time of timeSlotSelections" :value="time.value">
                 {time.label}
               </option>
             </select>
@@ -59,7 +59,7 @@
               <option class="Select Start time" value="">
                 Select End Time
               </option>
-              <option v-for="time of times" :value="time.value">
+              <option v-for="time of timeSlotSelections" :value="time.value">
                 {time.label}
               </option>
             </select>

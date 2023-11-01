@@ -28,10 +28,13 @@ func (h *TimeSlotHandler) RenderTimeSlotPage(c echo.Context) error {
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "GetTimeSlotsErr"))
 		}
+		selections := model.NewTimeSelection()
+		selections = selections.RemoveSelectedSelections(slots)
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
 				"slots": slots,
+				"slotSelections": selections,
 			},
 		})
 	}

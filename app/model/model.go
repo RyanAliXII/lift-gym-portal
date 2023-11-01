@@ -37,3 +37,5 @@ func (m *Model) Validate(structPtr interface{}, fields ...*validation.FieldRules
 	}
 	return  fieldErrs, validationErrs
 }
+
+

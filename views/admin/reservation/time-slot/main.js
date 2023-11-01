@@ -1,7 +1,6 @@
 import swal from "sweetalert2";
-import { createApp, onMounted, ref } from "vue";
+import { computed, createApp, onMounted, ref } from "vue";
 import { parse, format } from "date-fns";
-import { times } from "./times";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -15,6 +14,7 @@ createApp({
     };
     const form = ref({ ...initialValues });
     const timeSlots = ref([]);
+    const timeSlotSelections = ref([]);
     const errors = ref({});
 
     const handleFormInput = (event) => {
@@ -89,6 +89,7 @@ createApp({
 
         if (response.status === 200) {
           timeSlots.value = data?.slots ?? [];
+          timeSlotSelections.value = data?.slotSelections ?? [];
         }
       } catch (error) {
         console.error(error);
@@ -155,6 +156,10 @@ createApp({
         errors.value = {};
         form.value = { ...initialValues };
       });
+      $("#editSlotModal").on("hidden.bs.modal", () => {
+        errors.value = {};
+        form.value = { ...initialValues };
+      });
     });
     return {
       form,
@@ -165,8 +170,8 @@ createApp({
       errors,
       initDelete,
       initEdit,
-      times,
       onSubmitUpdate,
+      timeSlotSelections,
     };
   },
 }).mount("#TimeSlot");
