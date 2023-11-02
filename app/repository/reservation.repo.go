@@ -34,24 +34,23 @@ func (repo * Reservation)GetReservations () ([]model.Reservation, error){
 	reservations := make([]model.Reservation, 0)
 	query := `
 	SELECT 
-	reservation.id,
+	 reservation.reservation_id,
+	 reservation.id,
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
-	 reservation.status_id,
+     (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN 3 ELSE reservation.status_id END ) AS status_id,
+     (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN "No-Show" ELSE reservation_status.description END) as status,
 	 reservation.remarks,
-	 reservation_status.description as status,
-	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
+	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  AS client,
 	 date_slot.date,
-	 (case when cancelled_at is null then false else true end) as is_cancelled,
-	 (case when attended_at is null then false else true end) as has_attended,
-	 CONCAT(TIME_format(time_slot.start_time, '%h:%i %p'), ' - ', TIME_format(time_slot.end_time, '%h:%i %p')) as time,
-	 reservation_id
+	 CONCAT(TIME_FORMAT(time_slot.start_time, '%h:%i %p'), ' - ', TIME_FORMAT(time_slot.end_time, '%h:%i %p')) AS time
 	 FROM reservation 
-	INNER JOIN date_slot on date_slot_id = date_slot.id
-	INNER JOIN time_slot on time_slot_id = time_slot.id
-	INNER JOIN client on reservation.client_id = client.id
-	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
+	 INNER JOIN date_slot ON date_slot_id = date_slot.id
+	 INNER JOIN time_slot ON time_slot_id = time_slot.id
+	 INNER JOIN client ON reservation.client_id = client.id
+	 INNER JOIN reservation_status ON reservation.status_id = reservation_status.id
+	 ORDER BY date_slot.date DESC;
 	`
 	err := repo.db.Select(&reservations, query)
 	return reservations, err
@@ -64,13 +63,11 @@ func (repo * Reservation)GetReservationByDateSlot (dateSlotId int) ([]model.Rese
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
-	 reservation.status_id,
 	 reservation.remarks,
-	 reservation_status.description as status,
+	 (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN 3 ELSE reservation.status_id END ) AS status_id,
+     (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN "No-Show" ELSE reservation_status.description END) as status,
 	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	 date_slot.date,
-	 (case when cancelled_at is null then false else true end) as is_cancelled,
-	 (case when attended_at is null then false else true end) as has_attended,
 	 CONCAT(TIME_format(time_slot.start_time, '%h:%i %p'), ' - ', TIME_format(time_slot.end_time, '%h:%i %p')) as time,
 	 reservation_id
 	 FROM reservation 
@@ -78,7 +75,7 @@ func (repo * Reservation)GetReservationByDateSlot (dateSlotId int) ([]model.Rese
 	INNER JOIN time_slot on time_slot_id = time_slot.id
 	INNER JOIN client on reservation.client_id = client.id
 	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
-	where date_slot_id = ?
+	where date_slot_id = ? 	ORDER BY date_slot.date DESC
 	`
 	err := repo.db.Select(&reservations, query, dateSlotId)
 	return reservations, err
@@ -92,9 +89,9 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
-	 reservation.status_id,
+	 (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN 3 ELSE reservation.status_id END ) AS status_id,
+     (CASE WHEN CURDATE() > date_slot.date AND reservation.status_id = 1 THEN "No-Show" ELSE reservation_status.description END) as status,
 	 reservation.remarks,
-	 reservation_status.description as status,
 	 date_slot.date,
 	 CONCAT(TIME_format(time_slot.start_time, '%h:%i %p'), ' - ', TIME_format(time_slot.end_time, '%h:%i %p')) as time,
 	 reservation_id
@@ -102,7 +99,7 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	INNER JOIN date_slot on date_slot_id = date_slot.id
 	INNER JOIN time_slot on time_slot_id = time_slot.id
 	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
-	where client_id = ?
+	where client_id = ? ORDER BY date_slot.date DESC
 	`
 	err := repo.db.Select(&reservations, query, clientId)
 	return reservations, err

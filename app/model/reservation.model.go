@@ -43,6 +43,7 @@ func validateIfTemporarilyBanned(clientId int) validation.RuleFunc {
 			ORDER BY date desc LIMIT 3
 		`, clientId)
 		if err != nil {
+			logger.Error(err.Error())
 			return fmt.Errorf("you are not allowed to create a new reservation")
 		}
 		
@@ -60,6 +61,7 @@ func validateIfTemporarilyBanned(clientId int) validation.RuleFunc {
 		if(unattendedCount >= MaxAllowedUnattendedReservations){
 			latestReservation, err := reservations[0].TransformDateStrToTime()
 			if err != nil {
+				logger.Error(err.Error())
 				return fmt.Errorf("you are not allowed to create a new reservation")
 			}
 			latestReservationOneMonthFromNow := latestReservation.Add(OneMonth)
@@ -77,7 +79,7 @@ func validateIfTemporarilyBanned(clientId int) validation.RuleFunc {
 	this function check if user has 3 consecutive unattended reservation
 	if user has 3 consecutive unattended reservation, apply 30 days ban starting from last reservation date.
 */
-func IsTemporarilyBannedFromReservation(clientId int) bool {
+func IsTemporarilyBannedFromReservation(clientId int) (bool, time.Time) {
 	db := db.GetConnection()
 	reservations := make([]Reservation, 0)
 	err := db.Select(&reservations,`SELECT date_slot.date, status_id FROM reservation  
@@ -86,32 +88,33 @@ func IsTemporarilyBannedFromReservation(clientId int) bool {
 	ORDER BY date desc LIMIT 3
 	`, clientId)
 	if err != nil {
-			return true
+		logger.Error(err.Error())
+		return true, time.Time{}
 	}
 		
 	const MaxAllowedUnattendedReservations = 3
 	if len(reservations) < MaxAllowedUnattendedReservations{
-			return true
+		return false, time.Time{}
 	}
 	unattendedCount := 0;
 	for _, reservation := range reservations{
 		if(reservation.StatusId == status.ReservationStatusNoShow || reservation.StatusId == status.ReservationStatusPending){
-				unattendedCount = unattendedCount + 1
+			unattendedCount = unattendedCount + 1
 		}
 	}
 	OneMonth := (time.Hour * 24) * 30
+	
 	if(unattendedCount >= MaxAllowedUnattendedReservations){
 		latestReservation, err := reservations[0].TransformDateStrToTime()
 		if err != nil {
-			return true
+			logger.Error(err.Error())
+			return true, time.Time{}
 		}
 		latestReservationOneMonthFromNow := latestReservation.Add(OneMonth)
 		today := time.Now().Truncate(24 * time.Hour)
-		
 		if(today.Before(latestReservationOneMonthFromNow)){
-			return true
+			return true, latestReservationOneMonthFromNow
 		}
 	}
-	return false
-	
+	return false, time.Time{}
 }

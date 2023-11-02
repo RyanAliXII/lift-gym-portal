@@ -28,9 +28,10 @@ func NewReservationHandler () ReservationHandler{
 }
 func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 	contentType := c.Request().Header.Get("Content-Type")
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
 	if contentType == "application/json" {
-		sessionData := mysqlsession.SessionData{}
-		sessionData.Bind(c.Get("sessionData"))
+		
 		reservations, err := h.reservation.GetClientReservation(sessionData.User.Id)
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error","GetClientReservationErr"))
@@ -43,10 +44,14 @@ func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 			Message: "Fetch client's reservations.",
 		})
 	}
-	
+	isTempBan, unbanTime := model.IsTemporarilyBannedFromReservation(sessionData.User.Id)
+	TextDate := "January 2, 2006"
+	fmt.Println(isTempBan)
 	return c.Render(http.StatusOK, "client/reservation/main", Data{
 			"title": "Reservations",
 			"module": "Reservations",
+			"isTempBan": isTempBan,
+			"unbanTime": unbanTime.Format(TextDate),
 
 	})
 }

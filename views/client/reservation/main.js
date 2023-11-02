@@ -1,7 +1,14 @@
 import { computed, createApp, onMounted, ref } from "vue";
 import { Calendar } from "fullcalendar";
 import interactionPlugin from "@fullcalendar/interaction";
-import { format, parse, intervalToDuration } from "date-fns";
+import {
+  format,
+  parse,
+  intervalToDuration,
+  isAfter,
+  isBefore,
+  isEqual,
+} from "date-fns";
 import swal from "sweetalert2";
 createApp({
   compilerOptions: {
@@ -112,29 +119,33 @@ createApp({
           year: "numeric",
         });
       };
-      reservationCalendar.value = new Calendar(
-        reservationCalendarElement.value,
-        {
-          initialView: "dayGridMonth",
-          plugins: [interactionPlugin],
-          height: "650px",
-          selectable: true,
-          allDaySlot: false,
-          validRange: {
-            start: startDate,
-          },
-          eventClick: async (info) => {
-            const slot = info.event.extendedProps;
-            if (slot.available <= 0) return;
-            if (reservationCache.value.has(slot.date)) return;
-            selectedDate.value = formatDate(info.event.start);
-            await fetchTimeSlotsBasedOnDateSlot(info.event.id);
-            form.value.dateSlotId = parseInt(info.event.id);
-            $("#reserveModal").modal("show");
-          },
-        }
-      );
-      repopulateEvents();
+
+      if (reservationCalendarElement.value) {
+        reservationCalendar.value = new Calendar(
+          reservationCalendarElement.value,
+          {
+            initialView: "dayGridMonth",
+            plugins: [interactionPlugin],
+            height: "650px",
+            selectable: true,
+            allDaySlot: false,
+            validRange: {
+              start: startDate,
+            },
+            eventClick: async (info) => {
+              const slot = info.event.extendedProps;
+              if (slot.available <= 0) return;
+              if (reservationCache.value.has(slot.date)) return;
+              selectedDate.value = formatDate(info.event.start);
+              await fetchTimeSlotsBasedOnDateSlot(info.event.id);
+              form.value.dateSlotId = parseInt(info.event.id);
+              $("#reserveModal").modal("show");
+            },
+          }
+        );
+        repopulateEvents();
+        reservationCalendar.value.render();
+      }
       $("#reserveModal").on("hidden.bs.modal", () => {
         form.value = { ...initialValues };
         errors.value = {};
@@ -146,7 +157,6 @@ createApp({
           reservationCalendar.value.render();
         }
       });
-      reservationCalendar.value.render();
     });
 
     const formatDate = (date) => {
@@ -158,6 +168,7 @@ createApp({
       });
     };
     const repopulateEvents = () => {
+      if (!reservationCalendar.value) return;
       reservationCalendar.value.getEvents().forEach((event) => {
         event.remove();
       });
@@ -254,21 +265,19 @@ createApp({
     const isCancellable = (reservation) => {
       try {
         if (reservation.statusId != ReservationStatus.Pending) return false;
-        let now = new Date();
-        now.setHours(0, 0, 0, 0);
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
         let reservationDate = new Date(reservation.date);
         reservationDate.setHours(0, 0, 0, 0);
-        const duration = intervalToDuration({
-          start: reservationDate,
-          end: now,
-        });
-
-        if (duration.days > 0) {
+        if (
+          isBefore(reservationDate, today) ||
+          isEqual(reservationDate, today)
+        ) {
           return false;
         }
         return true;
       } catch (error) {
-        console.error(error);
+        console.log(error);
         return false;
       }
     };

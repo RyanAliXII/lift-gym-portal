@@ -71,7 +71,16 @@
                   role="tabpanel"
                   aria-labelledby="reserve-tab"
                 >
-                {{template "client/reservation/reserve-panel" .}}
+                {{if .isTempBan}}
+                <div class="alert alert-warning mt-3" role="alert">
+                  Access to this feature is temporarily suspended due to three consecutive missed reservations. The suspension will be lifted on <u class="underline">{{.unbanTime}}.</u>
+                </div>
+                
+                {{end}}
+              
+                {{if not .isTempBan}}
+                  {{template "client/reservation/reserve-panel" .}}
+                {{end}}
                 </div>
                 <div
                   class="tab-pane fade"
