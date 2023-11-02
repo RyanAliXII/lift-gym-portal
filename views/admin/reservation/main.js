@@ -48,6 +48,16 @@ createApp({
         title: "Status",
       },
       {
+        data: "remarks",
+        title: "Remarks",
+        render: (value) => {
+          if (value.length === 0) {
+            return "No Remarks.";
+          }
+          return value;
+        },
+      },
+      {
         data: "date",
         title: "Date",
         render: (v) => {
@@ -133,13 +143,17 @@ createApp({
       }
     };
 
-    const updateStatus = async (id, statusId = 1) => {
+    const updateStatus = async (id, statusId = 1, remarks = "") => {
+      const form = new FormData();
+      if (remarks.length >= 0) {
+        form.set("remarks", remarks);
+      }
       const response = await fetch(
         `/app/reservations/${id}/status?statusId=${statusId}`,
         {
           method: "PUT",
+          body: form,
           headers: new Headers({
-            "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
           }),
         }
@@ -198,7 +212,6 @@ createApp({
       $(dt.table().body()).on("click", "button.cancel-btn", async (event) => {
         const btn = event.currentTarget;
         const id = btn.getAttribute("data-id");
-
         const { value: text, isConfirmed } = await swal.fire({
           input: "textarea",
           inputLabel: "Remarks",
@@ -207,13 +220,14 @@ createApp({
           inputPlaceholder: "Enter the reason for cancellation.",
           inputAttributes: {
             "aria-label": "Enter the reason for cancellation.",
+            maxlength: "150",
           },
           showCancelButton: true,
           confirmButtonColor: "#d9534f",
         });
 
         if (!isConfirmed) return;
-        updateStatus(id, ReservationStatus.Cancelled);
+        updateStatus(id, ReservationStatus.Cancelled, text);
       });
     });
     return {

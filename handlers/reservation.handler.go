@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/status"
@@ -225,7 +226,38 @@ func (h * ReservationHandler) handleNoShow (c echo.Context, id int) error {
 }
 
 func (h * ReservationHandler) handleCancellation (c echo.Context, id int) error {
-	err := h.reservation.MarkAsCancelled(id)
+	remarks := c.FormValue("remarks")
+	err := h.reservation.MarkAsCancelled(id, remarks)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "MarkAsCancelled"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Reservation Status Updated.",
+	})
+}
+
+func (h * ReservationHandler) CancelReservation (c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "id"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	remarks := c.FormValue("remarks")
+	if len(remarks) == 0 {
+		remarks = "Cancelled by client."
+	}else{
+		remarks = fmt.Sprintf("Cancelled by client: %s", remarks)
+
+	}
+	err = h.reservation.MarkAsCancelled(id, remarks)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "MarkAsCancelled"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{

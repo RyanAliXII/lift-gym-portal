@@ -12,6 +12,7 @@
         <th>Date</th>
         <th>Time</th>
         <th>Status</th>
+        <th>Remarks</th>
         <th></th>
       </tr>
     </thead>
@@ -20,15 +21,20 @@
       <template v-for="reservation of reservations">
         <tr>
           <td class="font-weight-bold">{reservation.reservationId}</td>
-          <td>{reservation.date}</td>
+          <td>{formatDate(reservation.date)}</td>
           <td>{reservation.time}</td>
           <td>{reservation.status}</td>
+          <td>
+            {reservation.remarks.length === 0 ? "No remarks." :
+            reservation.remarks}
+          </td>
           <td>
             <button
               v-if="isCancellable(reservation)"
               class="btn btn-outline-danger cancel-btn"
               data-toggle="tooltip"
               title="Cancel Reservation"
+              @click="initCancellation(reservation.id)"
             >
               <i class="fa fa-times" aria-hidden="true"></i>
             </button>

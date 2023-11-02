@@ -15,6 +15,7 @@ type Reservation struct {
 	Time string `json:"time" db:"time"`
 	ReservationId string `json:"reservationId" db:"reservation_id"`
 	Client ClientJSON `json:"client,omitempty" db:"client"`
+	Remarks string `json:"remarks" db:"remarks"`
 	Model
 }
 

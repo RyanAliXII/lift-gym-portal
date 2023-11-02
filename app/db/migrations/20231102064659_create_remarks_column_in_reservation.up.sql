@@ -1,0 +1,2 @@
+ALTER TABLE reservation
+ADD COLUMN remarks VARCHAR(150) DEFAULT '';

@@ -136,6 +136,15 @@ createApp({
       });
       reservationCalendar.value.render();
     });
+
+    const formatDate = (date) => {
+      if (!date) return "";
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      });
+    };
     const repopulateEvents = () => {
       reservationCalendar.value.getEvents().forEach((event) => {
         event.remove();
@@ -204,6 +213,31 @@ createApp({
       }
     };
 
+    const cancelReservation = async (id, remarks) => {
+      const form = new FormData();
+      if (remarks.length >= 0) {
+        form.set("remarks", remarks);
+      }
+      const response = await fetch(
+        `/clients/reservations/${id}/status/cancellation`,
+        {
+          method: "PUT",
+          body: form,
+          headers: new Headers({
+            "X-CSRF-Token": window.csrf,
+          }),
+        }
+      );
+      if (response.status === 200) {
+        swal.fire(
+          "Reservation Status",
+          "Reservation status has been cancelled.",
+          "success"
+        );
+
+        fetchReservations();
+      }
+    };
     const isCancellable = (reservation) => {
       try {
         if (reservation.statusId != ReservationStatus.Pending) return false;
@@ -224,6 +258,23 @@ createApp({
         return false;
       }
     };
+    const initCancellation = async (id) => {
+      const { value: text, isConfirmed } = await swal.fire({
+        input: "textarea",
+        inputLabel: "Remarks",
+        title: "Cancellation Remarks",
+        confirmButtonText: "Submit",
+        inputPlaceholder: "Enter the reason for cancellation.",
+        inputAttributes: {
+          "aria-label": "Enter the reason for cancellation.",
+          maxlength: "150",
+        },
+        showCancelButton: true,
+        confirmButtonColor: "#d9534f",
+      });
+      if (!isConfirmed) return;
+      cancelReservation(id, text);
+    };
     return {
       reservationCalendarElement,
       selectedDate,
@@ -235,6 +286,8 @@ createApp({
       errors,
       reservations,
       isCancellable,
+      formatDate,
+      initCancellation,
     };
   },
 }).mount("#ReservationPage");

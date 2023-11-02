@@ -39,6 +39,7 @@ func (repo * Reservation)GetReservations () ([]model.Reservation, error){
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
 	 reservation.status_id,
+	 reservation.remarks,
 	 reservation_status.description as status,
 	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	 date_slot.date,
@@ -64,6 +65,7 @@ func (repo * Reservation)GetReservationByDateSlot (dateSlotId int) ([]model.Rese
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
 	 reservation.status_id,
+	 reservation.remarks,
 	 reservation_status.description as status,
 	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	 date_slot.date,
@@ -91,6 +93,7 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
 	 reservation.status_id,
+	 reservation.remarks,
 	 reservation_status.description as status,
 	 date_slot.date,
 	 (case when cancelled_at is null then false else true end) as is_cancelled,
@@ -119,8 +122,8 @@ func (repo * Reservation)MarkAsNoShow(id int) error {
 	return err 
 }
 
-func (repo * Reservation)MarkAsCancelled(id int) error {
+func (repo * Reservation)MarkAsCancelled(id int, remarks string) error {
 	//mark as attended if reservation status has the same id and status is pending
-	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and status_id = 1", status.ReservationStatusCancelled, id)
+	_, err := repo.db.Exec("UPDATE reservation set status_id = ?, remarks = ? where id = ? and status_id = 1", status.ReservationStatusCancelled, remarks, id)
 	return err 
 }
