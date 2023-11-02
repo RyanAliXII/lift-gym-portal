@@ -19,7 +19,7 @@ func NewReservation()Reservation{
 }
 func (repo * Reservation)NewReservation(reservation model.Reservation) error {
 	recordCount := 1
-	err := repo.db.Get(&recordCount,  "SELECT count(1) as recordCount from reservation where client_id = ? and date_slot_id = ?", reservation.ClientId, reservation.DateSlotId )
+	err := repo.db.Get(&recordCount,  "SELECT count(1) as recordCount from reservation where client_id = ? and date_slot_id = ? and status_id != 4", reservation.ClientId, reservation.DateSlotId )
 	if err != nil {
 		return err
 	}
@@ -96,8 +96,6 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	 reservation.remarks,
 	 reservation_status.description as status,
 	 date_slot.date,
-	 (case when cancelled_at is null then false else true end) as is_cancelled,
-	 (case when attended_at is null then false else true end) as has_attended,
 	 CONCAT(TIME_format(time_slot.start_time, '%h:%i %p'), ' - ', TIME_format(time_slot.end_time, '%h:%i %p')) as time,
 	 reservation_id
 	 FROM reservation 

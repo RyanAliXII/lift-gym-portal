@@ -9,6 +9,9 @@
     <thead>
       <tr>
         <th>Date</th>
+        <th>Total Capacity</th>
+        <th>Available</th>
+        <th>Ratio</th>
         <th></th>
       </tr>
     </thead>
@@ -17,6 +20,9 @@
       <template v-for="slot of slots">
         <tr>
           <td>{formatDate(slot.date)}</td>
+          <td>{slot.totalCapacity}</td>
+          <td>{slot.available}</td>
+          <td>{slot.totalCapacity}/{slot.available}</td>
           <td>
             <button class="btn btn-outline-danger" @click="initDelete(slot.id)">
               <i class="fas fa-trash"></i>

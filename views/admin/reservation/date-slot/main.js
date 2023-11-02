@@ -145,15 +145,6 @@ createApp({
         validRange: {
           start: startDate,
         },
-        dateClick: (info) => {
-          const date = info.dateStr;
-          if (dateWithSlots.value.includes(date)) {
-            calendarView.value.changeView("timeGridDay");
-          }
-        },
-        eventClick: (info) => {
-          calendarView.value.changeView("timeGridDay", info.event.startStr);
-        },
       });
 
       $('a[data-toggle="tab"]').on("shown.bs.tab", (event) => {

@@ -30,9 +30,14 @@ createApp({
     });
     const reservationCache = computed(() => {
       const map = new Map();
-      reservations.value.forEach((reservation) => {
+
+      for (const reservation of reservations.value) {
+        if (reservation.statusId === ReservationStatus.Cancelled) {
+          continue;
+        }
         map.set(reservation.date, reservation);
-      });
+      }
+
       return map;
     });
     const handleFormInput = (event) => {
@@ -134,6 +139,13 @@ createApp({
         form.value = { ...initialValues };
         errors.value = {};
       });
+
+      $('a[data-toggle="tab"]').on("shown.bs.tab", function (event) {
+        const tab = event.currentTarget;
+        if (tab.id === "reserve-tab") {
+          reservationCalendar.value.render();
+        }
+      });
       reservationCalendar.value.render();
     });
 
@@ -234,8 +246,9 @@ createApp({
           "Reservation status has been cancelled.",
           "success"
         );
-
-        fetchReservations();
+        await fetchReservations();
+        await fetchDateSlots();
+        repopulateEvents();
       }
     };
     const isCancellable = (reservation) => {
@@ -249,7 +262,8 @@ createApp({
           start: reservationDate,
           end: now,
         });
-        if (duration.days <= 0) {
+
+        if (duration.days > 0) {
           return false;
         }
         return true;

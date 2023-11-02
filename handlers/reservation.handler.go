@@ -137,6 +137,10 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
+
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	reservation.ClientId = sessionData.User.Id
 	fields, err := reservation.Validate()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -147,9 +151,7 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 			Message: "Validation error.",
 		})
 	}
-	sessionData := mysqlsession.SessionData{}
-	sessionData.Bind(c.Get("sessionData"))
-	reservation.ClientId = sessionData.User.Id
+	
 	err = h.reservation.NewReservation(reservation)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "NewReservationErr"))
