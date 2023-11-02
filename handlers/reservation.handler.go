@@ -3,6 +3,7 @@ package handlers
 import (
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/pkg/status"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -163,31 +164,37 @@ func (h * ReservationHandler)NewReservation(c echo.Context) error {
 }
 
 func (h * ReservationHandler)UpdateReservationStatus(c echo.Context) error {
-	reservation := model.Reservation{}
-	err := c.Bind(&reservation)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		logger.Error(err.Error(), zap.String("error", "id"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
 			Message: "Unknown error occured.",
 		})
 	}
-	fields, err := reservation.Validate()
+	statusId, err := strconv.Atoi(c.QueryParam("statusId"))
 	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "statusId"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
-			Data: Data{
-				"errors" : fields,
-			},
-			Message: "Validation error.",
+			Message: "Unknown error occured.",
 		})
 	}
-	sessionData := mysqlsession.SessionData{}
-	sessionData.Bind(c.Get("sessionData"))
-	reservation.ClientId = sessionData.User.Id
-	err = h.reservation.NewReservation(reservation)
+	switch(statusId) {
+		case status.ReservationStatusAttended:
+			return h.handleAttended(c, id )
+
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusBadRequest,
+		Message: "Unknown action.",
+	})
+}
+
+func (h * ReservationHandler) handleAttended (c echo.Context, id int) error {
+	err := h.reservation.MarkAsAttended(id)
 	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "NewReservationErr"))
+		logger.Error(err.Error(), zap.String("error", "MarkAsAttendedErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",
@@ -195,7 +202,7 @@ func (h * ReservationHandler)UpdateReservationStatus(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
-		Message: "Reservation created.",
+		Message: "Reservation Status Updated.",
 	})
 }
 

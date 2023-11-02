@@ -1,2 +1,3 @@
 ALTER TABLE reservation
-DROP COLUMN reservation_status_id;
+DROP CONSTRAINT fk_reservation_status,
+DROP COLUMN status_id;

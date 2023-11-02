@@ -48,7 +48,7 @@ createApp({
       {
         data: null,
         render: (value, type, row) => {
-          return `<button class='btn btn-outline-success attended-btn' data-toggle="tooltip" title="Mark client as attended" row-id=${row.id}>
+          return `<button class='btn btn-outline-success attended-btn' data-toggle="tooltip" title="Mark client as attended" data-id=${row.id}>
           <i class="fa fa-check" aria-hidden="true"></i
         </button>`;
         },
@@ -89,6 +89,19 @@ createApp({
         reservations.value = data?.reservations ?? [];
       }
     };
+
+    const updateStatus = async (id, statusId = 1) => {
+      const response = await fetch(
+        `/app/reservations/${id}/status?statusId=${statusId}`,
+        {
+          method: "PUT",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        }
+      );
+    };
     const search = (event) => {
       const query = event.target.value;
       dt.search(query).draw();
@@ -96,7 +109,11 @@ createApp({
     onMounted(() => {
       dt = table.value.dt;
       fetchReservations();
-      $(dt.table().body()).on("click", "button.attended-btn", (event) => {});
+      $(dt.table().body()).on("click", "button.attended-btn", (event) => {
+        const btn = event.currentTarget;
+        const id = btn.getAttribute("data-id");
+        updateStatus(id, 2);
+      });
     });
     return {
       reservations,

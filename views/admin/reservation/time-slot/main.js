@@ -15,6 +15,7 @@ createApp({
     const form = ref({ ...initialValues });
     const timeSlots = ref([]);
     const timeSlotSelections = ref([]);
+    const editTimeSlotSelections = ref([]);
     const errors = ref({});
 
     const handleFormInput = (event) => {
@@ -95,6 +96,17 @@ createApp({
         console.error(error);
       }
     };
+    const fetchTimeSlotSelections = async (id) => {
+      try {
+        const response = await fetch(`/app/time-slots/${id}/selections`);
+        const { data } = await response.json();
+        if (response.status === 200) {
+          editTimeSlotSelections.value = data?.slotSelections ?? [];
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const formatTime = (time) => {
       if (!time) return "";
       try {
@@ -133,12 +145,13 @@ createApp({
         deleteTimeSlot(id);
       }
     };
-    const initEdit = (slot) => {
+    const initEdit = async (slot) => {
       try {
         const startTime = parse(slot.startTime, "HH:mm:ss", new Date());
         const endTime = parse(slot.endTime, "HH:mm:ss", new Date());
         const formattedStart = format(startTime, "HH:mm");
         const formattedEnd = format(endTime, "HH:mm");
+        await fetchTimeSlotSelections(slot.id);
         form.value = {
           id: slot.id,
           startTime: formattedStart,
@@ -172,6 +185,7 @@ createApp({
       initEdit,
       onSubmitUpdate,
       timeSlotSelections,
+      editTimeSlotSelections,
     };
   },
 }).mount("#TimeSlot");

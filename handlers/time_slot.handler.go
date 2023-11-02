@@ -90,7 +90,8 @@ func (h *TimeSlotHandler) UpdateTimeSlot(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	err, fields := timeSlot.Validate()
+	timeSlot.Id = id
+	err, fields := timeSlot.ValidateOnUpdate()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, JSONResponse{Status: http.StatusBadRequest, Data: Data{
 			"errors": fields,
@@ -98,7 +99,7 @@ func (h *TimeSlotHandler) UpdateTimeSlot(c echo.Context) error {
 		Message: "Validation error.",
 	})
 	}
-	timeSlot.Id = id
+
 	err = h.timeSlotRepo.UpdateTimeSlot(timeSlot)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "updateTimeSlotErr"))
@@ -132,4 +133,30 @@ func (h * TimeSlotHandler) DeleteTimeSlot (c echo.Context) error {
 		Message: "Time slot deleted.",
 	})
 
+}
+
+func (h * TimeSlotHandler) GetTimeSlotExcept(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "conveErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		} )
+	}
+	slots, err := h.timeSlotRepo.GetTimeSlotExcept(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetTimeSlotsErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	selections := model.NewTimeSelection()
+	selections = selections.RemoveSelectedSelections(slots)
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"slotSelections": selections,
+	}})
 }

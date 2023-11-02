@@ -121,8 +121,11 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/time-slots", timeSlotHandler.NewTimeSlot)
 	router.PUT("/time-slots/:id", timeSlotHandler.UpdateTimeSlot)
 	router.DELETE("/time-slots/:id", timeSlotHandler.DeleteTimeSlot)
+	router.GET("/time-slots/:id/selections", timeSlotHandler.GetTimeSlotExcept)
 	router.GET("/reservations", reservationHandler.RenderAdminReservationPage)
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot)
+	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus)
+	
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

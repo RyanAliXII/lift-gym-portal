@@ -18,12 +18,22 @@ func NewTimeSlotRepository() TimeSlot {
 	}
 }
 func (repo * TimeSlot)NewTimeSlot(timeSlot model.TimeSlot) error {
-	_, err :=repo.db.Exec("INSERT INTO time_slot(start_time, end_time, max_capacity) VALUES(?, ?, ?)", timeSlot.StartTime, timeSlot.EndTime, timeSlot.MaxCapacity )
+	_, err := repo.db.Exec("INSERT INTO time_slot(start_time, end_time, max_capacity) VALUES(?, ?, ?)", timeSlot.StartTime, timeSlot.EndTime, timeSlot.MaxCapacity )
 	return err
 }
 func (repo * TimeSlot)GetTimeSlots() ([]model.TimeSlot, error) {
 	slots := make([]model.TimeSlot, 0)
-	err :=repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null order by start_time asc")
+	err := repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where deleted_at is null order by start_time asc")
+	return slots, err
+}
+func (repo * TimeSlot)GetTimeSlotExcept(id int) ([]model.TimeSlot, error) {
+	slots := make([]model.TimeSlot, 0)
+	timeSlot := model.TimeSlot{}
+	err := repo.db.Get(&timeSlot, "SELECT id, start_time, end_time from time_slot where id = ?", id)
+	if err != nil {
+		return slots, err
+	}
+	err = repo.db.Select(&slots,"SELECT id, start_time, end_time, max_capacity FROM time_slot where (start_time != ? AND start_time != ?)  and deleted_at is null order by start_time asc", timeSlot.StartTime, timeSlot.EndTime)
 	return slots, err
 }
 func (repo * TimeSlot)DeleteTimeSlot(id int)(error) {

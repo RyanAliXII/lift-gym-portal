@@ -9,10 +9,12 @@ type Reservation struct {
 	ClientId int `json:"clientId" db:"client_id"`
 	IsCancelled bool `json:"isCancelled" db:"is_cancelled"`
 	HasAttended bool `json:"hasAttended" db:"has_attended"`
+	StatusId int `json:"statusId" db:"status_id"`
+	Status string `json:"status" db:"status"`
 	Date string `json:"date" db:"date"`
 	Time string `json:"time" db:"time"`
 	ReservationId string `json:"reservationId" db:"reservation_id"`
-	Client ClientJSON `json:"client" db:"client"`
+	Client ClientJSON `json:"client,omitempty" db:"client"`
 	Model
 }
 

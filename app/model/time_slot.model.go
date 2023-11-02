@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"lift-fitness-gym/app/db"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -47,7 +48,6 @@ func validateTime(Value interface{}) error {
 	return nil
 }
 
-
 func ValidateEndTime (startTimeStr string) validation.RuleFunc {
 	return func (value interface{}) error  {
 		layout := "15:04"
@@ -55,7 +55,6 @@ func ValidateEndTime (startTimeStr string) validation.RuleFunc {
 		if !ok {
 			return fmt.Errorf("invalid time")
 		}
-		
 		endTime, err := time.Parse(layout, endTimeStr)
 		if err != nil {
 			return fmt.Errorf("invalid time")
@@ -71,15 +70,119 @@ func ValidateEndTime (startTimeStr string) validation.RuleFunc {
 		return nil
 	}
 }
+func validateStartTimeIfTaken(value interface{}) error{
+	startTime, _ := value.(string)
+	db := db.GetConnection()
+	recordCount := 1
+	err := db.Get(&recordCount,"SELECT COUNT(1) as recordCount from time_slot where deleted_at is null and start_time = ?", startTime)
+	if err != nil {
+		return fmt.Errorf("start time already exists")
+	}
+	if recordCount >= 1 {
+		return fmt.Errorf("start time already exists")
+	}
+	return nil
+}
+func validateEndTimeIfTaken(value interface{}) error{
+	endTime, _ := value.(string)
+	db := db.GetConnection()
+	recordCount := 1
+	err := db.Get(&recordCount,"SELECT COUNT(1) as recordCount from time_slot where deleted_at is null and end_time = ?", endTime)
+	if err != nil {
+		return fmt.Errorf("start time already exists")
+	}
+	if recordCount >= 1 {
+		return fmt.Errorf("start time already exists")
+	}
+	return nil
+}
+func validateStartTimeIfTakenOnUpdate (id int) validation.RuleFunc{
+	return func (value interface{}) error {
+		startTime, _ := value.(string)
+		db := db.GetConnection()
+		recordCount := 1
+		err := db.Get(&recordCount,"SELECT COUNT(1) as recordCount from time_slot where deleted_at is null and start_time = ? and id != ?", startTime, id)
+		if err != nil {
+			return fmt.Errorf("start time already exists")
+		}
+		if recordCount >= 1 {
+			return fmt.Errorf("start time already exists")
+		}
+		return nil
+	}
+}
+func validateEndTimeIfTakenOnUpdate (id int) validation.RuleFunc{
+	return func (value interface{}) error {
+		endTime, _ := value.(string)
+		db := db.GetConnection()
+		recordCount := 1
+		err := db.Get(&recordCount,"SELECT COUNT(1) as recordCount from time_slot where deleted_at is null and end_time = ? and id != ?", endTime, id)
+		if err != nil {
+			return fmt.Errorf("start time already exists")
+		}
+		if recordCount >= 1 {
+			return fmt.Errorf("start time already exists")
+		}
+			return nil
+	}
+}
 
+func validateTimeSlotOverlap (startTime string, endTime string) error {
+	db := db.GetConnection()
+	recordCount := 1
+	err := db.Get(&recordCount,"SELECT COUNT(1) FROM time_slot where deleted_at is null and start_time >= ? and end_time <= ?", startTime, endTime)
+	if err != nil {
+		return fmt.Errorf("time slot overlaps with current defined slots")
+	}
+	if recordCount >= 1 {
+		return fmt.Errorf("time slot overlaps with current defined slots")
+	}
+	return nil
+} 
+func validateTimeSlotOverlapOnUpdate(startTime string, endTime string, id int) error {
+	db := db.GetConnection()
+	recordCount := 1
+	err := db.Get(&recordCount,"SELECT COUNT(1) FROM time_slot where deleted_at is null and start_time >= ? and end_time <= ? and id != ?", startTime, endTime, id)
+	if err != nil {
+		return fmt.Errorf("time slot overlaps with current defined slots")
+	}
+	if recordCount >= 1 {
+		return fmt.Errorf("time slot overlaps with current defined slots")
+	}
+	return nil
+} 
 func (m  TimeSlot) Validate() (error, map[string]string) {
+	err := validateTimeSlotOverlap(m.StartTime, m.EndTime)
+	if err != nil {
+		return err, map[string]string{
+			"startTime": err.Error(),
+			"endTime": err.Error(),
+		}
+	}
 	return m.Model.ValidationRules(&m, 
-		validation.Field(&m.StartTime, validation.Required.Error("Start time is required."), validation.By(validateTime)), 
-		validation.Field(&m.EndTime, validation.Required.Error("End time is required."), validation.By(validateTime), validation.By(ValidateEndTime(m.StartTime))),
+		validation.Field(&m.StartTime, validation.Required.Error("Start time is required."), validation.By(validateTime), validation.By(validateStartTimeIfTaken)), 
+		validation.Field(&m.EndTime, validation.Required.Error("End time is required."), 
+		validation.By(validateTime), validation.By(ValidateEndTime(m.StartTime)), validation.By(validateEndTimeIfTaken)),
 		validation.Field(&m.MaxCapacity, validation.Required.Error("Max capacity is required."), validation.Min(1).Error("Max capacity must be atleast 1.")),
 	)
 }
 
+
+func (m  TimeSlot) ValidateOnUpdate() (error, map[string]string) {
+	err := validateTimeSlotOverlapOnUpdate(m.StartTime, m.EndTime, m.Id)
+	if err != nil {
+		return err, map[string]string{
+			"startTime": err.Error(),
+			"endTime": err.Error(),
+		}
+	}
+	return m.Model.ValidationRules(&m, 
+		validation.Field(&m.StartTime, validation.Required.Error("Start time is required."), validation.By(validateTime), validation.By(validateStartTimeIfTakenOnUpdate(m.Id))), 
+		validation.Field(&m.EndTime, validation.Required.Error("End time is required."), 
+		validation.By(validateTime), validation.By(ValidateEndTime(m.StartTime)), validation.By(validateEndTimeIfTakenOnUpdate(m.Id))),
+		validation.Field(&m.MaxCapacity, validation.Required.Error("Max capacity is required."), validation.Min(1).Error("Max capacity must be atleast 1.")),
+	)
+}
 
 type TimeSelection struct {
 	Label string `json:"label"`
@@ -87,43 +190,6 @@ type TimeSelection struct {
 }
 type timeSelections []TimeSelection
 
-
-func NewTimeSelection() timeSelections{
-	return  Selections
-}
-
-func (selections  timeSelections)RemoveSelectedSelections(timeSlots []TimeSlot) timeSelections{
-	slotsMap := make(map[string]string)
-	newSelections := make([]TimeSelection, 0)
-	for _, slot := range timeSlots{
-		start, end , err := slot.RemoveSecondsInTime()
-		
-		if err != nil {
-			return Selections
-		}
-		slotsMap[start] =  end
-	}
-	if(len(timeSlots) == 0 ){
-		return Selections
-	}
-	endTime := ""
-	for i := 0; i < len(selections); i++{
-		_, startExist := slotsMap[selections[i].Value]
-		if startExist {
-			endTime = slotsMap[selections[i].Value]
-			continue
-		}
-		if(endTime ==  selections[i].Value){
-			endTime = ""
-			continue
-		}
-		if(endTime != ""){
-			continue
-		}
-		newSelections = append(newSelections, selections[i])
-	}
-	return newSelections
-}
 var Selections timeSelections  = timeSelections{
 	{ Label: "12:00 AM", Value: "00:00" },
 	{ Label: "1:00 AM", Value: "01:00" },
@@ -150,15 +216,47 @@ var Selections timeSelections  = timeSelections{
 	{ Label: "10:00 PM", Value: "22:00" },
 	{ Label: "11:00 PM", Value: "23:00" },
 }
-func getTimeIndexPosition () map[string]int {
-	positions := make(map[string]int)
-	for idx, selection := range Selections {
-		positions[selection.Value] = idx
-	}
-	return positions
+func NewTimeSelection() timeSelections{
+	return  Selections
 }
-
-var timePositions = getTimeIndexPosition()
-
+// this functions assumes that the time slots that have been passed is sorted by TimeSlot.StartTime in ascending order.
+func (selections  timeSelections)RemoveSelectedSelections(timeSlots []TimeSlot) timeSelections{
+	slotsMap := make(map[string]TimeSlot)
+	newSelections := make([]TimeSelection, 0)
+	//convert list of time slots to map and use start time as key.
+	for _, slot := range timeSlots{
+		start, end , err := slot.RemoveSecondsInTime() // convert start time and end time to 24:00:00 to 24:00.
+		if err != nil {
+			return Selections
+		}
+		slot.StartTime = start
+		slot.EndTime = end
+		slotsMap[start] =  slot
+	}
+	if(len(timeSlots) == 0 ){
+		return Selections
+	}
+	endTime := ""
+	/*
+	check each time slot is defined.
+	if time slot is not defined then add it to selection
+	if time slot is defined, don't add the time slot from start time to end time.
+	*/
+	for i := 0; i < len(selections); i++{
+		_, startExist := slotsMap[selections[i].Value]
+		if startExist {
+			endTime = slotsMap[selections[i].Value].EndTime
+			continue
+		}
+		if(endTime ==  selections[i].Value){
+			endTime = ""
+		}
+		if(endTime != ""){
+			continue
+		}
+		newSelections = append(newSelections, selections[i])
+	}
+	return newSelections
+}
 
 

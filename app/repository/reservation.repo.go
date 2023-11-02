@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/status"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -37,6 +38,8 @@ func (repo * Reservation)GetReservations () ([]model.Reservation, error){
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
+	 reservation.status_id,
+	 reservation_status.description as status,
 	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	 date_slot.date,
 	 (case when cancelled_at is null then false else true end) as is_cancelled,
@@ -47,6 +50,7 @@ func (repo * Reservation)GetReservations () ([]model.Reservation, error){
 	INNER JOIN date_slot on date_slot_id = date_slot.id
 	INNER JOIN time_slot on time_slot_id = time_slot.id
 	INNER JOIN client on reservation.client_id = client.id
+	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
 	`
 	err := repo.db.Select(&reservations, query)
 	return reservations, err
@@ -59,6 +63,8 @@ func (repo * Reservation)GetReservationByDateSlot (dateSlotId int) ([]model.Rese
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
 	 reservation.time_slot_id,
+	 reservation.status_id,
+	 reservation_status.description as status,
 	 JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	 date_slot.date,
 	 (case when cancelled_at is null then false else true end) as is_cancelled,
@@ -69,6 +75,7 @@ func (repo * Reservation)GetReservationByDateSlot (dateSlotId int) ([]model.Rese
 	INNER JOIN date_slot on date_slot_id = date_slot.id
 	INNER JOIN time_slot on time_slot_id = time_slot.id
 	INNER JOIN client on reservation.client_id = client.id
+	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
 	where date_slot_id = ?
 	`
 	err := repo.db.Select(&reservations, query, dateSlotId)
@@ -82,7 +89,9 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	reservation.id,
 	 reservation.client_id, 
 	 reservation.date_slot_id, 
-	 reservation.time_slot_id ,
+	 reservation.time_slot_id,
+	 reservation.status_id,
+	 reservation_status.description as status,
 	 date_slot.date,
 	 (case when cancelled_at is null then false else true end) as is_cancelled,
 	 (case when attended_at is null then false else true end) as has_attended,
@@ -91,8 +100,15 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	 FROM reservation 
 	INNER JOIN date_slot on date_slot_id = date_slot.id
 	INNER JOIN time_slot on time_slot_id = time_slot.id
+	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
 	where client_id = ?
 	`
 	err := repo.db.Select(&reservations, query, clientId)
 	return reservations, err
+}
+
+func (repo * Reservation)MarkAsAttended(id int) error {
+	//mark as attended if reservation status has the same id and status is default.
+	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and status_id = 1", status.ReservationStatusAttended, id)
+	return err 
 }
