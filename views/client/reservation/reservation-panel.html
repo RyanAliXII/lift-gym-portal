@@ -11,6 +11,8 @@
         <th>Reservation Id</th>
         <th>Date</th>
         <th>Time</th>
+        <th>Status</th>
+        <th></th>
       </tr>
     </thead>
 
@@ -20,6 +22,17 @@
           <td class="font-weight-bold">{reservation.reservationId}</td>
           <td>{reservation.date}</td>
           <td>{reservation.time}</td>
+          <td>{reservation.status}</td>
+          <td>
+            <button
+              v-if="isCancellable(reservation)"
+              class="btn btn-outline-danger cancel-btn"
+              data-toggle="tooltip"
+              title="Cancel Reservation"
+            >
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+          </td>
         </tr>
       </template>
     </tbody>

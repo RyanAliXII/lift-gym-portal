@@ -1,13 +1,19 @@
 import { computed, createApp, onMounted, ref } from "vue";
 import { Calendar } from "fullcalendar";
 import interactionPlugin from "@fullcalendar/interaction";
-import { format, parse } from "date-fns";
+import { format, parse, intervalToDuration } from "date-fns";
 import swal from "sweetalert2";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
   },
   setup() {
+    const ReservationStatus = {
+      Pending: 1,
+      Attended: 2,
+      NoShow: 3,
+      Cancelled: 4,
+    };
     const reservationCalendarElement = ref(null);
     const reservationCalendar = ref(null);
     const dateSlots = ref([]);
@@ -84,6 +90,7 @@ createApp({
         return "";
       }
     };
+
     onMounted(async () => {
       const today = new Date();
       const nextThreeDays = new Date(today.setDate(today.getDate() + 3));
@@ -196,6 +203,27 @@ createApp({
         console.error(error);
       }
     };
+
+    const isCancellable = (reservation) => {
+      try {
+        if (reservation.statusId != ReservationStatus.Pending) return false;
+        let now = new Date();
+        now.setHours(0, 0, 0, 0);
+        let reservationDate = new Date(reservation.date);
+        reservationDate.setHours(0, 0, 0, 0);
+        const duration = intervalToDuration({
+          start: reservationDate,
+          end: now,
+        });
+        if (duration.days <= 0) {
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    };
     return {
       reservationCalendarElement,
       selectedDate,
@@ -206,6 +234,7 @@ createApp({
       handleFormInput,
       errors,
       reservations,
+      isCancellable,
     };
   },
 }).mount("#ReservationPage");

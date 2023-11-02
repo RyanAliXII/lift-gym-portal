@@ -183,6 +183,10 @@ func (h * ReservationHandler)UpdateReservationStatus(c echo.Context) error {
 	switch(statusId) {
 		case status.ReservationStatusAttended:
 			return h.handleAttended(c, id )
+		case status.ReservationStatusNoShow:
+			return h.handleNoShow(c, id)
+		case status.ReservationStatusCancelled: 
+			return h.handleCancellation(c, id)
 
 	}
 	return c.JSON(http.StatusOK, JSONResponse{
@@ -205,4 +209,35 @@ func (h * ReservationHandler) handleAttended (c echo.Context, id int) error {
 		Message: "Reservation Status Updated.",
 	})
 }
+func (h * ReservationHandler) handleNoShow (c echo.Context, id int) error {
+	err := h.reservation.MarkAsNoShow(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "MarkAsNoShowErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Reservation Status Updated.",
+	})
+}
+
+func (h * ReservationHandler) handleCancellation (c echo.Context, id int) error {
+	err := h.reservation.MarkAsCancelled(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "MarkAsCancelled"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Reservation Status Updated.",
+	})
+}
+
+
 

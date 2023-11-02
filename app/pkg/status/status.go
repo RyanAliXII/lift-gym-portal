@@ -22,7 +22,7 @@ const (
 
 
 const (
-	ReservationStatusDefault   = 1
+	ReservationStatusPending  = 1
 	ReservationStatusAttended = 2
 	ReservationStatusNoShow = 3
 	ReservationStatusCancelled = 4

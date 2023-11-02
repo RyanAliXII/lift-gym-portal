@@ -108,7 +108,19 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 }
 
 func (repo * Reservation)MarkAsAttended(id int) error {
-	//mark as attended if reservation status has the same id and status is default.
-	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and status_id = 1", status.ReservationStatusAttended, id)
+	//mark as attended if reservation status has the same id and status is pending or no show.
+	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and (status_id = 1 or status_id = 3)", status.ReservationStatusAttended, id)
+	return err 
+}
+
+func (repo * Reservation)MarkAsNoShow(id int) error {
+	//mark as attended if reservation status has the same id and status is pending or attended.
+	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and (status_id = 1 or status_id = 2)", status.ReservationStatusNoShow, id)
+	return err 
+}
+
+func (repo * Reservation)MarkAsCancelled(id int) error {
+	//mark as attended if reservation status has the same id and status is pending
+	_, err := repo.db.Exec("UPDATE reservation set status_id = ? where id = ? and status_id = 1", status.ReservationStatusCancelled, id)
 	return err 
 }

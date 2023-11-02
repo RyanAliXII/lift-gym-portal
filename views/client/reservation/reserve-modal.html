@@ -25,9 +25,11 @@
         <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label>Time slot</label>
+
             <select
               name="timeSlotId"
               class="form-control"
+              :value="form.timeSlotId"
               @change="handleFormInput"
               :class="{'is-invalid': errors?.timeSlotId}"
             >
