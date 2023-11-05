@@ -22,7 +22,7 @@ createApp({
     const columns = [
       {
         data: "publicId",
-        title: "Id",
+        title: "ID",
         render: (value) => {
           return `<span class='font-weight-bold'>
             ${value}

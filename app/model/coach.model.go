@@ -14,6 +14,7 @@ import (
 
 type Coach struct {
 	Id               int    `json:"id" db:"id"`
+	PublicId         string `json:"publicId" db:"public_id"`
 	GivenName        string `json:"givenName" db:"given_name"`
 	MiddleName       string `json:"middleName" db:"middle_name"`
 	Surname          string `json:"surname" db:"surname"`

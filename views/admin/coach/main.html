@@ -41,6 +41,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>ID</th>
                         <th>Given name</th>
                         <th>Middle name</th>
                         <th>Surname</th>
@@ -51,6 +52,7 @@
                     <tbody>
                       {{range .coaches}}
                       <tr>
+                        <td class="font-weight-bold">{{.PublicId}}</td>
                         <td>{{.GivenName}}</td>
                         <td>{{.MiddleName}}</td>
                         <td>{{.Surname}}</td>
