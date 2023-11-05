@@ -117,9 +117,20 @@ createApp({
       dateWithSlots.value = [];
       slots.forEach((slot) => {
         dateWithSlots.value.push(slot.date);
+
+        if (slot.available <= 0) {
+          calendarView.value.addEvent({
+            id: slot.id,
+            title: "Fully Booked",
+            date: slot.date,
+            className: "p-2 bg-danger border border-none",
+            extendedProps: slot,
+          });
+          return;
+        }
         calendarView.value.addEvent({
           id: slot.id,
-          title: "This date is available for reservation",
+          title: `Available: ${slot.available}`,
           date: slot.date,
           className: "p-2  bg-success",
         });
