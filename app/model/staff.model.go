@@ -16,6 +16,12 @@ type Staff struct {
 	AccountId  string `json:"accountId,omitempty" db:"account_id"`
 	Email      string `json:"email" db:"email"`
 	Password   string `json:"password,omitempty" db:"password"`
+	Address          string `json:"address,omitempty" db:"address"`
+	MobileNumber     string `json:"mobileNumber,omitempty" db:"mobile_number"`
+	PublicId 		string `json:"publicId" db:"public_id"`
+	Gender 			string `json:"gender" db:"gender"`
+	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
+	DateOfBirth      string `json:"dateOfBirth,omitempty" db:"date_of_birth"`
 	RoleId	   int `json:"roleId" db:"role_id"`
 	Model
 }
