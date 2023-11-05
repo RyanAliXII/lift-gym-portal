@@ -3,8 +3,6 @@ import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import swal from "sweetalert2";
-// import "datatables.net-bs4";
-// import "datatables.net-responsive-dt";
 
 DataTable.use(DataTablesCore);
 createApp({
@@ -25,7 +23,7 @@ createApp({
     const table = ref("");
     let dt;
     const options = {
-      lengthMenu: [20],
+      lengthMenu: [30],
       lengthChange: false,
     };
     const columns = [

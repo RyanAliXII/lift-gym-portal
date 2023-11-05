@@ -36,7 +36,7 @@
                 <select class="form-control" @change="handleDateSelect">
                   <option value="0">All</option>
                   {{range .dateSlots }}
-                  <option value="{{.Id}}">{{.Date}}</option>
+                  <option value="{{.Id}}">{{toReadableDate .Date}}</option>
                   {{end}}
                 </select>
                 <input

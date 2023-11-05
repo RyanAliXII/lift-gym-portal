@@ -99,7 +99,7 @@ func (repo * Reservation)GetClientReservation(clientId int) ([]model.Reservation
 	INNER JOIN date_slot on date_slot_id = date_slot.id
 	INNER JOIN time_slot on time_slot_id = time_slot.id
 	INNER JOIN reservation_status on reservation.status_id = reservation_status.id
-	where client_id = ? ORDER BY date_slot.date DESC
+	where client_id = ? ORDER BY reservation.created_at DESC
 	`
 	err := repo.db.Select(&reservations, query, clientId)
 	return reservations, err

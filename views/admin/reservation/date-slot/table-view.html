@@ -1,36 +1,10 @@
 {{define "admin/reservation/date-slot/table-view"}}
-<div class="table-responsive mt-3">
-  <table
-    class="table table-bordered"
-    id="dataTable"
-    width="100%"
-    cellspacing="0"
-  >
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Total Capacity</th>
-        <th>Available</th>
-        <th>Ratio</th>
-        <th></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <template v-for="slot of slots">
-        <tr>
-          <td>{formatDate(slot.date)}</td>
-          <td>{slot.totalCapacity}</td>
-          <td>{slot.available}</td>
-          <td>{slot.totalCapacity}/{slot.available}</td>
-          <td>
-            <button class="btn btn-outline-danger" @click="initDelete(slot.id)">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+<div class="mt-3">
+  <data-table
+    class="table table-bordered w-full"
+    :columns="columns"
+    :options="dataTableConfig"
+    :data="slots"
+  ></data-table>
 </div>
 {{end}}

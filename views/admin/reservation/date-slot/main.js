@@ -4,7 +4,15 @@ import swal from "sweetalert2";
 import { Calendar } from "fullcalendar";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+
+DataTable.use(DataTablesCore);
 createApp({
+  components: {
+    DataTable,
+  },
   compilerOptions: {
     delimiters: ["{", "}"],
   },
@@ -17,6 +25,30 @@ createApp({
       to: today,
       from: today,
     };
+    const dataTableConfig = {
+      lengthMenu: [15],
+      searching: false,
+      lengthChange: false,
+    };
+    const columns = [
+      {
+        data: "date",
+        title: "Date",
+        render: (value) => formatDate(value),
+      },
+      {
+        data: "totalCapacity",
+        title: "Total Capacity",
+      },
+      {
+        data: "booked",
+        title: "Booked",
+      },
+      {
+        data: "available",
+        title: "Available",
+      },
+    ];
     const form = ref({
       ...initialFormValue,
     });
@@ -182,6 +214,8 @@ createApp({
       slots,
       initDelete,
       calendarViewElement,
+      columns,
+      dataTableConfig,
     };
   },
 }).mount("#DateSlot");
