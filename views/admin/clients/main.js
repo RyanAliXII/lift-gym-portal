@@ -1,10 +1,103 @@
-import { createApp } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+DataTable.use(DataTablesCore);
 createApp({
+  components: {
+    DataTable,
+  },
   compilerOptions: {
     delimiters: ["{", "}"],
   },
   setup() {
+    const clients = ref([]);
+    const table = ref(null);
+    const tableConfig = {
+      lengthMenu: [15],
+      lengthChange: false,
+      dom: "lrtip",
+    };
+    const columns = [
+      {
+        data: "publicId",
+        title: "Id",
+        render: (value) => {
+          return `<span class='font-weight-bold'>
+            ${value}
+          </span>`;
+        },
+      },
+      {
+        data: "givenName",
+        title: "Given name",
+      },
+      {
+        data: "middleName",
+        title: "Middle name",
+      },
+      {
+        data: "surname",
+        title: "Surname",
+      },
+      {
+        data: null,
+        render: (value, event, row) => {
+          let buttons = ``;
+
+          if (window.hasEditPermission) {
+            buttons =
+              buttons +
+              `   <a
+          href="/app/clients/${row.id}"
+          class="btn btn-outline-primary"
+          >
+          <i class="fas fa-edit"></i>
+         </a>`;
+          }
+          if (window.hasDeletePermission) {
+            buttons =
+              buttons +
+              `  <button
+          class="btn btn-outline-danger delete-client"
+          data-toggle="tooltip"
+          title="Delete client"
+          data-id = ${row.id}
+       >
+        <i class="fas fa-trash"></i>
+       </button>`;
+          }
+
+          return `<div class='d-flex' style='gap: 5px;'>
+            ${buttons}  
+          </div>`;
+        },
+      },
+    ];
+
+    const fetchClients = async () => {
+      const response = await fetch("/app/clients", {
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        }),
+      });
+      const { data } = await response.json();
+      clients.value = data?.clients ?? [];
+    };
+    onMounted(() => {
+      fetchClients();
+      const dt = table.value.dt;
+      $(dt.table().body()).on(
+        "click",
+        "button.delete-client",
+        async (event) => {
+          const id = event.currentTarget.getAttribute("data-id");
+          initDelete(id);
+        }
+      );
+    });
     const deleteClient = async (id) => {
       try {
         const response = await fetch(`/app/clients/${id}`, {
@@ -23,8 +116,7 @@ createApp({
         console.error(error);
       }
     };
-    const initDelete = async (event) => {
-      const id = event.target.getAttribute("client-id");
+    const initDelete = async (id) => {
       const result = await swal.fire({
         showCancelButton: true,
         confirmButtonText: "Yes, delete it",
@@ -38,7 +130,12 @@ createApp({
         deleteClient(id);
       }
     };
+
     return {
+      table,
+      tableConfig,
+      columns,
+      clients,
       initDelete,
     };
   },

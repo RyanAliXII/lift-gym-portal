@@ -130,6 +130,7 @@
             const response = await fetch("/app/memberships", {
               headers: new Headers({
                 "content-type": "application/json",
+                "Cache-Control": "no-cache",
               }),
             });
 

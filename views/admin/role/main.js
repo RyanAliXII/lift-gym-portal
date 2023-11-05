@@ -35,7 +35,10 @@ createApp({
     const fetchRoles = async () => {
       try {
         const response = await fetch("/app/roles", {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
         roles.value = data?.roles ?? [];

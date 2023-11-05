@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/http/middlewares"
 	"net/http"
 
@@ -12,8 +13,10 @@ func RegisterHandlers(router *echo.Echo) {
 	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			contentType := c.Request().Header.Get("Content-Type")
+			fmt.Println(contentType)
 			if contentType == "application/json" {
 				c.Response().Header().Set("Vary", "Accept")
+				return next(c)
 			}
 			return next(c)
 		}

@@ -19,6 +19,7 @@ func (h * ClientHandler) RenderClientPage(c echo.Context) error {
 	csrf := c.Get("csrf")
 	
 	contentType := c.Request().Header.Get("content-type")
+	
 	if contentType == "application/json" {
 		return h.handleJSONContent(c)
 	}

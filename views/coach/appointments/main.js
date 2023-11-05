@@ -11,7 +11,10 @@ createApp({
     const fetchAppointments = async () => {
       try {
         const response = await fetch("/coaches/appointments", {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
 

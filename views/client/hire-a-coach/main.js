@@ -32,7 +32,10 @@ createApp({
     const swiperElement = ref(null);
     const fetchCoaches = async () => {
       const response = await fetch("/clients/hire-a-coach", {
-        headers: new Headers({ "Content-Type": "application/json" }),
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        }),
       });
 
       if (response.status >= 400) return;

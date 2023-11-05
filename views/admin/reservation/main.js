@@ -106,7 +106,10 @@ createApp({
     const reservations = ref([]);
     const fetchReservations = async () => {
       const response = await fetch("/app/reservations", {
-        headers: new Headers({ "Content-Type": "application/json" }),
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        }),
       });
       const { data } = await response.json();
       if (response.status === 200) {
@@ -133,7 +136,10 @@ createApp({
     };
     const fetchReservationsDateSlot = async (id) => {
       const response = await fetch(`/app/reservations/date-slots/${id}`, {
-        headers: new Headers({ "Content-Type": "application/json" }),
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        }),
       });
       const { data } = await response.json();
       if (response.status === 200) {

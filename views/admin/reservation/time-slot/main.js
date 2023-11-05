@@ -84,7 +84,10 @@ createApp({
     const fetchTimeSlots = async () => {
       try {
         const response = await fetch("/app/time-slots", {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
 

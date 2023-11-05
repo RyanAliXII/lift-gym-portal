@@ -69,10 +69,10 @@ createApp({
         const response = await fetch("/app/date-slots", {
           method: "POST",
           body: JSON.stringify(form.value),
-          headers: new Headers({
+          headers: {
             "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
-          }),
+          },
         });
         const { data } = await response.json();
         if (response.status >= 400) {
@@ -92,7 +92,10 @@ createApp({
     const fetchSlots = async () => {
       try {
         const response = await fetch("/app/date-slots", {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
         slots.value = data?.slots ?? [];

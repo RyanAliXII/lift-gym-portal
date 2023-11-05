@@ -13,7 +13,10 @@ export const fetchMembers = async () => {
 export const fetchClients = async () => {
   try {
     const response = await fetch("/app/clients?type=unsubscribed", {
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: new Headers({
+        "content-type": "application/json",
+        "Cache-Control": "no-cache",
+      }),
     });
     const { data } = await response.json();
     return data?.clients;
@@ -25,7 +28,10 @@ export const fetchClients = async () => {
 export const fetchMembershipPlans = async () => {
   try {
     const response = await fetch("/app/memberships", {
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: new Headers({
+        "content-type": "application/json",
+        "Cache-Control": "no-cache",
+      }),
     });
     const { data } = await response.json();
     return data?.membershipPlans;

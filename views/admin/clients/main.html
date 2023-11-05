@@ -33,7 +33,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table
+                  <!-- <table
                     class="table table-bordered"
                     id="dataTable"
                     width="100%"
@@ -41,6 +41,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>Id</th>
                         <th>Given name</th>
                         <th>Middle name</th>
                         <th>Surname</th>
@@ -51,6 +52,7 @@
                     <tbody>
                       {{range .clients}}
                       <tr>
+                        <td class="font-weight-bold">{{.PublicId}}</td>
                         <td>{{.GivenName}}</td>
                         <td>{{.MiddleName}}</td>
                         <td>{{.Surname}}</td>
@@ -80,7 +82,15 @@
                       </tr>
                       {{end}}
                     </tbody>
-                  </table>
+                  </table> -->
+                  <data-table
+                    ref="table"
+                    class="table table-bordered"
+                    :data="clients"
+                    :options="tableConfig"
+                    :columns="columns"
+                  >
+                  </data-table>
                 </div>
               </div>
             </div>
@@ -98,8 +108,13 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
+  {{$hasDeletePermission := hasPermission "Client.Delete"
+  .currentUser.Permissions }} {{$hasEditPermission := hasPermission
+  "Client.Edit" .currentUser.Permissions}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
+    window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
   <script src="/js/admin/clients/main.js"></script>
 </html>

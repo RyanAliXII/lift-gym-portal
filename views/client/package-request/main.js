@@ -17,7 +17,10 @@ createApp({
     const fetchPackages = async () => {
       try {
         const response = await fetch("/clients/packages", {
-          headers: new Headers({ "content-type": "application/json" }),
+          headers: new Headers({
+            "content-type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
         return data?.packages ?? [];
@@ -29,7 +32,10 @@ createApp({
     const fetchPackageRequests = async () => {
       try {
         const response = await fetch("/clients/package-requests", {
-          headers: new Headers({ "content-type": "application/json" }),
+          headers: new Headers({
+            "content-type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
         packageRequests.value = data?.packageRequests ?? [];

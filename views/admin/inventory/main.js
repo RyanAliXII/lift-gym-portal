@@ -72,6 +72,7 @@ createApp({
           headers: new Headers({
             "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
+            "Cache-Control": "no-cache",
           }),
         });
         const { data } = await response.json();

@@ -71,7 +71,10 @@ createApp({
     const fetchReservations = async () => {
       try {
         const response = await fetch("/clients/reservations", {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         });
         const { data } = await response.json();
         reservations.value = data?.reservations ?? [];

@@ -49,7 +49,10 @@ createApp({
           keyword: query,
         }).toString()}`,
         {
-          headers: new Headers({ "Content-Type": "application/json" }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
         }
       );
 
