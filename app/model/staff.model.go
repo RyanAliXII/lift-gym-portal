@@ -3,9 +3,11 @@ package model
 import (
 	"fmt"
 	"lift-fitness-gym/app/db"
+	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
+	"github.com/nyaruka/phonenumbers"
 )
 
 type Staff struct {
@@ -32,6 +34,16 @@ func (m Staff) Validate() (error, map[string]string) {
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname must be 1 to 255 characters.")),
 		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
 		validation.Field(&m.RoleId, validation.Required.Error("Role is required."), validation.Min(1).Error("Role is required.")),
+		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
+			strDate ,_ := value.(string)
+			_, err := time.Parse(time.DateOnly, strDate)
+			if err != nil {
+				return fmt.Errorf("Date of birth is required.")
+			}
+			return nil
+		})),
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email must be 1 to 255 characters"), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from user
@@ -42,6 +54,21 @@ func (m Staff) Validate() (error, map[string]string) {
 			}		
 			return nil
 		})),
+		validation.Field(&m.MobileNumber, validation.Required.Error("Mobile number is required."), validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("Invalid number")
+			}
+			return nil
+		 })),
+		 validation.Field(&m.EmergencyContact, validation.Required.Error("Emergency contact number is required."), validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("Invalid number")
+			}
+			return nil})),
 	)
 }
 func (m Staff) ValidateUpdate() (error, map[string]string) {
@@ -51,6 +78,15 @@ func (m Staff) ValidateUpdate() (error, map[string]string) {
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname must be 1 to 255 characters.")),
 		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
 		validation.Field(&m.RoleId, validation.Required.Error("Role is required."), validation.Min(1).Error("Role is required.")),
+		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
+			strDate ,_ := value.(string)
+			_, err := time.Parse(time.DateOnly, strDate)
+			if err != nil {
+				return fmt.Errorf("Date of birth is required.")
+			}
+			return nil
+		})),
+		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email must be 1 to 255 characters"), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from user
@@ -60,7 +96,21 @@ func (m Staff) ValidateUpdate() (error, map[string]string) {
 				return fmt.Errorf("Email is already registered.")
 			}		
 			return nil
-		})),
+		})),validation.Field(&m.MobileNumber, validation.Required.Error("Mobile number is required."), validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.MobileNumber, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("Invalid number")
+			}
+			return nil
+		 })),
+		 validation.Field(&m.EmergencyContact, validation.Required.Error("Emergency contact number is required."), validation.By(func(value interface{}) error {
+			p, _ := phonenumbers.Parse(m.EmergencyContact, "PH")
+			isValid := phonenumbers.IsValidNumberForRegion(p, "PH")
+			if !isValid {
+				return fmt.Errorf("Invalid number")
+			}
+			return nil})),
 	)
 }
 

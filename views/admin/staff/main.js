@@ -18,6 +18,12 @@ const initialForm = {
   middleName: "",
   surname: "",
   email: "",
+  gender: "",
+  dateOfBirth: "",
+  address: "",
+  emergencyContact: "",
+  mobileNumber: "",
+
   roleId: 0,
 };
 createApp({
@@ -48,6 +54,21 @@ createApp({
       validateOnChange: true,
     });
     const email = defineInputBinds("email", {
+      validateOnChange: true,
+    });
+    const dateOfBirth = defineInputBinds("dateOfBirth", {
+      validateOnChange: true,
+    });
+    const gender = defineInputBinds("gender", {
+      validateOnChange: true,
+    });
+    const address = defineInputBinds("address", {
+      validateOnChange: true,
+    });
+    const mobileNumber = defineInputBinds("mobileNumber", {
+      validateOnChange: true,
+    });
+    const emergencyContact = defineInputBinds("emergencyContact", {
       validateOnChange: true,
     });
     const fetchStaffs = async () => {
@@ -186,6 +207,11 @@ createApp({
       middleName,
       surname,
       email,
+      mobileNumber,
+      address,
+      dateOfBirth,
+      gender,
+      emergencyContact,
       errors,
       onSubmitNewStaff,
       staffs,
