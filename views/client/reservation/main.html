@@ -20,17 +20,20 @@
           <!-- Begin Page Content -->
           <div class="container-fluid" id="ReservationPage">
             {{template "partials/dashboard-page-heading" .}}
-            <div class="mb-3 ml-2">
-              <!-- <button
-                class="btn btn-primary"
-                type="button"
-                data-toggle="modal"
-                data-target="#requestModal"
-              >
-                <i class="fas fa-plus"></i>
-                Request Package
-              </button> -->
-            </div>
+            {{if or (not
+              .isVerified) (not .isInfoComplete)  (not .isMember)}}
+              <div class="alert alert-warning" role="alert">
+                To access full feature of the portal, Please verify your account
+                and make sure that your information is complete.
+                <a
+                  class="underline"
+                  href="/clients/profile"
+                  style="text-decoration: underline"
+                  >Profile
+                  <i class="fas fa-arrow-right" style="font-size: 12px"></i
+                ></a>
+              </div>
+              {{end}} 
         
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
@@ -78,14 +81,9 @@
                 
                 {{end}}
 
-                {{if not .isMember}}
-                <div class="alert alert-warning mt-3" role="alert">
-                  This feature is only available for gym members.
-                </div>
-                
-                {{end}}
               
-                {{if and (not .isTempBan) (.isMember)}}
+              
+                {{if and (not .isTempBan) (.isMember) (.isInfoComplete) (.isVerified)}}
                   {{template "client/reservation/reserve-panel" .}}
                 {{end}}
                 </div>

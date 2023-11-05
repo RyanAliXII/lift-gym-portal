@@ -19,20 +19,34 @@
 
           <!-- Begin Page Content -->
           <div class="container-fluid" id="MembershipRequest">
-            {{template "partials/dashboard-page-heading" .}}
-
+            {{template "partials/dashboard-page-heading" .}} {{if or (not
+            .isInfoComplete) (not .isVerified)}}
+            <div class="alert alert-warning" role="alert">
+              To access full feature of the portal, Please verify your account
+              and make sure that your information is complete.
+              <a
+                class="underline"
+                href="/clients/profile"
+                style="text-decoration: underline"
+                >Profile
+                <i class="fas fa-arrow-right" style="font-size: 12px"></i
+              ></a>
+            </div>
+            {{end}}
             <div class="mb-3 ml-2">
               {{if .isMember}}
               <div class="alert alert-info mb-3" role="alert">
                 <i class="fa fa-info-circle" aria-hidden="true"></i> Membership
                 requests have been disabled since you are currently a member.
               </div>
-              {{end}} {{if .isMember}}
+              {{end}} {{if or .isMember ( or ( not .isVerified) (not
+              .isInfoComplete)) }}
               <button class="btn btn-primary" type="button" disabled="true">
                 <i class="fas fa-plus"></i>
                 Request Membership
               </button>
               {{else}}
+
               <button
                 class="btn btn-primary"
                 type="button"
@@ -113,8 +127,8 @@
                 </div>
               </div>
             </div>
-            {{if not .isMember}} {{template
-            "client/membership-request/request-modal" .}} {{end}}
+            {{if or .isMember ( or ( not .isVerified) (not .isInfoComplete)) }}
+            {{template "client/membership-request/request-modal" .}} {{end}}
           </div>
           <!-- /.container-fluid -->
         </div>

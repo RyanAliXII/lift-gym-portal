@@ -52,12 +52,15 @@ func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 	
 	isTempBan, unbanTime := model.IsTemporarilyBannedFromReservation(sessionData.User.Id)
 	TextDate := "January 2, 2006"
+	isInfoComplete := ((len(client.EmergencyContact) > 0) && (len(client.MobileNumber) > 0) && (len(client.Address) > 0))
 	return c.Render(http.StatusOK, "client/reservation/main", Data{
 			"title": "Reservations",
 			"module": "Reservations",
 			"isTempBan": isTempBan,
 			"unbanTime": unbanTime.Format(TextDate),
 			"isMember": client.IsMember,
+			"isVerified": client.IsVerified,
+			"isInfoComplete": isInfoComplete,
 
 	})
 }

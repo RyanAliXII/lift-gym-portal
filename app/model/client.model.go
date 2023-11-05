@@ -139,7 +139,7 @@ func (m Client) ValidateRegistration () (error, map[string]string){
 			return nil
 		})),
 		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
-	validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
+		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
 			INNER JOIN account on client.account_id = account.id where UPPER(account.email) = UPPER(?) and deleted_at is null LIMIT 1;`

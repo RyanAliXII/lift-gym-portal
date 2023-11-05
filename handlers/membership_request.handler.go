@@ -18,6 +18,7 @@ type MembershipRequestHandler struct {
 	membershipPlanRepo repository.MembershipPlanRepository
 	membershipRequestRepo repository.MembershipRequestRepository
 	memberRepo repository.MemberRepository
+	client repository.ClientRepository
 }
 
 func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context) error{
@@ -29,14 +30,10 @@ func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context)
 			Message: "Unauthorized.",
 		})
 	}
-	var isMember bool = false
+
 	session := mysqlsession.SessionData{}
 	session.Bind(s.Values["data"])
 	contentType := c.Request().Header.Get("Content-Type")
-    member, _ := h.memberRepo.GetMemberById(session.User.Id)
-    if member.Id > 0 {
-		isMember = true
-	}
 	if contentType == "application/json" {
 		requests, err := h.membershipRequestRepo.GetMembershipRequestsByClientId(session.User.Id)
 		if err != nil {
@@ -54,11 +51,18 @@ func (h *MembershipRequestHandler) RenderClientMembershipRequest(c echo.Context)
 			Message: "Membership requests has been fetched.",
 		})
 	}
+	client ,err  := h.client.GetById(session.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetByIdErr"))
+	}
+	isInfoComplete := ((len(client.EmergencyContact) > 0) && (len(client.MobileNumber) > 0) && (len(client.Address) > 0))
 	return c.Render(http.StatusOK, "client/membership-request/main", Data{
 		"csrf" :  c.Get("csrf"),
 		"title": "Client | Membership Requests",
 		"module": "Membership Requests",
-		"isMember": isMember,
+		"isMember": client.IsMember,
+		"isInfoComplete": isInfoComplete,
+		"isVerified": client.IsVerified,
 	})
 }
 
@@ -308,5 +312,6 @@ func NewMembershipRequestHandler() MembershipRequestHandler {
 		 membershipPlanRepo: repository.NewMembershipPlanRepository(),
 		membershipRequestRepo: repository.NewMembershipRequestRepository(),
 		memberRepo: repository.NewMemberRepository() ,
+		client: repository.NewClientRepository(),
 	}
 }

@@ -14,11 +14,13 @@ import (
 
 type HiredCoachHandler  struct{
 	hiredCoach repository.HiredCoachRepository
+	client repository.ClientRepository
 }
 
 func NewHiredCoachHandler() HiredCoachHandler {
 	return HiredCoachHandler{
 		hiredCoach: repository.NewHiredCoachRepository(),
+		client: repository.NewClientRepository(),
 	}
 }
 
@@ -43,6 +45,7 @@ func (h *HiredCoachHandler) RenderClientHiredCoachesPage(c echo.Context) error {
 				Message: "Unknown error occured.",
 			})
 		}
+		
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
