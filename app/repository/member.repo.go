@@ -18,7 +18,7 @@ type MemberRepository struct {
 func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	members := make([]model.Member, 0)
 	selectQuery := `
-	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, 
+	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, client.public_id, subscription.valid_until, 
 	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
 	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
 	subscription.created_at FROM subscription
@@ -34,7 +34,7 @@ func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 }
 func (repo * MemberRepository)GetMemberById(id int)(model.Member, error){
 	member  := model.Member{}
-	query := `SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, subscription.valid_until, 
+	query := `SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, client.surname, account.email, client.mobile_number, client.public_id, subscription.valid_until, 
 	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
 	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
 	subscription.created_at FROM subscription
@@ -64,7 +64,7 @@ func (repo *MemberRepository)Subscribe(sub model.Subscribe) error {
 	}
 	if recordCount > 0 {
 		transaction.Rollback()
-		return fmt.Errorf("client has an active subscription.")
+		return fmt.Errorf("client has an active subscription")
 	}
 	getErr := transaction.Get(&plan, "SELECT price, description, months from membership_plan where id = ?", sub.MembershipPlanId)
 	if getErr != nil {

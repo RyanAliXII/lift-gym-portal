@@ -25,6 +25,7 @@ type Client struct {
 	AccountId 		 string `json:"accountId,omitempty" db:"account_id"`
 	IsVerified		 bool 	`json:"isVerified" db:"is_verified"`
 	IsMember		 bool 	`json:"isMember" db:"is_member"`
+	PublicId 		string `json:"publicId" db:"public_id"`
 	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
 	Model
 }
