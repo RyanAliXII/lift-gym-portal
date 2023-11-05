@@ -32,57 +32,13 @@
                 </h6>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
-                  <!-- <table
-                    class="table table-bordered"
-                    id="dataTable"
-                    width="100%"
-                    cellspacing="0"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Id</th>
-                        <th>Given name</th>
-                        <th>Middle name</th>
-                        <th>Surname</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {{range .clients}}
-                      <tr>
-                        <td class="font-weight-bold">{{.PublicId}}</td>
-                        <td>{{.GivenName}}</td>
-                        <td>{{.MiddleName}}</td>
-                        <td>{{.Surname}}</td>
-
-                        <td>
-                          <div class="d-flex" style="gap: 5px">
-                            {{if hasPermission "Client.Edit"
-                            $.currentUser.Permissions}}
-                            <a
-                              href="/app/clients/{{.Id}}"
-                              class="btn btn-outline-primary"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </a>
-                            {{end}} {{if hasPermission "Client.Delete"
-                            $.currentUser.Permissions}}
-                            <button
-                              class="btn btn-outline-danger"
-                              client-id="{{.Id}}"
-                              @click="initDelete"
-                            >
-                              <i class="fas fa-trash" client-id="{{.Id}}"></i>
-                            </button>
-                            {{end}}
-                          </div>
-                        </td>
-                      </tr>
-                      {{end}}
-                    </tbody>
-                  </table> -->
+                <input
+                  type="text"
+                  class="form-control mt-2"
+                  placeholder="Search"
+                  @input="handleSearch"
+                />
+                <div class="table-responsive mt-2">
                   <data-table
                     ref="table"
                     class="table table-bordered"

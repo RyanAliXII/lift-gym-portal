@@ -14,6 +14,7 @@ createApp({
   setup() {
     const clients = ref([]);
     const table = ref(null);
+    let dt;
     const tableConfig = {
       lengthMenu: [15],
       lengthChange: false,
@@ -86,9 +87,14 @@ createApp({
       const { data } = await response.json();
       clients.value = data?.clients ?? [];
     };
+
+    const handleSearch = (event) => {
+      const query = event.target.value;
+      dt.table().search(query).draw();
+    };
     onMounted(() => {
       fetchClients();
-      const dt = table.value.dt;
+      dt = table.value.dt;
       $(dt.table().body()).on(
         "click",
         "button.delete-client",
@@ -137,6 +143,7 @@ createApp({
       columns,
       clients,
       initDelete,
+      handleSearch,
     };
   },
 }).mount("#ClientPage");
