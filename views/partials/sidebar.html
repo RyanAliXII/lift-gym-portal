@@ -132,6 +132,36 @@
     >
   </li>
   {{end}}
+
+  <li class="nav-item">
+    <a
+      class="nav-link collapsed"
+      href="#"
+      data-toggle="collapse"
+      data-target="#collapseReservations"
+      aria-expanded="false"
+      aria-controls="collapseReservations"
+    >
+      <i class="fas fa-clipboard-list"></i>
+      <span>Reservations</span>
+    </a>
+    <div
+      id="collapseReservations"
+      class="collapse"
+      aria-labelledby="collapseReservations"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        {{if hasPermission "DateSlot.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/date-slots">Date Slots</a>
+        {{end}} {{if hasPermission "TimeSlot.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/time-slots">Time Slots</a>
+        {{end}} {{if hasPermission "Reservation.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/reservations">Reservations</a>
+        {{end}}
+      </div>
+    </div>
+  </li>
   <li class="nav-item">
     <a
       class="nav-link collapsed"
@@ -155,35 +185,6 @@
         <a class="collapse-item" href="/app/coaches">Coaches</a>
         {{end}} {{if hasPermission "Coach.Create" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/coaches/registration">New Coach</a>
-        {{end}}
-      </div>
-    </div>
-  </li>
-  <li class="nav-item">
-    <a
-      class="nav-link collapsed"
-      href="#"
-      data-toggle="collapse"
-      data-target="#collapseReservations"
-      aria-expanded="false"
-      aria-controls="collapseReservations"
-    >
-      <i class="fas fa-chalkboard"></i>
-      <span>Reservations</span>
-    </a>
-    <div
-      id="collapseReservations"
-      class="collapse"
-      aria-labelledby="collapseReservations"
-      data-parent="#accordionSidebar"
-    >
-      <div class="bg-white py-2 collapse-inner rounded">
-        {{if hasPermission "DateSlot.Read" .currentUser.Permissions}}
-        <a class="collapse-item" href="/app/date-slots">Date Slots</a>
-        {{end}} {{if hasPermission "TimeSlot.Read" .currentUser.Permissions}}
-        <a class="collapse-item" href="/app/time-slots">Time Slots</a>
-        {{end}} {{if hasPermission "Reservation.Read" .currentUser.Permissions}}
-        <a class="collapse-item" href="/app/reservations">Reservations</a>
         {{end}}
       </div>
     </div>
