@@ -1,0 +1,56 @@
+{{define "client/reservation/reserve-modal"}}
+
+<div
+  class="modal fade"
+  id="reserveModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="reserveModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{selectedDate}</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmit">
+          <div class="form-group">
+            <label>Time slot</label>
+
+            <select
+              name="timeSlotId"
+              class="form-control"
+              :value="form.timeSlotId"
+              @change="handleFormInput"
+              :class="{'is-invalid': errors?.timeSlotId}"
+            >
+              <option value="0">Choose time slot</option>
+              <option
+                v-for="timeSlot of timeSlots"
+                :value="timeSlot.id"
+                :disabled="timeSlot.available <= 0"
+              >
+                {formatTime(timeSlot.startTime)} -
+                {formatTime(timeSlot.endTime)} | {timeSlot.available > 0 ?
+                "Available: " + timeSlot.available: "Fully Booked"}
+              </option>
+            </select>
+            <div class="invalid-feedback">{errors?.timeSlotId}</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{end}}

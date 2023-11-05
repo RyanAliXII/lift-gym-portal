@@ -54,6 +54,16 @@ var Permissions = []string{
 	"Role.Edit",
 	"Role.Delete",
 	"Role.Create",
+	"TimeSlot.Read",
+	"TimeSlot.Edit",
+	"TimeSlot.Delete",
+	"TimeSlot.Create",
+	"DateSlot.Read",
+	"DateSlot.Delete",
+	"DateSlot.Edit",
+	"DateSlot.Create",
+	"Reservation.Read",
+	"Reservation.Edit",
 }
 
 

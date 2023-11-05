@@ -7,8 +7,6 @@ import (
 	"lift-fitness-gym/app/db"
 	"time"
 
-	_ "time/tzdata"
-
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/nyaruka/phonenumbers"

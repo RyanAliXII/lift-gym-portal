@@ -49,6 +49,9 @@ func adminRoutes (router  * echo.Group){
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
 	adminProfileHandler := NewAdminProfileHandler()
+	dateSlotHandler := NewDateSlotHandler()
+	timeSlotHandler := NewTimeSlotHandler()
+	reservationHandler := NewReservationHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -111,9 +114,18 @@ func adminRoutes (router  * echo.Group){
 	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog, middlewares.ValidatePermissions("ClientLog.Delete"))
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
+	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage, middlewares.ValidatePermissions("DateSlot.Read"))
+	router.POST("/date-slots", dateSlotHandler.NewSlot, middlewares.ValidatePermissions("DateSlot.Create"))
+	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot,  middlewares.ValidatePermissions("DateSlot.Delete"))
+	router.GET("/time-slots", timeSlotHandler.RenderTimeSlotPage, middlewares.ValidatePermissions("TimeSlot.Read"))
+	router.POST("/time-slots", timeSlotHandler.NewTimeSlot, middlewares.ValidatePermissions("TimeSlot.Create"))
+	router.PUT("/time-slots/:id", timeSlotHandler.UpdateTimeSlot, middlewares.ValidatePermissions("TimeSlot.Edit"))
+	router.DELETE("/time-slots/:id", timeSlotHandler.DeleteTimeSlot, middlewares.ValidatePermissions("TimeSlot.Delete"))
+	router.GET("/time-slots/:id/selections", timeSlotHandler.GetTimeSlotExcept, middlewares.ValidatePermissions("TimeSlot.Read"))
+	router.GET("/reservations", reservationHandler.RenderAdminReservationPage, middlewares.ValidatePermissions("Reservation.Read"))
+	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot, middlewares.ValidatePermissions("Reservation.Read"))
+	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
 }
-
-
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
 	dashboardHandler := NewDashboardHandler()
@@ -128,6 +140,7 @@ func clientRoutes(router * echo.Group){
 	hiredCoachHandler := NewHiredCoachHandler()
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
+	reservationHandler := NewReservationHandler()
 	router.GET("/reset-password", passwordHandler.RenderResetClientPasswordPage)
 	router.POST("/reset-password", passwordHandler.ResetClientPassword)
 	router.GET("/login", loginHandler.RenderClientLoginPage)
@@ -157,7 +170,11 @@ func clientRoutes(router * echo.Group){
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
-
+	router.GET("/reservations", reservationHandler.RenderClientReservationPage)
+	router.POST("/reservations", reservationHandler.NewReservation)
+	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
+	router.GET("/reservations/date-slots/:dateSlotId/time-slots", reservationHandler.GetTimeSlotsBasedOnDateSlotId)
+	router.PUT("/reservations/:id/status/cancellation", reservationHandler.CancelReservation)
 }
 
 func coachRoutes(router * echo.Group) {

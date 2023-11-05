@@ -1,0 +1,128 @@
+{{define "client/reservation/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/client/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          {{template "partials/client/dashboard-topbar" .}}
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid" id="ReservationPage">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="mb-3 ml-2">
+              <!-- <button
+                class="btn btn-primary"
+                type="button"
+                data-toggle="modal"
+                data-target="#requestModal"
+              >
+                <i class="fas fa-plus"></i>
+                Request Package
+              </button> -->
+            </div>
+        
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Your Reservations</h6>
+              </div>
+              <div class="card-body">
+               <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    id="reserve-tab"
+                    data-toggle="tab"
+                    href="#reserve-panel"
+                    role="tab"
+                    aria-controls="reserve"
+                    aria-selected="true"
+                    >Reserve </a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="reservation-tab"
+                    data-toggle="tab"
+                    href="#reservation-panel"
+                    role="tab"
+                    aria-controls="reservation"
+                    aria-selected="false"
+                    >Reservations</a
+                  >
+                </li>
+              </ul>
+              <div class="tab-content" id="profileTabContent">
+                <div
+                  class="tab-pane fade show active"
+                  id="reserve-panel"
+                  role="tabpanel"
+                  aria-labelledby="reserve-tab"
+                >
+                {{if .isTempBan}}
+                <div class="alert alert-warning mt-3" role="alert">
+                  Access to this feature is temporarily suspended due to three consecutive missed reservations. The suspension will be lifted on <u class="underline">{{.unbanTime}}.</u>
+                </div>
+                
+                {{end}}
+
+                {{if not .isMember}}
+                <div class="alert alert-warning mt-3" role="alert">
+                  This feature is only available for gym members.
+                </div>
+                
+                {{end}}
+              
+                {{if and (not .isTempBan) (.isMember)}}
+                  {{template "client/reservation/reserve-panel" .}}
+                {{end}}
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="reservation-panel"
+                  role="tabpanel"
+                  aria-labelledby="reservation-tab"
+                >
+                  {{template "client/reservation/reservation-panel" . }}
+                </div>
+              </div>
+                </div>
+              </div>
+              {{template
+                "client/reservation/reserve-modal" .}} 
+            </div>
+            
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+
+  {{template "partials/sb-scripts"}}
+  <script>
+    window.csrf = "{{.csrf}}";
+  </script>
+  <script src="/js/client/reservation/main.js"></script>
+</html>
+{{end}}

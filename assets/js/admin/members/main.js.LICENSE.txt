@@ -1,7 +1,0 @@
-/*! choices.js v10.2.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
-
-/**
-  * vee-validate v4.11.3
-  * (c) 2023 Abdelrahman Awad
-  * @license MIT
-  */

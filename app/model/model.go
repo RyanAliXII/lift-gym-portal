@@ -4,9 +4,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-type Model struct {
-	
-}
+type Model struct {}
 
 func (m *Model) ValidationRules(structPtr interface{}, fields ...*validation.FieldRules) (error, map[string]string) {
 	fieldErrs := make(map[string]string)
@@ -22,3 +20,22 @@ func (m *Model) ValidationRules(structPtr interface{}, fields ...*validation.Fie
 	}
 	return validationErrs, fieldErrs
 }
+
+
+
+func (m *Model) Validate(structPtr interface{}, fields ...*validation.FieldRules) (map[string]string, error, ) {
+	fieldErrs := make(map[string]string)
+	validationErrs :=  validation.ValidateStruct(structPtr,  fields...)
+	if validationErrs != nil  {
+		_, isValidationErrors:= validationErrs.(validation.Errors)
+		if isValidationErrors{
+			for k, validationErr := range validationErrs.(validation.Errors) {
+				fieldErrs[k] = validationErr.Error()
+			}
+		}
+		
+	}
+	return  fieldErrs, validationErrs
+}
+
+

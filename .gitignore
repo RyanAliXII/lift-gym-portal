@@ -3,3 +3,7 @@ node_modules/
 *.exe
 *.log
 /mysql
+assets/js/admin/
+assets/js/client/
+assets/js/coach/
+assets/js/public

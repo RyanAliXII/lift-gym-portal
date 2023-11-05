@@ -19,3 +19,11 @@ const (
 	CoachAppointmentStatusPaid  = 3
 	CoachAppointmentStatusCancelled = 4
 )
+
+
+const (
+	ReservationStatusPending  = 1
+	ReservationStatusAttended = 2
+	ReservationStatusNoShow = 3
+	ReservationStatusCancelled = 4
+)

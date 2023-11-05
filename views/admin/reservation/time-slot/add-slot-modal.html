@@ -1,0 +1,104 @@
+{{define "admin/reservation/time-slot/add-slot-modal"}}
+
+<div
+  class="modal fade"
+  id="newSlotModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="newSlotModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Slot</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmit">
+          <div class="form-group">
+            <label>Start Time</label>
+
+            <select
+              class="form-control"
+              name="startTime"
+              :value="form.startTime"
+              :class="{'is-invalid': errors?.startTime}"
+              @change="handleFormInput"
+            >
+              <option class="Select Start time" value="">
+                Select Start Time
+              </option>
+              <option v-for="time of timeSlotSelections" :value="time.value">
+                {time.label}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.startTime}"
+            >
+              {errors?.startTime}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <select
+              class="form-control"
+              name="endTime"
+              :value="form.endTime"
+              :class="{'is-invalid': errors?.endTime}"
+              @change="handleFormInput"
+            >
+              <option class="Select Start time" value="">
+                Select End Time
+              </option>
+              <option v-for="time of timeSlotSelections" :value="time.value">
+                {time.label}
+              </option>
+            </select>
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.endTime}">
+              {errors?.endTime}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Maximum Capacity</label>
+            <input
+              type="number"
+              class="form-control"
+              :value="form.maxCapacity"
+              name="maxCapacity"
+              :class="{'is-invalid': errors?.maxCapacity}"
+              @input="handleFormInput"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.maxCapacity}"
+            >
+              {errors?.maxCapacity}
+            </div>
+          </div>
+
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

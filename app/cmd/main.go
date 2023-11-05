@@ -14,6 +14,9 @@ import (
 	"net/http"
 	"path/filepath"
 	"slices"
+	"time"
+
+	_ "time/tzdata"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
@@ -83,6 +86,14 @@ func loadTemplates(path string) * template.Template{
 	tmpls, err := template.New("views").Funcs(template.FuncMap{
 		"hasPermission": func(requiredPermission string, permissions []string )bool {
 			return slices.Contains(permissions, requiredPermission)
+		},
+		"toReadableDate": func(dateStr string) string {
+			t, err := time.Parse(time.DateOnly, dateStr)
+			if err != nil {
+				return dateStr
+			}
+			TextDate := "January 2, 2006"
+			return t.Format(TextDate)
 		},
 	}).ParseFiles(templateList...)
 	
