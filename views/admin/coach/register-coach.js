@@ -14,6 +14,7 @@ createApp({
         email: "",
         mobileNumber: "",
         emergencyContact: "",
+        gender: "",
       },
       validationSchema: object({}),
       validateOnMount: false,
@@ -61,6 +62,9 @@ createApp({
     const emergencyContact = defineInputBinds("emergencyContact", {
       validateOnChange: true,
     });
+    const gender = defineInputBinds("gender", {
+      validateOnChange: true,
+    });
 
     return {
       givenName,
@@ -71,6 +75,7 @@ createApp({
       email,
       mobileNumber,
       emergencyContact,
+      gender,
       onSubmit,
       errors,
     };

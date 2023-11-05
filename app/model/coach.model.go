@@ -26,6 +26,7 @@ type Coach struct {
 	AccountId 		 int `json:"accountId" db:"account_id"`
 	IsVerified		 bool `json:"isVerified" db:"is_verified"`
 	EmergencyContact string `json:"emergencyContact" db:"emergency_contact"`
+	Gender 			 string `json:"gender" db:"gender"`
 	Images 			 CoachImages `json:"images" db:"images"`
 	Model
 }
@@ -44,6 +45,7 @@ func (m Coach) Validate() (error, map[string]string) {
 			}
 			return nil
 		})),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
@@ -86,6 +88,7 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil
 		})),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email."), validation.By(func(value interface{}) error {
 			recordCount := 0

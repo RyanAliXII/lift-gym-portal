@@ -27,8 +27,8 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 		transaction.Rollback()
 		return lastInsertedIdErr
 	}
-	insertCoachQuery := `INSERT INTO coach(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id, description) VALUES(?, ? ,? , ?, ? , ?, ?, ?, ?)`
-	_, insertCoachErr := transaction.Exec(insertCoachQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId,  coach.Description)
+	insertCoachQuery := `INSERT INTO coach(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id, description, gender) VALUES(?, ? ,? , ?, ? , ?, ?, ?, ?, ?)`
+	_, insertCoachErr := transaction.Exec(insertCoachQuery, coach.GivenName, coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, accountId,  coach.Description, coach.Gender)
 	if insertCoachErr != nil {
 		transaction.Rollback()
 		return insertCoachErr
@@ -39,7 +39,7 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 	coaches := make([]model.Coach , 0)
 	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, 
-	coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, 
+	coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, coach.gender,
 	account.email, account.id as account_id, description, COALESCE(CONCAT('[',GROUP_CONCAT('"',coach_image.path,'"'),']'), '[]') as images from coach
 	INNER JOIN account on coach.account_id = account.id
 	LEFT JOIN coach_image on coach.id = coach_image.coach_id
@@ -50,7 +50,7 @@ func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 }
 func (repo *CoachRepository)GetCoachById (id int ) (model.Coach, error) {
 	coach := model.Coach{}
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id,description from coach
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.gender, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id,description from coach
 	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
@@ -62,7 +62,7 @@ func (repo *CoachRepository)UpdateCoachDescription (id int, description string )
 }
 func (repo *CoachRepository)GetCoachByIdWithPassword (id int ) (model.Coach, error) {
 	coach := model.Coach{}
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.password, account.id as account_id, description from coach
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.gender, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.password, account.id as account_id, description from coach
 	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
@@ -77,8 +77,8 @@ func (repo  CoachRepository)UpdateCoach(coach model.Coach) error {
 		transaction.Rollback()
 		return transactErr
 	}
-	updateCoachQuery := `UPDATE coach SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ? where id = ?`
-	_, updateCoachErr := transaction.Exec(updateCoachQuery, coach.GivenName,coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, coach.Id)
+	updateCoachQuery := `UPDATE coach SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ?, gender = ? where id = ?`
+	_, updateCoachErr := transaction.Exec(updateCoachQuery, coach.GivenName,coach.MiddleName, coach.Surname, coach.DateOfBirth, coach.Address, coach.MobileNumber, coach.EmergencyContact, coach.Gender, coach.Id)
 	if updateCoachErr != nil {
 		transaction.Rollback()
 		return updateCoachErr

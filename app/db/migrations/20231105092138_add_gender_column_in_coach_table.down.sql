@@ -1,0 +1,2 @@
+ALTER TABLE coach
+DROP COLUMN gender;
