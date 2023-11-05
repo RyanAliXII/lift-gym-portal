@@ -110,7 +110,7 @@ createApp({
             "Client has been deleted.",
             "success"
           );
-          location.reload();
+          fetchClients();
         }
       } catch (error) {
         console.error(error);

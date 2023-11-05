@@ -27,8 +27,8 @@ func (repo *ClientRepository) New(client model.Client)(error) {
 			transaction.Rollback()
 			return lastInsertedIdErr
 		}
-		insertClientQuery := `INSERT INTO client(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id) VALUES(?, ? ,? , ?, ? , ?, ?, ?)`
-		_, insertClientErr := transaction.Exec(insertClientQuery, client.GivenName, client.MiddleName, client.Surname, client.DateOfBirth, client.Address, client.MobileNumber, client.EmergencyContact, accountId )
+		insertClientQuery := `INSERT INTO client(given_name, middle_name, surname, date_of_birth, address, mobile_number, emergency_contact, account_id, gender) VALUES(?, ? ,? , ?, ? , ?, ?, ?, ?)`
+		_, insertClientErr := transaction.Exec(insertClientQuery, client.GivenName, client.MiddleName, client.Surname, client.DateOfBirth, client.Address, client.MobileNumber, client.EmergencyContact, accountId, client.Gender)
 		if insertClientErr != nil {
 			transaction.Rollback()
 			return insertClientErr
@@ -38,7 +38,7 @@ func (repo *ClientRepository) New(client model.Client)(error) {
 }
 func (repo * ClientRepository)Get()([]model.Client, error) {
 	clients := make([]model.Client , 0)
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name,client.surname,client.public_id, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name,client.surname,client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
 	INNER JOIN account on client.account_id = account.id 
 	LEFT JOIN subscription on subscription.client_id = client.id
 	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
@@ -51,7 +51,7 @@ func (repo * ClientRepository)Get()([]model.Client, error) {
 func (repo * ClientRepository)Search(keyword string)([]model.Client, error) {
 	clients := make([]model.Client , 0)
 	keywordLike := fmt.Sprintf("%s%s%s","%", keyword, "%")
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname,client.public_id, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname,client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
 	INNER JOIN account on client.account_id = account.id 
 	LEFT JOIN subscription on subscription.client_id = client.id
 	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
@@ -62,7 +62,7 @@ func (repo * ClientRepository)Search(keyword string)([]model.Client, error) {
 }
 func (repo * ClientRepository)GetById(id int)(model.Client, error) {
 	clients := model.Client{}
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id, (case when verified_at is null then false else true end) as is_verified, (case when subscription.id then true else false end) as is_member from client
 	INNER JOIN account on client.account_id = account.id 
 	LEFT JOIN subscription on subscription.client_id = client.id
 	AND subscription.valid_until >= NOW() and subscription.cancelled_at is NULL
@@ -73,14 +73,14 @@ func (repo * ClientRepository)GetById(id int)(model.Client, error) {
 }
 func (repo * ClientRepository)GetByIdWithPassword(id int)(model.Client, error) {
 	clients := model.Client{}
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.password, account.id as account_id, (case when verified_at is null then false else true end ) as is_verified from client
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact,client.mobile_number, account.email, account.password, account.id as account_id, (case when verified_at is null then false else true end ) as is_verified from client
 	INNER JOIN account on client.account_id = account.id where client.id = ? and deleted_at is null ORDER BY client.updated_at DESC LIMIT 1;`
 	getErr := repo.db.Get(&clients, selectQuery , id)
 	return clients, getErr 
 }
 func (repo * ClientRepository)GetUnsubscribed()([]model.Client, error) {
 	clients := make([]model.Client , 0)
-	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.address, client.emergency_contact, client.mobile_number, account.email, account.id as account_id
+	selectQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact, client.mobile_number, account.email, account.id as account_id
 	FROM client
 	INNER JOIN account ON client.account_id = account.id
 	WHERE client.id NOT IN (
@@ -116,8 +116,8 @@ func (repo  ClientRepository) Update(client model.Client) (error) {
 		transaction.Rollback()
 		return transactErr
 	}
-	updateClientQuery := `UPDATE client SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ? where id = ?`
-	_, updateClientErr := transaction.Exec(updateClientQuery, client.GivenName,client.MiddleName, client.Surname, client.DateOfBirth, client.Address, client.MobileNumber, client.EmergencyContact, client.Id)
+	updateClientQuery := `UPDATE client SET given_name = ?, middle_name = ?, surname = ?, date_of_birth = ?, address = ?, mobile_number = ?, emergency_contact = ?, gender = ? where id = ?`
+	_, updateClientErr := transaction.Exec(updateClientQuery, client.GivenName,client.MiddleName, client.Surname, client.DateOfBirth, client.Address, client.MobileNumber, client.EmergencyContact, client.Gender, client.Id)
 	if updateClientErr != nil {
 		transaction.Rollback()
 		return updateClientErr
@@ -150,7 +150,7 @@ func (repo * ClientRepository)Delete(id int)(error) {
 
 func (repo * ClientRepository) GetClientById (id int) (model.Client, error) {
 	client := model.Client{}
-	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id from client
+	getQuery := `SELECT client.id, client.given_name, client.middle_name, client.surname, client.public_id, client.date_of_birth, client.gender, client.address, client.emergency_contact,client.mobile_number, account.email, account.id as account_id from client
 	INNER JOIN account on client.account_id = account.id where client.id = ? and client.deleted_at is null LIMIT 1`
 	getErr := repo.db.Get(&client, getQuery, id)
 	return client, getErr

@@ -8,68 +8,59 @@ createApp({
   },
   setup() {
     const displaySuccessMessage = ref(false);
-    const {
-      defineInputBinds,
-      handleSubmit,
-      setErrors,
-      errors,
-      isSubmitting,
-      resetForm,
-    } = useForm({
-      initialValues: {
-        givenName: "",
-        middleName: "",
-        surname: "",
-        email: "",
-        password: "",
-        dateOfBirth: "",
-      },
-      validationSchema: object({}),
-      validateOnMount: false,
+    const isSubmitting = ref(false);
+    const form = ref({
+      givenName: "",
+      middleName: "",
+      surname: "",
+      gender: "",
+      email: "",
+      password: "",
+      dateOfBirth: "",
     });
+    const errors = ref({});
+    const handleFormInput = (event) => {
+      let value = event.target.value;
+      let name = event.target.name;
 
-    const givenName = defineInputBinds("givenName", { validateOnInput: true });
-    const middleName = defineInputBinds("middleName", {
-      validateOnInput: true,
-    });
-    const surname = defineInputBinds("surname", { validateOnInput: true });
-    const email = defineInputBinds("email", { validateOnInput: true });
-    const password = defineInputBinds("password", { validateOnInput: true });
-    const dateOfBirth = defineInputBinds("dateOfBirth", {
-      validateOnInput: true,
-    });
-    const onSubmit = handleSubmit(async (values) => {
+      if (event.target.type === "number") {
+        value = Number(value);
+      }
+      form.value[name] = value;
+      delete errors.value[name];
+    };
+
+    const onSubmit = async () => {
+      isSubmitting.value = true;
       const response = await fetch("/clients/registration", {
         method: "POST",
-        body: JSON.stringify(values),
+        body: JSON.stringify(form.value),
         headers: new Headers({
           "Content-Type": "application/json",
           "X-CSRF-Token": window.csrf,
         }),
       });
+      isSubmitting.value = false;
       const { data } = await response.json();
 
       if (response.status >= 400) {
         if (data?.errors) {
-          setErrors({ ...data?.errors });
+          errors.value = data?.errors;
         }
+
         return;
       }
       displaySuccessMessage.value = true;
       resetForm();
-    });
+    };
 
     return {
-      givenName,
-      surname,
-      email,
-      password,
-      dateOfBirth,
-      middleName,
-      onSubmit,
-      isSubmitting,
       errors,
+      onSubmit,
+      form,
       displaySuccessMessage,
+      isSubmitting,
+      handleFormInput,
     };
   },
 }).mount("#RegistrationPage");

@@ -23,6 +23,13 @@
   </div>
   <hr />
   <div class="row">
+    <div class="col-sm-12 col-md-6 font-weight-bold">Gender</div>
+    <div class="col-sm-12 col-md-6" style="text-transform: capitalize">
+      {{.profile.Gender}}
+    </div>
+  </div>
+  <hr />
+  <div class="row">
     <div class="col-sm-12 col-md-6 font-weight-bold">Address</div>
     {{if eq (len .profile.Address) 0}}
     <div class="col-sm-12 col-md-4 d-flex align-items-center">

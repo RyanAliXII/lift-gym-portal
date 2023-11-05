@@ -26,12 +26,13 @@ type Client struct {
 	IsVerified		 bool 	`json:"isVerified" db:"is_verified"`
 	IsMember		 bool 	`json:"isMember" db:"is_member"`
 	PublicId 		string `json:"publicId" db:"public_id"`
+	Gender 			string `json:"gender" db:"gender"`
 	EmergencyContact string `json:"emergencyContact,omitempty" db:"emergency_contact"`
 	Model
 }
 
 func (m Client) Validate() (error, map[string]string) {
-
+	fmt.Println(m.Gender)
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
@@ -47,6 +48,7 @@ func (m Client) Validate() (error, map[string]string) {
 			return nil
 		})),
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
@@ -91,6 +93,7 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 			}
 			return nil
 		})),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
@@ -135,6 +138,7 @@ func (m Client) ValidateRegistration () (error, map[string]string){
 			}
 			return nil
 		})),
+		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 	validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from client
