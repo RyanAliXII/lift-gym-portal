@@ -18,20 +18,21 @@ type ReservationHandler struct {
 	dateSlot repository.DateSlot
 	timeSlot repository.TimeSlot
 	reservation repository.Reservation
+	client repository.ClientRepository
 }
 func NewReservationHandler () ReservationHandler{
 	return ReservationHandler{
 		dateSlot:  repository.NewDateSlotRepository(),
 		timeSlot: repository.NewTimeSlotRepository(),
 		reservation: repository.NewReservation(),
+		client: repository.NewClientRepository(),
 	}
 }
 func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 	contentType := c.Request().Header.Get("Content-Type")
 	sessionData := mysqlsession.SessionData{}
 	sessionData.Bind(c.Get("sessionData"))
-	if contentType == "application/json" {
-		
+	if contentType == "application/json" {	
 		reservations, err := h.reservation.GetClientReservation(sessionData.User.Id)
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error","GetClientReservationErr"))
@@ -44,14 +45,19 @@ func(h * ReservationHandler) RenderClientReservationPage(c echo.Context) error {
 			Message: "Fetch client's reservations.",
 		})
 	}
+	client, err := h.client.GetById(sessionData.User.Id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetByIdError"))
+	}
+	
 	isTempBan, unbanTime := model.IsTemporarilyBannedFromReservation(sessionData.User.Id)
 	TextDate := "January 2, 2006"
-	fmt.Println(isTempBan)
 	return c.Render(http.StatusOK, "client/reservation/main", Data{
 			"title": "Reservations",
 			"module": "Reservations",
 			"isTempBan": isTempBan,
 			"unbanTime": unbanTime.Format(TextDate),
+			"isMember": client.IsMember,
 
 	})
 }

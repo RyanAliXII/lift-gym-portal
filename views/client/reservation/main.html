@@ -77,8 +77,15 @@
                 </div>
                 
                 {{end}}
+
+                {{if not .isMember}}
+                <div class="alert alert-warning mt-3" role="alert">
+                  This feature is only available for gym members.
+                </div>
+                
+                {{end}}
               
-                {{if not .isTempBan}}
+                {{if and (not .isTempBan) (.isMember)}}
                   {{template "client/reservation/reserve-panel" .}}
                 {{end}}
                 </div>

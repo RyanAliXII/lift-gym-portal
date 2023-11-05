@@ -154,7 +154,7 @@ createApp({
       $('a[data-toggle="tab"]').on("shown.bs.tab", function (event) {
         const tab = event.currentTarget;
         if (tab.id === "reserve-tab") {
-          reservationCalendar.value.render();
+          reservationCalendar?.value?.render?.();
         }
       });
     });
