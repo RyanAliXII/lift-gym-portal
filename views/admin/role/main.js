@@ -140,6 +140,34 @@ createApp({
       editSelect.value.setChoiceByValue(role.permissions);
       $("#editRoleModal").modal("show");
     };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Role",
+        text: "Are you sure you want to delete role?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete this role",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteRole(id);
+      }
+    };
+    const deleteRole = async (id) => {
+      const response = await fetch(`/app/roles/${id}`, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        }),
+      });
+
+      if (response.status === 200) {
+        swal.fire("Delete Role", "Role has been deleted.", "success");
+        fetchRoles();
+      }
+    };
     return {
       addSelectElement,
       form,
@@ -147,6 +175,7 @@ createApp({
       errors,
       roles,
       initEdit,
+      initDelete,
       editSelectElement,
       onSubmitNew,
       onSubmitUpdate,

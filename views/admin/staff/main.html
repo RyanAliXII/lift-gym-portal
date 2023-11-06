@@ -46,6 +46,7 @@
                   >
                     <thead>
                       <tr>
+                        <th>ID</th>
                         <th>Given name</th>
                         <th>Middle name</th>
                         <th>Surname</th>
@@ -57,24 +58,41 @@
                     <tbody>
                       <template v-for="staff of staffs">
                         <tr>
+                          <td class="font-weight-bold">{staff.publicId}</td>
                           <td>{staff.givenName}</td>
                           <td>{staff.middleName}</td>
                           <td>{staff.surname}</td>
                           <td>{staff.email}</td>
                           <td>
-                            {{if hasPermission "Staff.Edit"
-                            .currentUser.Permissions}}
-                            <button
-                              type="button"
-                              class="btn btn-outline-primary"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Edit"
-                              @click="initEdit(staff)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            {{end}}
+                            <div class="d-flex" style="gap: 10px">
+                              {{if hasPermission "Staff.Edit"
+                              .currentUser.Permissions}}
+
+                              <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Edit"
+                                @click="initEdit(staff)"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              {{end}} {{if hasPermission "Staff.Delete"
+                              .currentUser.Permissions}}
+                              <button
+                                type="button"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Edit"
+                                @click="initDelete(staff.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+
+                              {{end}}
+                            </div>
                           </td>
                         </tr>
                       </template>

@@ -23,7 +23,7 @@ const initialForm = {
   address: "",
   emergencyContact: "",
   mobileNumber: "",
-
+  publicId: "",
   roleId: 0,
 };
 createApp({
@@ -181,6 +181,34 @@ createApp({
       editRoleSelect.value.setChoiceByValue(staff.roleId.toString());
       $("#editStaffModal").modal("show");
     };
+    const initDelete = async (id) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Staff",
+        text: "Are you sure you want to delete staff?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete this staff",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteStaff(id);
+      }
+    };
+
+    const deleteStaff = async (id) => {
+      const response = await fetch(`/app/staffs/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": window.csrf,
+        },
+      });
+      if (response.status === 200) {
+        swal.fire("Staff delete", "Staff has been deleted.", "success");
+        fetchStaffs();
+      }
+    };
     onMounted(() => {
       addRoleSelect.value = new Choices(addSelectRoleElement.value, {
         allowHTML: true,
@@ -207,6 +235,7 @@ createApp({
       middleName,
       surname,
       email,
+      form,
       mobileNumber,
       address,
       dateOfBirth,
@@ -214,6 +243,7 @@ createApp({
       emergencyContact,
       errors,
       onSubmitNewStaff,
+      initDelete,
       staffs,
       initEdit,
       onSubmitUpdate,

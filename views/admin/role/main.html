@@ -56,16 +56,38 @@
                           <td>{role.name}</td>
                           <td>{role.permissions.join(", ")}</td>
                           <td>
-                            {{if hasPermission "Role.Edit"
-                            .currentUser.Permissions}}
-                            <button
-                              type="button"
-                              @click="initEdit(role)"
-                              class="btn btn-outline-primary"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            {{end}}
+                            <div class="d-flex" style="gap: 5px">
+                              {{if hasPermission "Role.Edit"
+                              .currentUser.Permissions}}
+                              <button
+                                type="button"
+                                @click="initEdit(role)"
+                                class="btn btn-outline-primary"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              {{end}} {{if hasPermission "Role.Delete"
+                              .currentUser.Permissions}}
+                              <button
+                                v-if="role.isDeletable"
+                                type="button"
+                                class="btn btn-outline-danger"
+                                @click="initDelete(role.id)"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                              <button
+                                v-else
+                                type="button"
+                                disabled
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                title="Role cannot be deleted since, it is currently used."
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                              {{end}}
+                            </div>
                           </td>
                         </tr>
                       </template>

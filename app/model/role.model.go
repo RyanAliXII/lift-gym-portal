@@ -14,6 +14,7 @@ type Role struct {
 	Id          int      `json:"id" db:"id"`
 	Name        string   `json:"name" db:"name"`
 	Permissions Permissions `json:"permissions" db:"permissions"`
+	IsDeletable bool `json:"isDeletable" db:"is_deletable"`
 	Model
 }
 

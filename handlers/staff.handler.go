@@ -159,6 +159,30 @@ func (h *StaffHandler)ResetPassword(c echo.Context) error {
 	})
 }
 
+func (h * StaffHandler) DeleteStaff(c echo.Context) error {
+	accountId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	err  = h.staffRepo.Delete(accountId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "DeleteErr"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",
+
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Staff deleted.",
+	})
+}
+
 
 
 func NewStaffHandler() StaffHandler{

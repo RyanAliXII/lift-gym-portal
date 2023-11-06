@@ -22,8 +22,18 @@ func (repo *RoleRepository) GetRoles() ([]model.Role, error) {
 
 	roles := make([]model.Role,0)
 	query := `
-	SELECT role.id, name, CONCAT('[',GROUP_CONCAT('"',permission.value,'"'),']') as permissions from role
-	INNER JOIN permission on role.id = permission.role_id GROUP BY role.id ORDER BY role.updated_at DESC
+	SELECT role.id, name, (case when COALESCE(user_role.count, 0) > 0 then false else true end) as is_deletable, CONCAT('[', GROUP_CONCAT('"', permission.value, '"'), ']') as permissions
+	FROM role
+	INNER JOIN permission ON role.id = permission.role_id
+	LEFT JOIN (
+		SELECT role_id, COUNT(1) as count
+		FROM user
+		WHERE user.deleted_at IS NULL
+		GROUP BY role_id
+	) AS user_role ON role.id = user_role.role_id
+	where deleted_at is null
+	GROUP BY role.id, user_role.role_id, user_role.count
+	ORDER BY role.updated_at DESC;
 	`
 	err := repo.db.Select(&roles, query)
 	return roles, err
@@ -101,6 +111,30 @@ func (repo *RoleRepository) UpdateRole(role model.Role) error {
 	}
 	transaction.Commit()
 	return nil;
+}
+
+func (repo * RoleRepository)Delete(roleId int )error {
+	role := model.Role{}
+	//check if role is deletable before deleting.
+	query := `SELECT role.id, name, (case when COALESCE(user_role.count, 0) > 0 then false else true end) as is_deletable, CONCAT('[', GROUP_CONCAT('"', permission.value, '"'), ']') as permissions
+	FROM role
+	INNER JOIN permission ON role.id = permission.role_id
+	LEFT JOIN (
+		SELECT role_id, COUNT(1) as count
+		FROM user
+		WHERE user.deleted_at IS NULL
+		GROUP BY role_id
+	) AS user_role ON role.id = user_role.role_id
+	where (case when COALESCE(user_role.count, 0) > 0 then false else true end) = true and role.id = ?
+	GROUP BY role.id, user_role.role_id, user_role.count
+	ORDER BY role.updated_at DESC LIMIT 1`
+	// this will throw error if row is empty
+	err := repo.db.Get(&role, query, roleId)
+	if err != nil {
+		return err 
+	}
+	_, err = repo.db.Exec("Update role set deleted_at = now() where id = ?", role.Id)
+	return err
 }
 func (repo * RoleRepository)GetRoleByUserId(userId int)(model.Role, error){
 	role := model.Role{}

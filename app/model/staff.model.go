@@ -45,9 +45,9 @@ func (m Staff) Validate() (error, map[string]string) {
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
 		validation.Field(&m.Gender, validation.Required.Error("Gender is required."), validation.In("male", "female", "other", "prefer not to answer").Error("Invalid gender value.")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email must be 1 to 255 characters"), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
-			recordCount := 0
+			recordCount := 1
 			query := `SELECT COUNT(1) as record_count from user
-			INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) and user.deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered.")
@@ -88,9 +88,9 @@ func (m Staff) ValidateUpdate() (error, map[string]string) {
 		})),
 		validation.Field(&m.Address, validation.Required.Error("Address is required."), validation.Length(1, 255).Error("Address should be atleast 1 to 255 characters long")),
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email must be 1 to 255 characters"), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
-			recordCount := 0
+			recordCount := 1
 			query := `SELECT COUNT(1) as record_count from user
-			INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) AND user.id != ? LIMIT 1;`
+			INNER JOIN account on user.account_id = account.id where UPPER(account.email) = UPPER(?) AND user.id != ? and user.deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email, m.Id)
 			if recordCount > 0 {
 				return fmt.Errorf("Email is already registered.")

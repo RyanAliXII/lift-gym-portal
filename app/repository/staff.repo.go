@@ -67,9 +67,20 @@ if err != nil {
 	return nil	
 }
 
+func (repo * StaffRepository) Delete (id int) error {
+	query := `SELECT user.id, given_name, middle_name, surname, (case when role_id is null then 0 else role_id end) as role_id,  email, COALESCE(date_of_birth, '') as date_of_birth, gender, address,mobile_number,emergency_contact, public_id FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false where user.deleted_at is null and user.id = ?  ORDER BY user.updated_at DESC LIMIT 1`
+	staff := model.Staff{}
+	err := repo.db.Get(&staff, query, id )
+	if err != nil {
+		return err
+	}
+	_, err = repo.db.Exec("UPDATE user set deleted_at = now() where id = ?", id)
+	return err
+}
+
 func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	staffs := make([]model.Staff, 0)
-	query := `SELECT user.id, given_name, middle_name, surname, (case when role_id is null then 0 else role_id end) as role_id,  email, COALESCE(date_of_birth, '') as date_of_birth, gender, address,mobile_number,emergency_contact FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false ORDER BY user.updated_at DESC`
+	query := `SELECT user.id, given_name, middle_name, surname, (case when role_id is null then 0 else role_id end) as role_id,  email, COALESCE(date_of_birth, '') as date_of_birth, gender, address,mobile_number,emergency_contact, public_id FROM user INNER JOIN account on user.account_id = account.id and account.is_root = false where user.deleted_at is null ORDER BY user.updated_at DESC`
 	err := repo.db.Select(&staffs, query)
 	if err != nil {
 		 return staffs, err
@@ -77,6 +88,7 @@ func (repo *StaffRepository)GetStaffs()([]model.Staff, error){
 	return staffs, nil
 
 }
+
 func (repo * StaffRepository) UpdatePassword(newPassword string, userId int) error{
 	transaction, err := repo.db.Beginx()
 	if err != nil {

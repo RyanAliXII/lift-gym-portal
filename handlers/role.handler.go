@@ -117,6 +117,30 @@ func (h *RoleHandler) UpdateRole(c echo.Context) error {
 	})
 }
 
+func(h * RoleHandler) DeleteRole (c echo.Context) error {
+
+	roleId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","strConvErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured",
+		})
+	}
+	err = h.roleRepo.Delete(roleId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "deleteRoleErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Role deleted.",
+	})
+}
+
 
 func NewRoleHandler () RoleHandler {
 	return RoleHandler{
