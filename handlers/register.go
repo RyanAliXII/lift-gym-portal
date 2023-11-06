@@ -83,6 +83,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/coaches/:id", coachHandler.RenderCoachUpdatePage, middlewares.ValidatePermissions("Coach.Edit"))
 	router.POST("/coaches", coachHandler.NewCoach, middlewares.ValidatePermissions("Coach.Create"))
 	router.PUT("/coaches/:id", coachHandler.UpdateCoach, middlewares.ValidatePermissions("Coach.Edit"))
+	router.DELETE("/coaches/:id", coachHandler.DeleteCoach, middlewares.ValidatePermissions("Coach.Delete"))
 	router.PATCH("/coaches/:id/password", coachHandler.ResetPassword, middlewares.ValidatePermissions("Coach.Edit"))
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest, middlewares.ValidatePermissions("MembershipRequest.Read"))
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus, middlewares.ValidatePermissions("MembershipRequest.Edit"))

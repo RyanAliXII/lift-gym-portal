@@ -10,7 +10,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">New Equipment</h5>
+        <h5 class="modal-title">New Item</h5>
         <button
           type="button"
           class="close"
@@ -24,7 +24,13 @@
         <form @submit.prevent="onSubmitNew">
           <div class="form-group">
             <label for="name" class="col-form-label">Name</label>
-            <input type="text" name="name" class="form-control" v-bind="name" />
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              v-bind="name"
+              :class="{'is-invalid': errors?.name}"
+            />
 
             <div class="invalid-feedback" :class="{'d-block': errors?.name}">
               {errors?.name}
@@ -37,6 +43,7 @@
               name="model"
               class="form-control"
               v-bind="model"
+              :class="{'is-invalid': errors?.model}"
             />
 
             <div class="invalid-feedback" :class="{'d-block': errors?.model}">
@@ -50,6 +57,7 @@
               name="quantity"
               class="form-control"
               v-bind="quantity"
+              :class="{'is-invalid': errors?.quantity}"
             />
 
             <div
@@ -57,6 +65,42 @@
               :class="{'d-block': errors?.quantity}"
             >
               {errors?.quantity}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity" class="col-form-label">Condition (%)</label>
+            <input
+              type="number"
+              name="condition"
+              class="form-control"
+              v-bind="condition"
+              :class="{'is-invalid': errors?.condition}"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors.condition}"
+            >
+              {errors?.condition}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantityThreshold" class="col-form-label"
+              >Quantity Threshold</label
+            >
+            <input
+              type="number"
+              name="quantityThreshold"
+              class="form-control"
+              v-bind="quantityThreshold"
+              :class="{'is-invalid': errors?.quantityThreshold}"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.quantityThreshold}"
+            >
+              {errors?.quantityThreshold}
             </div>
           </div>
           <div class="form-group">
@@ -85,6 +129,7 @@
               name="dateReceived"
               v-bind="dateReceived"
               class="form-control"
+              :class="{'is-invalid': errors?.dateReceived}"
             />
 
             <div

@@ -29,7 +29,7 @@ func (repo * ClientLogRepository)GetLogs() ([]model.ClientLog, error){
 	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, client_log.is_member, JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client, client_log.created_at from client_log
 		INNER JOIN client on client_log.client_id = client.id
 		INNER JOIN account on client.account_id = account.id
-		where deleted_at is null
+		where client_log.deleted_at is null
 		ORDER BY client_log.created_at DESC`
 
 	err := repo.db.Select(&logs, query)

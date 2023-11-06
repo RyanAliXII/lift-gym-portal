@@ -29,7 +29,7 @@ func (repo *UserRepository) GetClientUserByEmail (email string) (model.User, err
 func (repo  * UserRepository) GetCoachUserByEmail(email string)(model.Coach, error){
 	coach := model.Coach{}
 	query := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id, account.password from coach
-	INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) ORDER BY coach.updated_at DESC`
+	INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) and coach.deleted_at is null LIMIT 1`
 	err := repo.db.Get(&coach, query, email)
 	return coach, err
 }

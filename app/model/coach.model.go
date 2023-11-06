@@ -51,7 +51,7 @@ func (m Coach) Validate() (error, map[string]string) {
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email"), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from coach
-			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) LIMIT 1;`
+			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) and coach.deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email)
 			if recordCount > 0 {
 				return fmt.Errorf("email is already registered")
@@ -94,7 +94,7 @@ func (m Coach) ValidateUpdate() (error, map[string]string) {
 		validation.Field(&m.Email, validation.Required.Error("Email is required."), validation.Length(1, 255).Error("Email is required."), is.Email.Error("Invalid email."), validation.By(func(value interface{}) error {
 			recordCount := 0
 			query := `SELECT COUNT(1) as record_count from coach
-			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) and coach.id != ? LIMIT 1;`
+			INNER JOIN account on coach.account_id = account.id where UPPER(account.email) = UPPER(?) and coach.id != ? and coach.deleted_at is null LIMIT 1;`
 			db.Get(&recordCount, query, m.Email, m.Id)
 			if recordCount > 0 {
 				return fmt.Errorf("email is already registered")

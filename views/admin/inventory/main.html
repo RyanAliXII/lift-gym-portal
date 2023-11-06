@@ -25,7 +25,7 @@
                 data-target="#addEquipmentModal"
               >
                 <i class="fas fa-plus"></i>
-                New Equipment
+                New Item
               </button>
               {{end}}
             </div>
@@ -35,7 +35,7 @@
                   <div
                     class="text-xs font-weight-bold text-primary text-uppercase mb-1"
                   >
-                    Equipment Total Cost Price
+                    Item Total Cost Price
                   </div>
                   <div class="h5 mb-0 font-weight-bold text-gray-800">
                     ₱ {formatCurrency(stat.totalCost)}
@@ -46,9 +46,7 @@
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                  List of Equipments
-                </h6>
+                <h6 class="m-0 font-weight-bold text-primary">List of Items</h6>
               </div>
 
               <div class="card-body">
@@ -61,7 +59,7 @@
                   >
                     <thead>
                       <tr>
-                        <th>Equipment</th>
+                        <th>Item</th>
                         <th>Make/Model</th>
                         <th>Quantity</th>
                         <th>Cost Price</th>

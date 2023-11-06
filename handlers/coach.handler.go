@@ -266,8 +266,27 @@ func (h  *CoachHandler)ResetPassword(c echo.Context) error {
 			Message: "Password has been updated.",
 	})
 }
-
-
+func(h * CoachHandler)DeleteCoach(c echo.Context) error {
+	id, convErr := strconv.Atoi(c.Param("id"))
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
+	err := h.coachRepo.Delete(id)
+	if err != nil {	
+		logger.Error(err.Error(), zap.String("error", "deletCoach"))
+		return c.JSON(http.StatusInternalServerError, Data{
+			"status": http.StatusInternalServerError,
+			"message": "Unknown error occured.",})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Coach deleted.",
+	})
+}
 func NewCoachHandler() CoachHandler{
 	return CoachHandler{
 		coachRepo: repository.NewCoachRepository(),

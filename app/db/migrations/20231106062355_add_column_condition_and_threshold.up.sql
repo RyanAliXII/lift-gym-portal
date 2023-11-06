@@ -1,0 +1,3 @@
+ALTER TABLE equipment
+ADD COLUMN `condition` INT NOT NULL DEFAULT 100,
+ADD COLUMN quantity_threshold INT NOT NULL DEFAULT 0;

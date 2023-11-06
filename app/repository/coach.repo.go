@@ -38,20 +38,21 @@ func (repo *CoachRepository) NewCoach(coach model.Coach) error{
 }
 func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 	coaches := make([]model.Coach , 0)
-	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, 
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname,
 	coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, coach.gender, coach.public_id,
 	account.email, account.id as account_id, description, COALESCE(CONCAT('[',GROUP_CONCAT('"',coach_image.path,'"'),']'), '[]') as images from coach
 	INNER JOIN account on coach.account_id = account.id
 	LEFT JOIN coach_image on coach.id = coach_image.coach_id
+	where coach.deleted_at is null
 	GROUP BY coach.id
 	ORDER BY coach.updated_at DESC`
 	selectErr := repo.db.Select(&coaches, selectQuery)
 	return coaches, selectErr 
 }
-func (repo *CoachRepository)GetCoachById (id int ) (model.Coach, error) {
+func (repo *CoachRepository)GetCoachById (id int) (model.Coach, error) {
 	coach := model.Coach{}
 	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname, coach.date_of_birth, coach.gender, coach.public_id, coach.address, coach.emergency_contact,coach.mobile_number, account.email, account.id as account_id,description from coach
-	INNER JOIN account on coach.account_id = account.id where coach.id = ? ORDER BY coach.updated_at DESC LIMIT 1`
+	INNER JOIN account on coach.account_id = account.id where coach.id = ? and coach.deleted_at is null ORDER BY coach.updated_at DESC LIMIT 1`
 	err := repo.db.Get(&coach, selectQuery, id)
 	return coach, err
 }
@@ -106,6 +107,11 @@ func (repo * CoachRepository)UpdatePassword (newPassword string, coachId int )(e
 	}
 	return nil
 } 
+
+func (repo * CoachRepository)Delete(id int )error {
+	_, err := repo.db.Exec("UPDATE coach set deleted_at = now() where id = ?", id)
+	return err
+}
 func NewCoachRepository()CoachRepository {
 
 	return CoachRepository{
