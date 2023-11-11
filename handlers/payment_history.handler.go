@@ -27,6 +27,7 @@ func(h * PaymentHistory)RenderClientPaymentHistory(c echo.Context)error{
 		session := mysqlsession.SessionData{}
 		session.Bind(sessionData)
 		payments, err := h.paymentsHistory.GetPaymentHistoryByClient(session.User.Id)
+	
 		if err != nil{
 			logger.Error(err.Error(), zap.String("error", "GetPaymentHistoryByClient"))
 			return c.JSON(http.StatusInternalServerError, JSONResponse{
