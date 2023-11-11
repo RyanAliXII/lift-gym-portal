@@ -18,10 +18,19 @@ func (h *DashboardHandler) RenderDashboardPage(c echo.Context) error{
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "GetAdminDashboardData"))
 		}
+		data.MonthlyWalkIns, err = h.dashboardRepo.GetMonthlyWalkIns()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetMonthlyWalkIns"))
+		}
+		data.WeeklyWalkIns, err = h.dashboardRepo.GetWeeklyWalkIns()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetWeeklyWalkIns"))
+		}
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
 				"dashboardData": data,
+
 			},
 			Message: "Dashboard data fetched.",
 		})

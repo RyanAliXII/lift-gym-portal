@@ -14,6 +14,12 @@ type AdminDashboardData struct {
 	AnnualEarningsBreakdown EarningsBreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
 	MonthlyEarningsBreakdown EarningsBreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
 	WeeklyEarningsBreakdown EarningsBreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
+	MonthlyWalkIns []WalkInData `json:"monthlyWalkIns" db:"monthly_walk_ins"`
+	WeeklyWalkIns []WalkInData`json:"weeklyWalkIns" db:"weekly_walk_ins"`
+}
+type WalkInData struct {
+	Total  int `json:"total" db:"total"`
+	Date string `json:"date" db:"date"`
 }
 
 type EarningsBreakDown struct {

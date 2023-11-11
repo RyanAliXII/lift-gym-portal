@@ -129,3 +129,17 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	err := repo.db.Get(&data, query)
 	return data, err
 }
+
+func (repo *Dashboard)GetWeeklyWalkIns()([]model.WalkInData, error) {
+	data := make([]model.WalkInData, 0)
+	query := `SELECT COUNT(1) as total, cast(created_at as date)  as date FROM client_log where created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW() GROUP BY DAY(created_at), cast(created_at as date)`
+	err := repo.db.Select(&data, query)
+	return data, err
+}
+func (repo *Dashboard)GetMonthlyWalkIns()([]model.WalkInData, error) {
+	data := make([]model.WalkInData, 0)
+	query := `SELECT COUNT(1) as total, cast(created_at as date)  as date FROM client_log where created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY DAY(created_at), cast(created_at as date)`
+	err := repo.db.Select(&data, query)
+	return data, err
+}
+
