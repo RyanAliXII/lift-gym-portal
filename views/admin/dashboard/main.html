@@ -18,7 +18,7 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" id="Dashboard">
             <!-- Page Heading -->
             {{template "partials/dashboard-page-heading" .}}
             <!-- Content Row -->
@@ -35,7 +35,7 @@
                           Earnings (Monthly)
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          $40,000
+                          &#8369 {toMoney(dashboardData.monthlyEarnings)}
                         </div>
                       </div>
                       <div class="col-auto">
@@ -58,7 +58,7 @@
                           Earnings (Annual)
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          $215,000
+                          &#8369 {toMoney(dashboardData.annualEarnings)}
                         </div>
                       </div>
                       <div class="col-auto">
@@ -78,14 +78,14 @@
                         <div
                           class="text-xs font-weight-bold text-info text-uppercase mb-1"
                         >
-                          Tasks
+                          Clients
                         </div>
                         <div class="row no-gutters align-items-center">
                           <div class="col-auto">
                             <div
                               class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
                             >
-                              50%
+                              {dashboardData.clients}
                             </div>
                           </div>
                           <div class="col">
@@ -121,10 +121,10 @@
                         <div
                           class="text-xs font-weight-bold text-warning text-uppercase mb-1"
                         >
-                          Pending Requests
+                         Members
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          18
+                          {dashboardData.members}
                         </div>
                       </div>
                       <div class="col-auto">
@@ -502,7 +502,7 @@
       </div>
     </div> -->
   </body>
-
+  <script src="/js/admin/dashboard/main.js"></script>
   {{template "partials/sb-scripts"}}
 </html>
 {{end}}
