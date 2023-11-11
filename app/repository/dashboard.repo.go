@@ -31,7 +31,7 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
      (
      COALESCE((SELECT SUM(amount_paid) 
      FROM client_log  
-     WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0) 
+     WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0) 
      + 
      COALESCE((SELECT  SUM(price) from subscription
      INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
@@ -66,7 +66,7 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	 (
      COALESCE((SELECT SUM(amount_paid) 
      FROM client_log  
-     WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0) 
+     WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0) 
      + 
      COALESCE((SELECT  SUM(price) from subscription
      INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
@@ -84,7 +84,7 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	  JSON_OBJECT(
       'walkIn', COALESCE((SELECT SUM(amount_paid) 
       FROM client_log  
-      WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0), 
+      WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0), 
 	 'membership',  COALESCE((SELECT  SUM(price) from subscription
       INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
 	  where subscription.valid_until >= NOW() 
@@ -99,7 +99,7 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
       JSON_OBJECT(
       'walkIn', COALESCE((SELECT SUM(amount_paid) 
       FROM client_log  
-      WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
+      WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
 	 'membership',  COALESCE((SELECT  SUM(price) from subscription
       INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
 	  where subscription.valid_until >= NOW() 
@@ -143,7 +143,7 @@ func (repo *Dashboard)GetMonthlyWalkIns()([]model.WalkInData, error) {
 	return data, err
 }
 
-func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardData,error) {
+func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboardData,error) {
   data := model.ClientDashboardData{}
   query := `
   SELECT 
@@ -153,7 +153,7 @@ func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardDa
   JSON_OBJECT(
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
-        WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW() and client_id = ?), 0), 
+        WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW() and client_id = ?), 0), 
     'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where subscription.valid_until >= NOW() 
@@ -163,12 +163,12 @@ func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardDa
         INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
         where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
         AND NOW()),0)
-      ) as annual_earnings_breakdown,
+      ) as annual_expenditures_breakdown,
         
         JSON_OBJECT(
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
-        WHERE client_id = ? and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
+        WHERE deleted_at is null and client_id = ? and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
     'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where client_id = ? and subscription.valid_until >= NOW() 
@@ -178,11 +178,11 @@ func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardDa
         INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
         where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
         AND NOW()),0)
-      ) as monthly_earnings_breakdown,
+      ) as monthly_expenditures_breakdown,
         JSON_OBJECT(	
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
-        WHERE client_id = ? and  created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
+        WHERE deleted_at is null and client_id = ? and  created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
     'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where client_id = ? and  subscription.valid_until >= NOW() 
@@ -192,11 +192,22 @@ func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardDa
         INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
         where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
         AND NOW()),0)
-  ) as weekly_earnings_breakdown
-  
+  ) as weekly_expenditures_breakdown
   `
-  err := repo.db.Get(&data, query, clientId)
+  err := repo.db.Get(&data, query, clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId)
 	return data, err
 
+}
+
+func (repo * Dashboard)GetClientWalkIns(clientId int) ([]model.ClientLog, error){
+	logs := make([]model.ClientLog, 0)
+	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, client_log.is_member, JSON_OBJECT('publicId',client.public_id ,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client,  convert_tz(client_log.created_at, 'UTC', 'Asia/Manila') as created_at from client_log
+		INNER JOIN client on client_log.client_id = client.id
+		INNER JOIN account on client.account_id = account.id
+		where client_log.deleted_at is null and client_id = ?
+		ORDER BY client_log.created_at DESC`
+
+	err := repo.db.Select(&logs, query, clientId)
+	return logs, err
 }
 

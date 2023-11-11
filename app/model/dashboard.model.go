@@ -11,51 +11,50 @@ type AdminDashboardData struct {
 	MonthlyEarnings float64 `json:"monthlyEarnings" db:"monthly_earnings"`
 	WeeklyEarnings float64 `json:"weeklyEarnings" db:"weekly_earnings"`
 	AnnualEarnings float64 `json:"annualEarnings" db:"annual_earnings"`
-	AnnualEarningsBreakdown EarningsBreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
-	MonthlyEarningsBreakdown EarningsBreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
-	WeeklyEarningsBreakdown EarningsBreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
+	AnnualEarningsBreakdown BreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
+	MonthlyEarningsBreakdown BreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
+	WeeklyEarningsBreakdown BreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
 	MonthlyWalkIns []WalkInData `json:"monthlyWalkIns" db:"monthly_walk_ins"`
 	WeeklyWalkIns []WalkInData`json:"weeklyWalkIns" db:"weekly_walk_ins"`
 }
-
 
 type ClientDashboardData struct {
 	Reservations int `json:"reservations" db:"reservations"`
 	Packages int `json:"packages" db:"packages"`
 	CoachAppointments int `json:"coachAppointments" db:"coach_appointments"`
-	AnnualEarningsBreakdown EarningsBreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
-	MonthlyEarningsBreakdown EarningsBreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
-	WeeklyEarningsBreakdown EarningsBreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
-	
+	AnnualExpendituresBreakdown BreakDownJSON `json:"annualExpendituresBreakdown" db:"annual_expenditures_breakdown"`
+	MonthlyExpendituresBreakdown BreakDownJSON `json:"monthlyExpendituresBreakdown" db:"monthly_expenditures_breakdown"`
+	WeeklyExpendituresBreakdown BreakDownJSON `json:"weeklyExpendituresBreakdown" db:"weekly_expenditures_breakdown"`
+	WalkIns []ClientLog `json:"walkIns"`
 }
 type WalkInData struct {
 	Total  int `json:"total" db:"total"`
 	Date string `json:"date" db:"date"`
 }
 
-type EarningsBreakDown struct {
+type BreakDown struct {
 	WalkIn float64 `json:"walkIn" db:"walk_in"`
 	Package float64 `json:"package" db:"package"`
 	Membership float64 `json:"membership" db:"membership"`
 }
 
-type EarningsBreakDownJSON struct {
-	EarningsBreakDown
+type BreakDownJSON struct {
+	BreakDown
 }
 
-func (instance *EarningsBreakDownJSON) Scan(value interface{}) error {
+func (instance *BreakDownJSON) Scan(value interface{}) error {
 	val, valid := value.([]byte)
 	if valid {
 		unmarshalErr := json.Unmarshal(val, instance)
 		if unmarshalErr != nil {
-			*instance = EarningsBreakDownJSON{}
+			*instance = BreakDownJSON{}
 		}
 	} else {
-		*instance = EarningsBreakDownJSON{}
+		*instance = BreakDownJSON{}
 	}
 	return nil
 
 }
-func (copy EarningsBreakDownJSON) Value(value interface{}) (driver.Value, error) {
+func (copy BreakDownJSON) Value(value interface{}) (driver.Value, error) {
 	return copy, nil
 }
