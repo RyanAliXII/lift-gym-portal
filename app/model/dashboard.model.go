@@ -21,6 +21,7 @@ type AdminDashboardData struct {
 type ClientDashboardData struct {
 	Reservations int `json:"reservations" db:"reservations"`
 	Packages int `json:"packages" db:"packages"`
+	MembershipRequests int `json:"membershipRequests" db:"membership_requests"`
 	CoachAppointments int `json:"coachAppointments" db:"coach_appointments"`
 	AnnualExpendituresBreakdown BreakDownJSON `json:"annualExpendituresBreakdown" db:"annual_expenditures_breakdown"`
 	MonthlyExpendituresBreakdown BreakDownJSON `json:"monthlyExpendituresBreakdown" db:"monthly_expenditures_breakdown"`
