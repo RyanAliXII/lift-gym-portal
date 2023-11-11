@@ -139,6 +139,7 @@ func clientRoutes(router * echo.Group){
 	pkgRequestHandler := NewPackageRequestHandler()
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	registrationHandler := NewRegistrationHandler()
+	paymentHistoryHandler := NewPaymentHistoryHandler()
 	coachHandler := NewCoachHandler()
 	coachRateHandler := NewCoachRateHandler()
 	hiredCoachHandler := NewHiredCoachHandler()
@@ -179,6 +180,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
 	router.GET("/reservations/date-slots/:dateSlotId/time-slots", reservationHandler.GetTimeSlotsBasedOnDateSlotId)
 	router.PUT("/reservations/:id/status/cancellation", reservationHandler.CancelReservation)
+	router.GET("/payment-history", paymentHistoryHandler.RenderClientPaymentHistory)
 }
 
 func coachRoutes(router * echo.Group) {
