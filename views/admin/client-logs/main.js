@@ -1,10 +1,18 @@
 import Choices from "choices.js";
 import { createApp, onMounted, ref } from "vue";
-import { useDebounce, useDebounceFn } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
+import DataTable from "datatables.net-vue3";
+import DataTableCore from "datatables.net";
 import swal from "sweetalert2";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+
+DataTable.use(DataTableCore);
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
+  },
+  components: {
+    DataTable,
   },
   setup() {
     const initialForm = {
@@ -12,6 +20,69 @@ createApp({
       clientId: 0,
       isMember: false,
       amountPaid: 0,
+    };
+
+    const table = ref(null);
+    let dt;
+    const columns = [
+      {
+        title: "Created At",
+        data: "createdAt",
+        render: (value) => {
+          return `<span>${formatDate(value)}</span>`;
+        },
+      },
+      {
+        title: "Client ID",
+        data: "client.publicId",
+      },
+      {
+        title: "Client",
+        data: null,
+        render: (value, event, row) =>
+          `${row.client.givenName} ${row.client.surname}`,
+      },
+      {
+        title: "Amount Paid",
+        data: "amountPaid",
+        render: (value) => toMoney(value),
+      },
+      {
+        title: "",
+        data: null,
+        render: (value, event, row) => {
+          let buttons = `<div class='d-flex' style='gap:5px'>`;
+          if (window.hasEditPermission) {
+            buttons += `<button
+            class="btn btn-outline-primary edit-log"
+            data-toggle="tooltip"
+            title="Edit Log"
+          
+          >
+            <i class="fas fa-edit"></i>
+          </button>`;
+          }
+          if (window.hasDeletePermission) {
+            buttons += `
+            <button
+              data-id=${row.id}
+              class="btn btn-outline-danger delete-log"
+              data-toggle="tooltip"
+              title="Delete Log"
+         
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+            `;
+          }
+          return buttons + `</div>`;
+        },
+      },
+    ];
+    const tableConfig = {
+      lengthMenu: [25],
+      lengthChange: false,
+      dom: "lrtip",
     };
     const logs = ref([]);
     const logClientSelectElement = ref(null);
@@ -194,6 +265,7 @@ createApp({
       });
     };
     onMounted(() => {
+      dt = table?.value?.dt;
       logClientSelect.value = new Choices(logClientSelectElement.value, {
         allowHTML: false,
         placeholder: "Seach Client",
@@ -248,7 +320,21 @@ createApp({
       );
       initModalListeners();
       fetchLogs();
+
+      $(dt.table().body()).on("click", "button.delete-log", async (event) => {
+        const id = event.currentTarget.getAttribute("data-id");
+        initDelete(id);
+      });
+      $(dt.table().body()).on("click", "button.edit-log", async (event) => {
+        let data = dt.row(event.target.closest("tr")).data();
+        initEdit(data);
+      });
     });
+
+    const searchLogs = (event) => {
+      const query = event.target.value;
+      dt.search(query).draw();
+    };
     const initEdit = async (log) => {
       form.value = {
         id: log.id,
@@ -288,6 +374,10 @@ createApp({
       updateLog,
       editLogClientSelectElement,
       initDelete,
+      columns,
+      table,
+      tableConfig,
+      searchLogs,
     };
   },
 }).mount("#ClientLog");

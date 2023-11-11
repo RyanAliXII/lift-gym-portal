@@ -26,7 +26,7 @@ func (repo * ClientLogRepository)UpdateLog(log model.ClientLog) error{
 }
 func (repo * ClientLogRepository)GetLogs() ([]model.ClientLog, error){
 	logs := make([]model.ClientLog, 0)
-	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, client_log.is_member, JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client, client_log.created_at from client_log
+	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, client_log.is_member, JSON_OBJECT('publicId',client.public_id ,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client,  convert_tz(client_log.created_at, 'UTC', 'Asia/Manila') as created_at from client_log
 		INNER JOIN client on client_log.client_id = client.id
 		INNER JOIN account on client.account_id = account.id
 		where client_log.deleted_at is null

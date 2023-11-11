@@ -43,7 +43,7 @@ func (repo MembershipRequestRepository)GetMembershipRequestsByClientId(clientId 
 	err := repo.db.Select(&requests,`
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
-	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
+	JSON_OBJECT('publicId', client.public_id, 'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
     JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
     mbr.created_at
@@ -62,7 +62,7 @@ func (repo MembershipRequestRepository)GetMembershipRequestById(id int) (model.M
 	err := repo.db.Get(&request,`
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
-	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
+	JSON_OBJECT('publicId', client.public_id,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
     JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
     mbr.created_at
@@ -80,7 +80,7 @@ func (repo MembershipRequestRepository)GetMembershipRequests() ([]model.Membersh
 	err := repo.db.Select(&requests,`
 	SELECT 
 	mbr.id, mbr.client_id, mbr.membership_plan_id, mbr.status_id, mbrs.description as status, mbr.remarks,
-	JSON_OBJECT('id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
+	JSON_OBJECT('publicId', client.public_id,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname)  as client,
 	JSON_OBJECT('id', mp.id, 'description', mp.description, 'months', mp.months, 'price', mp.price) as membership_plan,
     JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snapshot,
     mbr.created_at

@@ -30,100 +30,19 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    class="form-control mt-2 mb-2"
+                    @input="searchRequests"
+                  />
+                  <data-table
                     class="table table-bordered"
-                    id="dataTable"
-                    width="100%"
-                    cellspacing="0"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Created At</th>
-                        <th>Client</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Remarks</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <template v-for="request of membershipRequests">
-                        <tr>
-                          <td>{formatDate(request.createdAt)}</td>
-                          <td>
-                            {request.client.givenName} {request.client.surname}
-                          </td>
-                          <td>{request.membershipPlan.description}</td>
-                          <td>{request.membershipPlan.price}</td>
-                          <td
-                            class="font-weight-bold"
-                            :class="{'text-warning': request.statusId === Status.Pending, 
-                            'text-primary': request.statusId === Status.Approved,
-                             'text-success': request.statusId === Status.Received, 
-                             'text-danger': request.statusId === Status.Cancelled}"
-                          >
-                            <div>{request.status}</div>
-
-                            <small v-if="request.statusId === Status.Pending"
-                              >Waiting for approval.</small
-                            >
-                            <small v-if="request.statusId === Status.Approved"
-                              >Membership has been approved. Waiting for
-                              payment.</small
-                            >
-
-                            <small v-if="request.statusId === Status.Received"
-                              >Membership has been received by client.</small
-                            >
-                          </td>
-                          <td>
-                            {request.remarks.length === 0 ? "No Remarks":
-                            request.remarks }
-                          </td>
-                          <td>
-                            {{if hasPermission "MembershipRequest.Edit"
-                            .currentUser.Permissions}}
-                            <div class="d-flex" style="gap: 5px">
-                              <button
-                                v-if="request.statusId === Status.Pending"
-                                class="btn btn-outline-primary"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Approve Request"
-                                @click="initApproval(request.id)"
-                              >
-                                <i class="fas fa-thumbs-up"></i>
-                              </button>
-                              <button
-                                v-if="request.statusId === Status.Approved"
-                                class="btn btn-outline-success"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Mark as Received: Mark this if payment has been made."
-                                @click="initMarkAsReceived(request.id)"
-                              >
-                                <i class="fas fa-check"></i>
-                              </button>
-                              <button
-                                v-if="request.statusId != Status.Received && request.statusId != Status.Cancelled"
-                                type="button"
-                                class="btn btn-outline-danger"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Cancel Membership Request"
-                                @click="initCancellation(request.id)"
-                              >
-                                <i class="fas fa-trash"></i>
-                              </button>
-                            </div>
-                            {{end}}
-                          </td>
-                        </tr>
-                      </template>
-                    </tbody>
-                  </table>
+                    :options="tableConfig"
+                    :columns="columns"
+                    ref="table"
+                    :data="membershipRequests"
+                  ></data-table>
                 </div>
               </div>
             </div>

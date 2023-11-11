@@ -127,8 +127,8 @@
                 </div>
               </div>
             </div>
-            {{if or .isMember ( or ( not .isVerified) (not .isInfoComplete)) }}
-            {{template "client/membership-request/request-modal" .}} {{end}}
+            {{if and .isVerified .isInfoComplete }} {{template
+            "client/membership-request/request-modal" .}} {{end}}
           </div>
           <!-- /.container-fluid -->
         </div>

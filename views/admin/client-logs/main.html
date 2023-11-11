@@ -37,58 +37,19 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table
+                  <input
+                    type="text"
+                    @input="searchLogs"
+                    class="form-control mt-2 mb-2"
+                    placeholder="Search"
+                  />
+                  <data-table
+                    ref="table"
+                    :options="tableConfig"
                     class="table table-bordered"
-                    id="dataTable"
-                    width="100%"
-                    cellspacing="0"
-                  >
-                    <thead>
-                      <tr>
-                        <td>Created At</td>
-                        <th>Client</th>
-                        <th>Client Email</th>
-                        <th>Member(Yes/No)</th>
-                        <th>Amount Paid</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <template v-for="log of logs ">
-                        <tr>
-                          <td>{formatDate(log.createdAt)}</td>
-                          <td>{ log.client.givenName } {log.client.surname}</td>
-                          <td>{log.client.email}</td>
-                          <td>{log.isMember ? "Yes" : "No"}</td>
-                          <td>₱ {toMoney(log.amountPaid)}</td>
-                          <td>
-                            {{if hasPermission "ClientLog.Edit"
-                            .currentUser.Permissions}}
-                            <button
-                              class="btn btn-outline-primary"
-                              data-toggle="tooltip"
-                              title="Edit Log"
-                              @click="initEdit(log)"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            {{end}} {{if hasPermission "ClientLog.Delete"
-                            .currentUser.Permissions}}
-                            <button
-                              class="btn btn-outline-danger ml-2"
-                              data-toggle="tooltip"
-                              title="Delete Log"
-                              @click="initDelete(log.id)"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
-                            {{end}}
-                          </td>
-                        </tr>
-                      </template>
-                    </tbody>
-                  </table>
+                    :data="logs"
+                    :columns="columns"
+                  ></data-table>
                 </div>
               </div>
             </div>
@@ -108,8 +69,13 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
+  {{ $hasDeletePermission := hasPermission "ClientLog.Delete"
+  .currentUser.Permissions}} {{ $hasEditPermission := hasPermission
+  "ClientLog.Edit" .currentUser.Permissions}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
+    window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
   <script src="/js/admin/client-logs/main.js"></script>
 </html>

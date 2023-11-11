@@ -10,7 +10,11 @@ import {
   subscribe,
 } from "./fetch";
 import swal from "sweetalert2";
+import DataTable from "datatables.net-vue3";
+import DataTableCore from "datatables.net";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
 
+DataTable.use(DataTableCore);
 const SubscribeValidation = object({
   clientId: number()
     .required("Client is required")
@@ -22,7 +26,68 @@ const SubscribeValidation = object({
     .min(1, "Membership plan is required"),
 });
 createApp({
+  components: {
+    DataTable,
+  },
   setup() {
+    const table = ref(null);
+    let dt;
+    const tableConfig = {
+      lengthMenu: [20],
+      lengthChange: false,
+      dom: "lrtip",
+    };
+    const columns = [
+      {
+        title: "Member ID",
+        data: "publicId",
+        render: (value) => `<span class='font-weight-bold'>${value}</span>`,
+      },
+      {
+        title: "Client",
+        data: null,
+        render: (value, event, row) => {
+          return `<span class='font-weight-bold'>${row.givenName} ${row.surname}</span>`;
+        },
+      },
+      {
+        title: "Membership Plan",
+        data: "membershipSnapshot.description",
+      },
+      {
+        title: "Subscription Start Date",
+        data: "subscriptionStartDate",
+        render: (value) => formatDate(value),
+      },
+      {
+        title: "Membership Valid Until",
+        data: "validUntil",
+        render: (value) => formatDate(value),
+      },
+      {
+        title: "",
+        data: null,
+        render: () => {
+          if (window.hasDeletePermission) {
+            return `<button
+            type="button"
+            class="btn btn-outline-danger cancel-sub"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Cancel subscription"
+            @click="initCancellation(member)"
+          >
+            <i class="fas fa-trash"></i>
+          </button>`;
+          }
+          return "";
+        },
+      },
+    ];
+    const searchMembers = (event) => {
+      const query = event.target.value;
+      dt.search(query).draw();
+    };
     const clientSelectElement = ref(null);
     const planSelectElement = ref(null);
     let clientSelect = null;
@@ -137,6 +202,11 @@ createApp({
     defineInputBinds("membershipPlanId");
     onMounted(() => {
       init();
+      dt = table.value.dt;
+      $(dt.table().body()).on("click", "button.cancel-sub", async (event) => {
+        const id = event.currentTarget.getAttribute("data-id");
+        initCancellation(id);
+      });
     });
     return {
       onSubmit,
@@ -146,6 +216,10 @@ createApp({
       initCancellation,
       clientSelectElement,
       planSelectElement,
+      columns,
+      tableConfig,
+      searchMembers,
+      table,
     };
   },
   compilerOptions: {

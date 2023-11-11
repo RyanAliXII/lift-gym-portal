@@ -37,8 +37,14 @@
                 </h6>
               </div>
               <div class="card-body">
+                <input
+                  type="text"
+                  @input="searchMembers"
+                  class="form-control mt-2 mb-2"
+                  placeholder="Search"
+                />
                 <div class="table-responsive">
-                  <table
+                  <!-- <table
                     class="table table-bordered"
                     id="dataTable"
                     width="100%"
@@ -83,7 +89,14 @@
                         </tr>
                       </template>
                     </tbody>
-                  </table>
+                  </table> -->
+                  <data-table
+                    class="table table-bordered"
+                    :options="tableConfig"
+                    :data="members"
+                    :columns="columns"
+                    ref="table"
+                  ></data-table>
                 </div>
               </div>
             </div>
@@ -101,9 +114,11 @@
       <i class="fas fa-angle-up"></i>
     </a>
   </body>
-  {{template "partials/sb-scripts" .}}
+  {{template "partials/sb-scripts" .}} {{$hasDeletePermission := hasPermission
+  "Member.Delete" .currentUser.Permissions}}
   <script>
     window.csrf = "{{.csrf}}";
+    window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
   </script>
   <script src="/js/admin/members/main.js"></script>
 </html>
