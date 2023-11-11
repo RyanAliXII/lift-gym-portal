@@ -43,7 +43,10 @@ func(h * PaymentHistory)RenderClientPaymentHistory(c echo.Context)error{
 			Message: "Payments fetched.",
 		})
 	}
-	return c.Render(http.StatusOK, "client/payment-history/main", Data{})
+	return c.Render(http.StatusOK, "client/payment-history/main", Data{
+		"title": "Payment History",
+		"module": "Payment History",
+	})
 }
 func (h * PaymentHistory) RenderPayments(c  echo.Context) error {
 	contentType := c.Request().Header.Get("content-type")
@@ -66,7 +69,10 @@ func (h * PaymentHistory) RenderPayments(c  echo.Context) error {
 			Message: "Payments fetched.",
 		})
 	}
-	return c.Render(http.StatusOK, "admin/payments/main", Data{})
+	return c.Render(http.StatusOK, "admin/payments/main", Data{
+		"title": "Payments",
+		"module": "Payments",
+	})
 }
 
 
@@ -93,5 +99,7 @@ func (h * PaymentHistory) RenderCoachPayments(c  echo.Context) error {
 			Message: "Payments fetched.",
 		})
 	}
-	return c.Render(http.StatusOK, "coach/payments/main", Data{})
+	return c.Render(http.StatusOK, "coach/payments/main", Data{	
+	"title": "Payments",
+	"module": "Payments",})
 }
