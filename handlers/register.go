@@ -193,6 +193,7 @@ func coachRoutes(router * echo.Group) {
 	hiredCoachHandler := NewHiredCoachHandler()
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
+	paymentHandler := NewPaymentHistoryHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.GET("/reset-password", passwordHandler.RenderResetCoachPasswordPage)
@@ -209,4 +210,5 @@ func coachRoutes(router * echo.Group) {
 	router.DELETE("/rates/:id", coachRateHandler.DeleteRate)
 	router.GET("/appointments", hiredCoachHandler.RenderCoachAppointments)
 	router.PATCH("/appointments/:id/status", hiredCoachHandler.UpdateStatus)
+	router.GET("/payments", paymentHandler.RenderCoachPayments)
 }

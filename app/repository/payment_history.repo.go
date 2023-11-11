@@ -24,7 +24,7 @@ func(repo  * PaymentHistory)GetPaymentHistoryByClient(clientId int )([]model.Pay
 	SELECT client_id, package_snapshot.price as amount, concat('Package payment: ', package_snapshot.description) as description, convert_tz(package_request.created_at, 'UTC', 'Asia/Manila') as created_at  FROM package_request INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
 	UNION ALL
 	SELECT  client_id,  coaching_rate_snapshot.price as amount, CONCAT('Coaching fee: ', coaching_rate_snapshot.description) as description, convert_tz(hired_coach.created_at, 'UTC', 'Asia/Manila') as created_at FROM hired_coach INNER JOIN hired_coaches_status on status_id = hired_coaches_status.id  
-	INNER JOIN coaching_rate_snapshot on rate_snapshot_id = coaching_rate_snapshot.id) as payments where payments.client_id = ?
+	INNER JOIN coaching_rate_snapshot on rate_snapshot_id = coaching_rate_snapshot.id where status_id = 3) as payments where payments.client_id = ?
 	ORDER BY created_at DESC
 	`
 	err := repo.db.Select(&payments, query, clientId)
@@ -40,9 +40,33 @@ func(repo  * PaymentHistory)GetPaymentHistory()([]model.PaymentHistory, error) {
 	 SELECT  client_id,  coaching_rate_snapshot.price as amount, CONCAT('Coaching payment to ', coach.given_name, ' ', coach.surname,' Coaching rate: ' ,coaching_rate_snapshot.description) as description, convert_tz(hired_coach.created_at, 'UTC', 'Asia/Manila') as created_at FROM hired_coach INNER JOIN hired_coaches_status on status_id = hired_coaches_status.id  
 	 INNER JOIN coaching_rate_snapshot on rate_snapshot_id = coaching_rate_snapshot.id
 	 INNER JOIN coach ON hired_coach.coach_id = coach.id
+	 where status_id = 3
 	 ) as payment INNER JOIN client on payment.client_id = client.id
 	 ORDER BY created_at DESC
 	`
 	err := repo.db.Select(&payments, query)
+	return payments,  err
+}
+
+ 
+func(repo  * PaymentHistory)GetCoachPayments(coachId int)([]model.PaymentHistory, error) {
+	payments := make([]model.PaymentHistory, 0)
+	query := `SELECT
+    client_id,
+    coaching_rate_snapshot.price AS amount,
+    JSON_OBJECT('publicId', client.public_id, 'id', client.id, 'givenName',
+                client.given_name, 'middleName', client.middle_name, 'surname', client.surname) AS client,
+   'Coaching payment' AS description,
+    CONVERT_TZ(hired_coach.created_at, 'UTC', 'Asia/Manila') AS created_at
+	FROM
+		hired_coach
+	INNER JOIN coaching_rate_snapshot ON rate_snapshot_id = coaching_rate_snapshot.id
+	INNER JOIN coach ON hired_coach.coach_id = coach.id
+	INNER JOIN client ON client_id = client.id
+	WHERE
+    status_id = 3 and hired_coach.coach_id = ?
+	order by created_at desc
+	`
+	err := repo.db.Select(&payments, query, coachId)
 	return payments,  err
 }

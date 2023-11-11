@@ -1,4 +1,4 @@
-{{define "admin/payments/main"}}
+{{define "coach/payments/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
@@ -7,7 +7,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      {{template "partials/sidebar" .}}
+      {{template "partials/coach/sidebar" .}}
       <!-- End of Sidebar -->
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
@@ -61,6 +61,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <script src="/js/admin/payments/main.js"></script>
+  <script src="/js/coach/payments/main.js"></script>
 </html>
 {{end}}
