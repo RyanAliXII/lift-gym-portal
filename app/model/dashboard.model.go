@@ -28,7 +28,19 @@ type ClientDashboardData struct {
 	WeeklyExpendituresBreakdown BreakDownJSON `json:"weeklyExpendituresBreakdown" db:"weekly_expenditures_breakdown"`
 	WalkIns []ClientLog `json:"walkIns"`
 }
+
+type CoachDashboardData struct {
+	Appointments int `json:"appointments" db:"appointments"`
+	Clients int `json:"clients" db:"clients"`
+	Earnings float64 `json:"earnings" db:"earnings"`
+	WeeklyCoachClients  []CoachClient `json:"weeklyCoachClients"`
+	MonthlyCoachClients  []CoachClient `json:"monthlyCoachClients"`
+}
 type WalkInData struct {
+	Total  int `json:"total" db:"total"`
+	Date string `json:"date" db:"date"`
+}
+type CoachClient struct {
 	Total  int `json:"total" db:"total"`
 	Date string `json:"date" db:"date"`
 }

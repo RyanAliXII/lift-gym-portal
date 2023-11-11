@@ -74,6 +74,35 @@ func (h *DashboardHandler) RenderClientDashboard(c echo.Context ) error {
 
 }
 func (h * DashboardHandler) RenderCoachDashboard(c echo.Context) error {
+
+	contentType := c.Request().Header.Get("content-type")
+	if contentType == "application/json" {
+		sessionData := c.Get("sessionData")
+		session := mysqlsession.SessionData{}
+		session.Bind(sessionData)
+		data, err := h.dashboardRepo.GetCoachDashboardData(session.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetCoachDashboardDataErr"))
+		}
+		data.WeeklyCoachClients, err = h.dashboardRepo.GetWeeklyCoachClients(session.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetWeeklyCoachClientsErr"))
+		}
+	
+		data.MonthlyCoachClients, err = h.dashboardRepo.GetMonthlyCoachClients(session.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetMonthlyCoachClientsErr"))
+		}
+
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"dashboardData": data,
+			},
+			Message: "Dashboard date fetched.",
+		})
+	}
+	
 	return c.Render(http.StatusOK, "coach/dashboard/main", Data{
 		"title": "Dashboard",
 		"module": "Dashboard",

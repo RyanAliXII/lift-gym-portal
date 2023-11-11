@@ -142,7 +142,26 @@ func (repo *Dashboard)GetMonthlyWalkIns()([]model.WalkInData, error) {
 	err := repo.db.Select(&data, query)
 	return data, err
 }
+func (repo Dashboard)GetWeeklyCoachClients (coachId int) ([]model.CoachClient, error ) {
+  
+   data := make([]model.CoachClient, 0)
+   query := `SELECT COUNT(1) as total, cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date)  
+      as date FROM hired_coach where hired_coach.coach_id = ? and status_id = 3 and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW() 
+      GROUP BY DAY(created_at), cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date) 
+   `
+   err := repo.db.Select(&data, query, coachId)
+   return data, err
+}
 
+func (repo Dashboard)GetMonthlyCoachClients (coachId int) ([]model.CoachClient, error ) {
+  data := make([]model.CoachClient, 0)
+  query := `SELECT COUNT(1) as total, cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date)  
+     as date FROM hired_coach where hired_coach.coach_id = ? and  status_id = 3 and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() 
+     GROUP BY DAY(created_at), cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date) 
+  `
+  err := repo.db.Select(&data, query, coachId)
+  return data, err
+}
 func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboardData,error) {
   data := model.ClientDashboardData{}
   query := `
@@ -210,5 +229,22 @@ func (repo * Dashboard)GetClientWalkIns(clientId int) ([]model.ClientLog, error)
 
 	err := repo.db.Select(&logs, query, clientId)
 	return logs, err
+}
+
+func(repo Dashboard)GetCoachDashboardData (coachId int) (model.CoachDashboardData, error) {
+  data := model.CoachDashboardData{}
+  query := `
+     SELECT 
+    (SELECT COUNT(DISTINCT client_id) from hired_coach where coach_id = ?) as clients,
+    (SELECT COUNT(1) from hired_coach where coach_id = ?) as appointments,
+    (SELECT 
+    SUM(coaching_rate_snapshot.price) 
+    from hired_coach 
+    inner join coaching_rate_snapshot 
+    on hired_coach.rate_snapshot_id = coaching_rate_snapshot.id 
+    where hired_coach.coach_id = ? and status_id = 3 ) as earnings
+  `
+  err := repo.db.Get(&data, query, coachId, coachId, coachId)
+  return data, err
 }
 
