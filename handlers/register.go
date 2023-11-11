@@ -130,7 +130,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/reservations", reservationHandler.RenderAdminReservationPage, middlewares.ValidatePermissions("Reservation.Read"))
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot, middlewares.ValidatePermissions("Reservation.Read"))
 	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
-	router.GET("/payments", PaymentHistory.RenderPayments)
+	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
