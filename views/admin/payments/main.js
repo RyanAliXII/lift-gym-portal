@@ -3,6 +3,7 @@ import DataTable from "datatables.net-vue3";
 import DataTableCore from "datatables.net";
 DataTable.use(DataTableCore);
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+
 createApp({
   components: {
     DataTable,
@@ -58,7 +59,7 @@ createApp({
     };
     const fetchData = async () => {
       try {
-        const response = await fetch("/clients/payment-history", {
+        const response = await fetch("/app/payments", {
           headers: new Headers({
             "Content-Type": "application/json",
             "Cache-Control": "no-cache",

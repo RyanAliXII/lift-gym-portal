@@ -45,5 +45,27 @@ func(h * PaymentHistory)RenderClientPaymentHistory(c echo.Context)error{
 	}
 	return c.Render(http.StatusOK, "client/payment-history/main", Data{})
 }
+func (h * PaymentHistory) RenderPayments(c  echo.Context) error {
+	contentType := c.Request().Header.Get("content-type")
 
+	if contentType == "application/json"{
+		
+		payments, err := h.paymentsHistory.GetPaymentHistory()
+		if err != nil{
+			logger.Error(err.Error(), zap.String("error", "GetPaymentHistoryByClient"))
+			return c.JSON(http.StatusInternalServerError, JSONResponse{
+				Status: http.StatusInternalServerError,
+				Message: "Unknown error occured.",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"payments": payments,
+			},
+			Message: "Payments fetched.",
+		})
+	}
+	return c.Render(http.StatusOK, "admin/payments/main", Data{})
+}
 

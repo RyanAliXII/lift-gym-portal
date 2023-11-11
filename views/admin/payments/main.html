@@ -1,4 +1,4 @@
-{{define "client/payment-history/main"}}
+{{define "admin/payments/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
@@ -21,7 +21,7 @@
           <div class="container-fluid" id="PaymentHistory">
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Your Payments</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Payments</h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -54,6 +54,6 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <script src="/js/client/payment-history/main.js"></script>
+  <script src="/js/admin/payments/main.js"></script>
 </html>
 {{end}}
