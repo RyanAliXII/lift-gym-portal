@@ -9,6 +9,8 @@ createApp({
     DataTable,
   },
   setup() {
+    const table = ref(null);
+    let dt;
     const payments = ref([]);
     const dtConfig = {
       lengthMenu: [20],
@@ -25,11 +27,22 @@ createApp({
         },
       },
       {
+        title: "Client ID",
+        data: "client",
+        render: (value) => {
+          return `<span class='font-weight-bold'>${value.publicId}</span>`;
+        },
+      },
+      {
+        title: "Client",
+        data: "client",
+        render: (value) => {
+          return `<span class='font-weight-bold'>${value.givenName} ${value.surname}</span>`;
+        },
+      },
+      {
         title: "Description",
         data: "description",
-        render: (value) => {
-          return `<span class='font-weight-bold'>${value}</span>`;
-        },
       },
       {
         title: "Amount",
@@ -73,7 +86,12 @@ createApp({
         console.error(err);
       }
     };
+    const searchPayments = (event) => {
+      const query = event.target.value;
+      dt.search(query).draw();
+    };
     onMounted(() => {
+      dt = table.value.dt;
       fetchData();
     });
 
@@ -81,6 +99,8 @@ createApp({
       payments,
       columns,
       dtConfig,
+      table,
+      searchPayments,
     };
   },
 }).mount("#PaymentHistory");

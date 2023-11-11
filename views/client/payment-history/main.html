@@ -24,8 +24,15 @@
                 <h6 class="m-0 font-weight-bold text-primary">Your Payments</h6>
               </div>
               <div class="card-body">
+                <input
+                  type="text"
+                  @input="searchPayments"
+                  class="form-control mt-2 mb-2"
+                  placeholder="Search"
+                />
                 <div class="table-responsive">
                   <data-table
+                    ref="table"
                     class="table table-bordered"
                     :columns="columns"
                     :data="payments"

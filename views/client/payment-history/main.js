@@ -9,6 +9,8 @@ createApp({
   },
   setup() {
     const payments = ref([]);
+    const table = ref();
+    let dt;
     const dtConfig = {
       lengthMenu: [20],
       dom: "lrtip",
@@ -75,11 +77,20 @@ createApp({
     onMounted(() => {
       fetchData();
     });
-
+    const searchPayments = (event) => {
+      const query = event.target.value;
+      dt.search(query).draw();
+    };
+    onMounted(() => {
+      dt = table.value.dt;
+      fetchData();
+    });
     return {
       payments,
       columns,
       dtConfig,
+      table,
+      searchPayments,
     };
   },
 }).mount("#PaymentHistory");
