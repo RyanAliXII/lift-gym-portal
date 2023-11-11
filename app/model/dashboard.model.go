@@ -10,6 +10,8 @@ type AdminDashboardData struct {
 	Members int `json:"members" db:"members"`
 	MonthlyEarnings float64 `json:"monthlyEarnings" db:"monthly_earnings"`
 	WeeklyEarnings float64 `json:"weeklyEarnings" db:"weekly_earnings"`
+	AnnualEarnings float64 `json:"annualEarnings" db:"annual_earnings"`
+	AnnualEarningsBreakdown EarningsBreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
 	MonthlyEarningsBreakdown EarningsBreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
 	WeeklyEarningsBreakdown EarningsBreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
 }

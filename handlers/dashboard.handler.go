@@ -1,13 +1,25 @@
 package handlers
 
 import (
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
-type DashboardHandler struct {}
+type DashboardHandler struct {
+	dashboardRepo repository.Dashboard
+}
 func (h *DashboardHandler) RenderDashboardPage(c echo.Context) error{
+     
+	
+	
+	data, err := h.dashboardRepo.GetAdminDashboardData()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GetAdminDashboardData"))
+	}
+
 	return c.Render(http.StatusOK, "admin/dashboard/main", Data{
 		"title": "Dashboard",
 		"module": "Dashboard",
@@ -30,7 +42,9 @@ func (h * DashboardHandler) RenderCoachDashboard(c echo.Context) error {
 } )
 }
 func NewDashboardHandler() DashboardHandler{
-	return DashboardHandler{}
+	return DashboardHandler{
+		dashboardRepo: repository.NewDashboard(),
+	}
 }
 
 
