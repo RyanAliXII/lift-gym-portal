@@ -147,9 +147,9 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
   data := model.ClientDashboardData{}
   query := `
   SELECT 
-  (SELECT count(1) from package_request) as packages,
-  (SELECT count(1) from reservation) as reservations,
-  (SELECT count(1) from hired_coach) as coach_appointments,
+  (SELECT count(1) from package_request where client_id = ?) as packages,
+  (SELECT count(1) from reservation where client_id = ?) as reservations,
+  (SELECT count(1) from hired_coach where client_id = ?) as coach_appointments,
   JSON_OBJECT(
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
@@ -194,7 +194,7 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
         AND NOW()),0)
   ) as weekly_expenditures_breakdown
   `
-  err := repo.db.Get(&data, query, clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId)
+  err := repo.db.Get(&data, query, clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId, clientId, clientId, clientId )
 	return data, err
 
 }

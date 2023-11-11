@@ -35,7 +35,7 @@
                           Packages
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <!-- &#8369 {toMoney(dashboardData.monthlyEarnings)} -->
+                          {dashboardData.packages}
                         </div>
                       </div>
                       <div class="col-auto">
@@ -58,6 +58,7 @@
                           Reservations
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          {dashboardData.reservations}
                           <!-- &#8369 {toMoney(dashboardData.annualEarnings)} -->
                         </div>
                       </div>
@@ -85,10 +86,9 @@
                             <div
                               class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
                             >
-                              <!-- {dashboardData.clients} -->
+                              {dashboardData.coachAppointments}
                             </div>
                           </div>
-                      
                         </div>
                       </div>
                       <div class="col-auto">
@@ -142,18 +142,16 @@
                   </div>
                   <!-- Card Body -->
                   <div class="card-body">
-                    <div class="">
-
-                    </div>
+                    
                     <div> 
-                      <div class="d-flex" style="gap: 5px;"  ref="earningsOverviewNavTabs">
-                          <button class="btn btn-primary" @click="switchEarningsOverviewTab('Weekly')" id="earningsWeekly">Weekly</button>
-                          <button class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Monthly')" id="earningsMonthly">Monthly</button>
-                          <button  class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Annual')" id="earningsAnnual">Annual</button>
+                      <div class="d-flex" style="gap: 5px;"  ref="expendituresNavs">
+                          <button class="btn btn-primary" @click="switchExpendituresOverviewTab('Weekly')" id="earningsWeekly">Weekly</button>
+                          <button class="btn btn-outline-secondary" @click="switchExpendituresOverviewTab('Monthly')" id="earningsMonthly">Monthly</button>
+                          <button  class="btn btn-outline-secondary" @click="switchExpendituresOverviewTab('Annual')" id="earningsAnnual">Annual</button>
                       </div>
                       <section class="mt-4">
-                        <div class="text-center font-weight-bold"> {earningsOverviewActiveTab} Earnings</div>
-                        <apex-chart width="500"  :options="pieChartOptions" :series="earningsOverviewSeries"></apex-chart>
+                        <div class="text-center font-weight-bold"> {expendituresOverviewActiveTab} Expenditures</div>
+                        <apex-chart width="500"  :options="pieChartOptions" :series="expendituresOverviewSeries"></apex-chart>
                          </div>
                       </section>
                   </div>
@@ -167,21 +165,21 @@
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
                   >
                     <h6 class="m-0 font-weight-bold text-primary">
-                       Gym Activity Overview
+                       Gym Activity
                     </h6>
                   
                   </div>
                   <!-- Card Body -->
                   <div class="card-body">
-                    <div class="d-flex" style="gap: 5px;" ref="walkInNavs">
-                      <button class="btn btn-primary" id="walkInWeekly" @click="switchWalkInTab('Weekly')">Weekly</button>
-                      <button class="btn btn-outline-secondary" id="walkInMonthly" @click="switchWalkInTab('Monthly')">Monthly</button>
-                   </div>
-                    <apex-chart width="500"  :options="barChartOptions" :series="walkInSeries"></apex-chart>
+                    <div class="table-responsive">
+
+                      <data-table  class="table table-bordered rounded" :options="tableConfig" :columns="columns" :data="dashboardData.walkIns" ref="table"></data-table>
+                    </div>
+                  
                   </div>
                 </div>
               </div>
-            </div>
+             </div>
 
           
           </div>
@@ -198,7 +196,7 @@
       <i class="fas fa-angle-up"></i>
     </a>
   </body>
-
+  <script src="/js/client/dashboard/main.js"></script>
   {{template "partials/sb-scripts"}}
 </html>
 {{end}}

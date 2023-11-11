@@ -58,7 +58,7 @@ func (h *DashboardHandler) RenderClientDashboard(c echo.Context ) error {
 			logger.Error(err.Error(), zap.String("error", "GetClientWalkIns"))
 		}
 		
-		c.JSON(http.StatusOK, JSONResponse{
+		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
 				"dashboardData": data,

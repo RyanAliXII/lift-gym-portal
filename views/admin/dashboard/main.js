@@ -1,4 +1,4 @@
-import { computed, createApp, onMounted, ref, watch } from "vue";
+import { createApp, onMounted, ref } from "vue";
 import ApexChart from "vue3-apexcharts";
 createApp({
   components: {
