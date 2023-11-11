@@ -140,7 +140,7 @@
 
             <div class="row">
               <!-- Area Chart -->
-              <div class="col-xl-8 col-lg-7">
+              <div class="col-xl-6">
                 <div class="card shadow mb-4">
                   <!-- Card Header - Dropdown -->
                   <div
@@ -179,9 +179,24 @@
                   </div>
                   <!-- Card Body -->
                   <div class="card-body">
-                    <div class="chart-area">
-                      <canvas id="myAreaChart"></canvas>
+                   
+                    <div> 
+                      <div class="text-center font-weight-bold"> Annual Earnings</div>
+                      <apex-chart width="500"  :options="pieChartOptions" :series="annualBreakdownSeries"></apex-chart>
+                   
                     </div>
+                    <div> 
+                    <div class="text-center font-weight-bold"> Monthly Earnings</div>
+                    <apex-chart width="500"  :options="pieChartOptions" :series="monthlyBreakdownSeries"></apex-chart>
+                    </div>
+                    <div>
+                      <div class="text-center font-weight-bold"> Weekly Earnings</div>
+                      <apex-chart width="500"  :options="pieChartOptions" :series="weeklyBreakdownSeries"></apex-chart>
+                    </div>
+                  
+                
+                
+                    
                   </div>
                 </div>
               </div>

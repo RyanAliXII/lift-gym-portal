@@ -1,6 +1,9 @@
-import { createApp, onMounted, ref } from "vue";
-
+import { computed, createApp, onMounted, ref, watch } from "vue";
+import ApexChart from "vue3-apexcharts";
 createApp({
+  components: {
+    ApexChart,
+  },
   compilerOptions: {
     delimiters: ["{", "}"],
   },
@@ -13,7 +16,7 @@ createApp({
     const INITIAL_DASHBOARD_DATA = {
       clients: 0,
       members: 0,
-      annualEarnins: 0,
+      annualEarnings: 0,
       monthlyEarnings: 0,
       weeklyEarnings: 0,
       annualEarningsBreakdown: INITAL_BREAKDOWN_DATA,
@@ -33,7 +36,6 @@ createApp({
         dashboardData.value = data?.dashboardData ?? {
           ...INITIAL_DASHBOARD_DATA,
         };
-        console.log(data);
       }
     };
     onMounted(() => {
@@ -47,9 +49,52 @@ createApp({
         maximumFractionDigits: 2,
       });
     };
+
+    const annualBreakdownSeries = computed(() => {
+      return [
+        dashboardData.value.annualEarningsBreakdown.membership,
+        dashboardData.value.annualEarningsBreakdown.package,
+        dashboardData.value.annualEarningsBreakdown.walkIn,
+      ];
+    });
+    const monthlyBreakdownSeries = computed(() => {
+      return [
+        dashboardData.value.monthlyEarningsBreakdown.membership,
+        dashboardData.value.monthlyEarningsBreakdown.package,
+        dashboardData.value.monthlyEarningsBreakdown.walkIn,
+      ];
+    });
+    const weeklyBreakdownSeries = computed(() => {
+      return [
+        dashboardData.value.weeklyEarningsBreakdown.membership,
+        dashboardData.value.weeklyEarningsBreakdown.package,
+        dashboardData.value.weeklyEarningsBreakdown.walkIn,
+      ];
+    });
+    const pieChartOptions = {
+      chart: {
+        type: "pie",
+      },
+      tooltip: {
+        y: {
+          formatter: function (value) {
+            return `${toMoney(value)}`;
+          },
+        },
+        legend: {
+          position: "bottom",
+        },
+      },
+      labels: ["Membership", "Package", "Walk In"],
+    };
+
     return {
       dashboardData,
       toMoney,
+      annualBreakdownSeries,
+      monthlyBreakdownSeries,
+      weeklyBreakdownSeries,
+      pieChartOptions,
     };
   },
 }).mount("#Dashboard");
