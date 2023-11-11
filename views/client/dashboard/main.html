@@ -18,16 +18,172 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" id="Dashboard">
             <!-- Page Heading -->
             {{template "partials/dashboard-page-heading" .}}
-            <div class="alert alert-warning" role="alert">
-              Account is not fully verified. Please verify your account to fully
-              access the portal.
-            </div>
             <!-- Content Row -->
+            <div class="row">
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                        >
+                          Packages
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <!-- &#8369 {toMoney(dashboardData.monthlyEarnings)} -->
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                        >
+                          Reservations
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <!-- &#8369 {toMoney(dashboardData.annualEarnings)} -->
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                        >
+                          Coach Appointments
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                          <div class="col-auto">
+                            <div
+                              class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
+                            >
+                              <!-- {dashboardData.clients} -->
+                            </div>
+                          </div>
+                      
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-clipboard-list fa-2x text-gray-300"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pending Requests Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                        >
+                         Members
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <!-- {dashboardData.members} -->
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Content Row -->
+
+            <div class="row">
+              <!-- Area Chart -->
+              <div class="col-xl-4">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Expenditures Overview
+                    </h6>
+                  
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="">
+
+                    </div>
+                    <div> 
+                      <div class="d-flex" style="gap: 5px;"  ref="earningsOverviewNavTabs">
+                          <button class="btn btn-primary" @click="switchEarningsOverviewTab('Weekly')" id="earningsWeekly">Weekly</button>
+                          <button class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Monthly')" id="earningsMonthly">Monthly</button>
+                          <button  class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Annual')" id="earningsAnnual">Annual</button>
+                      </div>
+                      <section class="mt-4">
+                        <div class="text-center font-weight-bold"> {earningsOverviewActiveTab} Earnings</div>
+                        <apex-chart width="500"  :options="pieChartOptions" :series="earningsOverviewSeries"></apex-chart>
+                         </div>
+                      </section>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-8">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                       Gym Activity Overview
+                    </h6>
+                  
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="d-flex" style="gap: 5px;" ref="walkInNavs">
+                      <button class="btn btn-primary" id="walkInWeekly" @click="switchWalkInTab('Weekly')">Weekly</button>
+                      <button class="btn btn-outline-secondary" id="walkInMonthly" @click="switchWalkInTab('Monthly')">Monthly</button>
+                   </div>
+                    <apex-chart width="500"  :options="barChartOptions" :series="walkInSeries"></apex-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          
           </div>
           <!-- /.container-fluid -->
         </div>

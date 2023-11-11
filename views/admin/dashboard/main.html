@@ -32,7 +32,7 @@
                         <div
                           class="text-xs font-weight-bold text-primary text-uppercase mb-1"
                         >
-                          Earnings (Monthly)
+                         Earnings (MONTHLY)
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                           &#8369 {toMoney(dashboardData.monthlyEarnings)}
@@ -88,18 +88,7 @@
                               {dashboardData.clients}
                             </div>
                           </div>
-                          <div class="col">
-                            <div class="progress progress-sm mr-2">
-                              <div
-                                class="progress-bar bg-info"
-                                role="progressbar"
-                                style="width: 50%"
-                                aria-valuenow="50"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              ></div>
-                            </div>
-                          </div>
+                        
                         </div>
                       </div>
                       <div class="col-auto">
@@ -167,17 +156,6 @@
                         <apex-chart width="500"  :options="pieChartOptions" :series="earningsOverviewSeries"></apex-chart>
                          </div>
                       </section>
-            
-                    <!-- <section v-show="earningsOverviewActiveTab === 'Monthly'"> 
-                    <div class="text-center font-weight-bold"> Monthly Earnings</div>
-                    <apex-chart width="500"  :options="pieChartOptions" :series="monthlyBreakdownSeries"></apex-chart>
-                    </section>
-                    <section   v-show="earningsOverviewActiveTab === 'Weekly'">
-                      <div class="text-center font-weight-bold"> Weekly Earnings</div>
-                      <apex-chart width="500"  :options="pieChartOptions" :series="weeklyBreakdownSeries"></apex-chart>
-                    </section> --> -->
-      
-                    
                   </div>
                 </div>
               </div>
@@ -220,44 +198,6 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <!-- <div
-      class="modal fade"
-      id="logoutModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-            <button
-              class="close"
-              type="button"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            Select "Logout" below if you are ready to end your current session.
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-secondary"
-              type="button"
-              data-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </body>
   <script src="/js/admin/dashboard/main.js"></script>
   {{template "partials/sb-scripts"}}

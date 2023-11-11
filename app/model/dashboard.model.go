@@ -17,6 +17,17 @@ type AdminDashboardData struct {
 	MonthlyWalkIns []WalkInData `json:"monthlyWalkIns" db:"monthly_walk_ins"`
 	WeeklyWalkIns []WalkInData`json:"weeklyWalkIns" db:"weekly_walk_ins"`
 }
+
+
+type ClientDashboardData struct {
+	Reservations int `json:"reservations" db:"reservations"`
+	Packages int `json:"packages" db:"packages"`
+	CoachAppointments int `json:"coachAppointments" db:"coach_appointments"`
+	AnnualEarningsBreakdown EarningsBreakDownJSON `json:"annualEarningsBreakdown" db:"annual_earnings_breakdown"`
+	MonthlyEarningsBreakdown EarningsBreakDownJSON `json:"monthlyEarningsBreakdown" db:"monthly_earnings_breakdown"`
+	WeeklyEarningsBreakdown EarningsBreakDownJSON `json:"weeklyEarningsBreakdown" db:"weekly_earnings_breakdown"`
+	
+}
 type WalkInData struct {
 	Total  int `json:"total" db:"total"`
 	Date string `json:"date" db:"date"`

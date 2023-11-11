@@ -143,3 +143,60 @@ func (repo *Dashboard)GetMonthlyWalkIns()([]model.WalkInData, error) {
 	return data, err
 }
 
+func (repo * Dashboard)GetClientDashboard(clientId int) (model.ClientDashboardData,error) {
+  data := model.ClientDashboardData{}
+  query := `
+  SELECT 
+  (SELECT count(1) from package_request) as packages,
+  (SELECT count(1) from reservation) as reservations,
+  (SELECT count(1) from hired_coach) as coach_appointments,
+  JSON_OBJECT(
+        'walkIn', COALESCE((SELECT SUM(amount_paid) 
+        FROM client_log  
+        WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW() and client_id = ?), 0), 
+    'membership',  COALESCE((SELECT  SUM(price) from subscription
+        INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+      where subscription.valid_until >= NOW() 
+      and subscription.cancelled_at is NULL and client_id = ? and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+        AND NOW()),0),
+        'package', COALESCE((SELECT SUM(price) from package_request 
+        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
+        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+        AND NOW()),0)
+      ) as annual_earnings_breakdown,
+        
+        JSON_OBJECT(
+        'walkIn', COALESCE((SELECT SUM(amount_paid) 
+        FROM client_log  
+        WHERE client_id = ? and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
+    'membership',  COALESCE((SELECT  SUM(price) from subscription
+        INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+      where client_id = ? and subscription.valid_until >= NOW() 
+      and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+        AND NOW()),0),
+        'package', COALESCE((SELECT SUM(price) from package_request 
+        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
+        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+        AND NOW()),0)
+      ) as monthly_earnings_breakdown,
+        JSON_OBJECT(	
+        'walkIn', COALESCE((SELECT SUM(amount_paid) 
+        FROM client_log  
+        WHERE client_id = ? and  created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
+    'membership',  COALESCE((SELECT  SUM(price) from subscription
+        INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+      where client_id = ? and  subscription.valid_until >= NOW() 
+      and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+        AND NOW()),0),
+        'package', COALESCE((SELECT SUM(price) from package_request 
+        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
+        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+        AND NOW()),0)
+  ) as weekly_earnings_breakdown
+  
+  `
+  err := repo.db.Get(&data, query, clientId)
+	return data, err
+
+}
+
