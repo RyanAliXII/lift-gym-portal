@@ -1,17 +1,23 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
-type Report struct {}
+type Report struct {
+	reportRepo repository.Report
+}
 
 func NewReportHandler() Report {
-	return Report{}
+	return Report{
+		reportRepo: repository.NewReport(),
+	}
 }
 func(h * Report) RenderReportPage(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin/reports/main", Data{	
@@ -31,7 +37,7 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	_, _, err = reportConfig.ToDateOnly()
+	startDate,endDate, err := reportConfig.ToDateOnly()
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "toDateOnly"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
@@ -39,7 +45,12 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
+	data, err := h.reportRepo.GetReportData(startDate, endDate)
+	if err != nil {
+		logger.Error(err.Error())
+	}
 
+	fmt.Println(data)
 	
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,

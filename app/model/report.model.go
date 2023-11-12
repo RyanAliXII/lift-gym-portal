@@ -16,3 +16,19 @@ func(config ReportConfig ) ToDateOnly()(start string, end string, parseErr error
 	end = config.DateRange[1].Format(time.DateOnly)
 	return start, end, nil
 }
+
+
+type ReportData struct {
+	Clients int `json:"clients" db:"clients"`
+	Coaches int `json:"coaches" db:"coaches"`
+	Members int `json:"members" db:"members"`
+	InventoryItems int `json:"inventoryItems" db:"inventory_items"`
+	Reservations int `json:"reservations" db:"reservations"`//
+	MembershipRequests int `json:"membershipRequests" db:"membership_requests"`
+	WalkIn []WalkInData `json:"walkIn" db:"walk_in"`
+	PackageRequests int `json:"packageRequests" db:"package_requests"` 
+	Earnings float64 `json:"earnings" db:"earnings"` 
+	EarningsBreakdown BreakDownJSON `json:"earningsBreakdown" db:"earnings_breakdown"`
+}
+
+
