@@ -49,9 +49,7 @@ func(h  * Report) CreateReport (c echo.Context) error {
 	if err != nil {
 		logger.Error(err.Error())
 	}
-
 	fmt.Println(data)
-	
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Reports Generated.",

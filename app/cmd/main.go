@@ -9,6 +9,7 @@ import (
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/http/middlewares"
 	"lift-fitness-gym/app/pkg/applog"
+	"lift-fitness-gym/app/pkg/browser"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/handlers"
 	"net/http"
@@ -22,6 +23,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go.uber.org/zap"
 )
 
 type TemplateRegistry struct {
@@ -49,12 +51,18 @@ func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c 
 	}
 	return err
 }
-
+var logger * zap.Logger = applog.Get()
 func main() {
 	godotenv.Load(".env")
 	store := mysqlsession.GetMySQLStore()
 	db.GetConnection()
 	db.CreateRootAccount()
+	browser, err  := browser.NewBrowser()
+	if err != nil{
+		logger.Error(err.Error())
+	}
+	defer browser.GetBrowser().Close()
+	defer browser.GetLauncher().Close()
 	e := echo.New()
 	defer e.Shutdown(context.Background())
 	logger := applog.Get()

@@ -5,10 +5,12 @@ createApp({
   components: {
     VueDatePicker,
   },
-
+  compilerOptions: {
+    delimiters: ["{", "}"],
+  },
   setup() {
     const dateRange = ref([]);
-    const today = new Date();
+
     const onSubmit = async () => {
       try {
         if (dateRange.value.length != 2) return;
