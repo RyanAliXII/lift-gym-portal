@@ -53,6 +53,7 @@ func adminRoutes (router  * echo.Group){
 	dateSlotHandler := NewDateSlotHandler()
 	timeSlotHandler := NewTimeSlotHandler()
 	reservationHandler := NewReservationHandler()
+	PaymentHistory := NewPaymentHistoryHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -129,6 +130,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/reservations", reservationHandler.RenderAdminReservationPage, middlewares.ValidatePermissions("Reservation.Read"))
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot, middlewares.ValidatePermissions("Reservation.Read"))
 	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
+	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
@@ -139,6 +141,7 @@ func clientRoutes(router * echo.Group){
 	pkgRequestHandler := NewPackageRequestHandler()
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	registrationHandler := NewRegistrationHandler()
+	paymentHistoryHandler := NewPaymentHistoryHandler()
 	coachHandler := NewCoachHandler()
 	coachRateHandler := NewCoachRateHandler()
 	hiredCoachHandler := NewHiredCoachHandler()
@@ -179,6 +182,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/reservations/date-slots", reservationHandler.GetDateSlots)
 	router.GET("/reservations/date-slots/:dateSlotId/time-slots", reservationHandler.GetTimeSlotsBasedOnDateSlotId)
 	router.PUT("/reservations/:id/status/cancellation", reservationHandler.CancelReservation)
+	router.GET("/payment-history", paymentHistoryHandler.RenderClientPaymentHistory)
 }
 
 func coachRoutes(router * echo.Group) {
@@ -189,6 +193,7 @@ func coachRoutes(router * echo.Group) {
 	hiredCoachHandler := NewHiredCoachHandler()
 	passwordHandler := NewPasswordHandler()
 	logoutHandler := NewLogoutHandler()
+	paymentHandler := NewPaymentHistoryHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.GET("/reset-password", passwordHandler.RenderResetCoachPasswordPage)
@@ -205,4 +210,5 @@ func coachRoutes(router * echo.Group) {
 	router.DELETE("/rates/:id", coachRateHandler.DeleteRate)
 	router.GET("/appointments", hiredCoachHandler.RenderCoachAppointments)
 	router.PATCH("/appointments/:id/status", hiredCoachHandler.UpdateStatus)
+	router.GET("/payments", paymentHandler.RenderCoachPayments)
 }

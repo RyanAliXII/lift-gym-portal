@@ -64,6 +64,7 @@ var Permissions = []string{
 	"DateSlot.Create",
 	"Reservation.Read",
 	"Reservation.Edit",
+	"Payment.Read",
 }
 
 

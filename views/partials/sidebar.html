@@ -253,6 +253,14 @@
       </div>
     </div>
   </li>
+  {{if hasPermission "Payment.Read" .currentUser.Permissions}}
+  <li class="nav-item">
+    <a class="nav-link" href="/app/payments">
+      <i class="fas fa-money-bill-wave"></i>
+      <span>Payments</span></a
+    >
+  </li>
+  {{end}}
   <li class="nav-item">
     <a class="nav-link" href="/app/profile">
       <i class="fas fa-user"></i>
