@@ -10,9 +10,13 @@ createApp({
     const dateRange = ref([]);
     const today = new Date();
     const onSubmit = () => {
-      if (dateRange.value.length != 2) return;
-      const start = dateRange.value[0];
-      const end = dateRange.value[1];
+      try {
+        if (dateRange.value.length != 2) return;
+        const start = dateRange.value[0];
+        const end = dateRange.value[1];
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     const setToMonthly = () => {

@@ -133,6 +133,7 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 	router.GET("/reports", reportHandler.RenderReportPage)
+	router.POST("/reports", reportHandler.CreateReport)
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
