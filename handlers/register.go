@@ -54,6 +54,7 @@ func adminRoutes (router  * echo.Group){
 	timeSlotHandler := NewTimeSlotHandler()
 	reservationHandler := NewReservationHandler()
 	PaymentHistory := NewPaymentHistoryHandler()
+	reportHandler := NewReportHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -131,6 +132,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot, middlewares.ValidatePermissions("Reservation.Read"))
 	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
+	router.GET("/reports", reportHandler.RenderReportPage)
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

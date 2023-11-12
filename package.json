@@ -14,6 +14,7 @@
     "@fullcalendar/interaction": "^6.1.9",
     "@fullcalendar/timegrid": "^6.1.9",
     "@vorms/core": "^1.1.0",
+    "@vuepic/vue-datepicker": "^7.2.2",
     "@vueuse/core": "^10.5.0",
     "apexcharts": "^3.44.0",
     "choices.js": "^10.2.0",
