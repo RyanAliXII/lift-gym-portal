@@ -9,11 +9,22 @@ createApp({
   setup() {
     const dateRange = ref([]);
     const today = new Date();
-    const onSubmit = () => {
+    const onSubmit = async () => {
       try {
         if (dateRange.value.length != 2) return;
         const start = dateRange.value[0];
         const end = dateRange.value[1];
+
+        const response = await fetch("/app/reports", {
+          method: "POST",
+          body: JSON.stringify({
+            dateRange: [start.toISOString(), end.toISOString()],
+          }),
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
       } catch (err) {
         console.error(err);
       }

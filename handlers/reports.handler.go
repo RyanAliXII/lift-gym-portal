@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/model"
 	"net/http"
 
@@ -32,7 +31,16 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	fmt.Println(reportConfig)
+	_, _, err = reportConfig.ToDateOnly()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "toDateOnly"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+
+	
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Reports Generated.",
