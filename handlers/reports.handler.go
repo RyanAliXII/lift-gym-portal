@@ -26,6 +26,11 @@ func(h * Report) RenderReportPage(c echo.Context) error {
 
 	})
 }
+func(h * Report) RenderReportData(c echo.Context) error {
+	return c.Render(http.StatusOK, "admin/reports/report-data", Data{	
+
+	})
+}
 
 func(h  * Report) CreateReport (c echo.Context) error {
 	reportConfig := model.ReportConfig{}
@@ -45,7 +50,7 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	data, err := h.reportRepo.GetReportData(startDate, endDate)
+	data, err := h.reportRepo.GenerateReportData(startDate, endDate)
 	if err != nil {
 		logger.Error(err.Error())
 	}

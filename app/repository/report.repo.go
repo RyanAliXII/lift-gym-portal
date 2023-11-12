@@ -16,7 +16,7 @@ func NewReport() Report {
 		db: db.GetConnection(),
 	}
 }
-func(repo * Report) GetReportData(startDate string, endDate string)(model.ReportData, error) {
+func(repo * Report) GenerateReportData(startDate string, endDate string)(model.ReportData, error) {
 	query := `
 	SELECT 
 	(SELECT count(1) from client where deleted_at is null and date(created_at) between ? and ?) as clients,

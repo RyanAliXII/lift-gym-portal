@@ -1,0 +1,83 @@
+{{define "admin/reports/report-data"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <style type="text/css">
+      div {
+        break-inside: avoid;
+      }
+      .catalog-card {
+        min-height: 3in;
+        width: 5in;
+        border: 1px dotted black;
+        margin: 10px auto;
+        font-family: "Roboto", sans-serif;
+      }
+      .roboto {
+        font-family: "Roboto", sans-serif;
+      }
+      .ddc-cutter {
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .author-list {
+        max-width: 280px;
+      }
+      .card-content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .card-content {
+        width: fit-content;
+        max-width: 300px;
+      }
+      .main-text {
+        font-size: medium;
+      }
+      .text {
+        font-size: smaller;
+        word-spacing: 2px;
+      }
+      .text-small {
+        font-size: x-small;
+      }
+      .call-numbers {
+        width: 3in;
+        width: 5in;
+        gap: 15px;
+        margin: auto;
+      }
+      .call-number {
+        width: 0.9in;
+        height: 1.3in;
+        padding: 10px;
+        border: 1px dotted black;
+      }
+      .item {
+        margin-top: 5px;
+        align-items: center;
+        gap: 5px;
+        display: flex;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main id="ReportData"></main>
+  </body>
+  <script src="/js/admin/reports/report-data.js"></script>
+</html>
+
+{{end}}

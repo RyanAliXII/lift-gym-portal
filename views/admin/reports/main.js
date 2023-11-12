@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted } = require("vue");
+import { createApp, ref, onMounted } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 createApp({
