@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
@@ -50,7 +51,10 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-	data, err := h.reportRepo.GenerateReportData(startDate, endDate)
+	sessionData := c.Get("sessionData")
+	session := mysqlsession.SessionData{}
+	session.Bind(sessionData)
+	data, err := h.reportRepo.GenerateReportData(startDate, endDate, fmt.Sprintf("%s %s", session.User.GivenName, session.User.Surname))
 	if err != nil {
 		logger.Error(err.Error())
 	}

@@ -16,7 +16,7 @@ func NewReport() Report {
 		db: db.GetConnection(),
 	}
 }
-func(repo * Report) GenerateReportData(startDate string, endDate string)(model.ReportData, error) {
+func(repo * Report) GenerateReportData(startDate string, endDate string, preparedBy string)(model.ReportData, error) {
 	query := `
 	SELECT 
 	(SELECT count(1) from client where deleted_at is null and date(created_at) between ? and ?) as clients,
@@ -67,6 +67,7 @@ func(repo * Report) GenerateReportData(startDate string, endDate string)(model.R
 	) as earnings_breakdown;
 	`
 	data := model.ReportData{}
+	data.PreparedBy = preparedBy
 	err := repo.db.Get(&data, query,
 		startDate, endDate,
 		startDate, endDate, 
@@ -82,6 +83,20 @@ func(repo * Report) GenerateReportData(startDate string, endDate string)(model.R
 		startDate, endDate, 
 		startDate,endDate,
 	)
+	if err != nil {
+		return model.ReportData{}, nil
+	}
+	
+	result, err := repo.db.Exec("INSERT INTO report(data) VALUES(?)", data)
 
-	return data, err
+	if err != nil {
+		return model.ReportData{}, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return model.ReportData{}, err
+	}
+	data.Id = id
+	return data, nil
 }

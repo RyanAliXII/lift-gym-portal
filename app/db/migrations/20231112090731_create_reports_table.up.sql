@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS report (
+    id INT NOT NULL AUTO_INCREMENT  PRIMARY KEY,
+    data json
+)

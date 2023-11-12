@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -18,7 +20,16 @@ func(config ReportConfig ) ToDateOnly()(start string, end string, parseErr error
 }
 
 
+func (c ReportData) Value() (driver.Value, error) {
+    b, err := json.Marshal(c)
+    if err != nil {
+        return nil, err
+    }
+    return string(b), nil
+  
+}
 type ReportData struct {
+	Id int64 `json:"id" db:"id"`
 	Clients int `json:"clients" db:"clients"`
 	Coaches int `json:"coaches" db:"coaches"`
 	Members int `json:"members" db:"members"`
@@ -29,6 +40,6 @@ type ReportData struct {
 	PackageRequests int `json:"packageRequests" db:"package_requests"` 
 	Earnings float64 `json:"earnings" db:"earnings"` 
 	EarningsBreakdown BreakDownJSON `json:"earningsBreakdown" db:"earnings_breakdown"`
+	PreparedBy string `json:"preparedBy" db:"prepared_by"`
 }
-
 
