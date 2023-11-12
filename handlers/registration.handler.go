@@ -19,7 +19,6 @@ func (h *RegistrationHandler) RenderRegistrationPage(c echo.Context) error {
 		"csrf": c.Get("csrf"),
 	})
 }
-
 func (h *RegistrationHandler)RegisterClient (c echo.Context) error {
      client := model.Client{}
 	 err := c.Bind(&client)
