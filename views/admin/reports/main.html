@@ -26,9 +26,10 @@
                 <div class="card-body">
                     <form @submit.prevent="onSubmit">
                         <div class="d-flex" style="gap:5px">
-                            <button class="btn btn-outline-secondary">Monthly</button>
-                            <button class="btn btn-outline-secondary">Weekly</button>
-                            <button class="btn btn-outline-secondary">Annually</button>
+                            <button class="btn btn-outline-secondary" @click="setToWeekly">Weekly</button>
+                            <button class="btn btn-outline-secondary" @click="setToMonthly">Monthly</button>
+                          
+                            <button class="btn btn-outline-secondary" @click="setToAnnually">Annually</button>
                         </div>
                         <div class="form-group mt-3">
                             <label>Date Range</label>

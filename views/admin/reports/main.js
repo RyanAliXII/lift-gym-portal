@@ -16,11 +16,29 @@ createApp({
     };
 
     const setToMonthly = () => {
-      const ONE_MONTH = 30;
+      const ONE_MONTH = 30; //30 days
       const endDate = new Date();
-      const startDate = new Date(new Date().setDate(endDate.getDate() - 30));
+      const startDate = new Date(
+        new Date().setDate(endDate.getDate() - ONE_MONTH)
+      );
+      dateRange.value = [startDate, endDate];
     };
-    const setToWeekly = () => {};
+    const setToWeekly = () => {
+      const ONE_WEEK = 7; //7 days
+      const endDate = new Date();
+      const startDate = new Date(
+        new Date().setDate(endDate.getDate() - ONE_WEEK)
+      );
+      dateRange.value = [startDate, endDate];
+    };
+    const setToAnnually = () => {
+      const ONE_YEAR = 365; //365 days
+      const endDate = new Date();
+      const startDate = new Date(
+        new Date().setDate(endDate.getDate() - ONE_YEAR)
+      );
+      dateRange.value = [startDate, endDate];
+    };
     onMounted(() => {
       const endDate = new Date();
       const startDate = new Date(new Date().setDate(endDate.getDate() - 7));
@@ -29,6 +47,9 @@ createApp({
     return {
       dateRange,
       onSubmit,
+      setToAnnually,
+      setToWeekly,
+      setToMonthly,
     };
   },
 }).mount("#Reports");
