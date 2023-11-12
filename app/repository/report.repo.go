@@ -68,6 +68,8 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 	`
 	data := model.ReportData{}
 	data.PreparedBy = preparedBy
+	data.StartDate = startDate
+	data.EndDate = endDate
 	err := repo.db.Get(&data, query,
 		startDate, endDate,
 		startDate, endDate, 
@@ -99,4 +101,10 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 	}
 	data.Id = id
 	return data, nil
+}
+
+func (repo * Report) GetReportById (id int) (model.ReportDataJSON, error ){
+	data := model.ReportDataJSON{}
+	err := repo.db.Get(&data, "Select data from report where id = ? limit 1", id)
+	return data, err
 }

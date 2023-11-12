@@ -6,77 +6,103 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="/css/sb-admin/sb-admin-2.min.css" rel="stylesheet" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
 
     <style type="text/css">
-      div {
-        break-inside: avoid;
+      .bl {
+        color: #454443;
       }
-      .catalog-card {
-        min-height: 3in;
-        width: 5in;
-        border: 1px dotted black;
-        margin: 10px auto;
-        font-family: "Roboto", sans-serif;
+      .gr {
+        color: #5c5c5c;
       }
-      .roboto {
-        font-family: "Roboto", sans-serif;
-      }
-      .ddc-cutter {
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-      }
-      .author-list {
-        max-width: 280px;
-      }
-      .card-content-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .card-content {
-        width: fit-content;
-        max-width: 300px;
-      }
-      .main-text {
-        font-size: medium;
-      }
-      .text {
-        font-size: smaller;
-        word-spacing: 2px;
-      }
-      .text-small {
-        font-size: x-small;
-      }
-      .call-numbers {
-        width: 3in;
-        width: 5in;
-        gap: 15px;
-        margin: auto;
-      }
-      .call-number {
-        width: 0.9in;
-        height: 1.3in;
-        padding: 10px;
-        border: 1px dotted black;
-      }
-      .item {
-        margin-top: 5px;
-        align-items: center;
-        gap: 5px;
-        display: flex;
+      @media print {
+        .apexcharts-legend-marker {
+          -webkit-print-color-adjust: exact;
+        }
       }
     </style>
   </head>
 
   <body>
-    <main id="ReportData"></main>
+    <main id="ReportData">
+      <div class="container-fluid" id="Reports">
+        <div class="w-100 d-flex justify-content-between">
+          <div>Prepared By: {reportData.preparedBy}</div>
+          <div>Date: {reportData.startDate} to {reportData.endDate}</div>
+        </div>
+        <div class="card shadow mb-4">
+          <div class="card-header shadow mb-4">
+            <h6 class="m-0 font-weight-bold text-primary"></h6>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="bl font-weight-bold">New Clients</td>
+                  <td class="gr">{reportData.clients}</td>
+                </tr>
+
+                <tr>
+                  <td class="bl font-weight-bold">New Members</td>
+                  <td class="gr">{reportData.members}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Coaches</td>
+                  <td class="gr">{reportData.coaches}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Membership Requests</td>
+                  <td class="gr">{reportData.membershipRequests}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Package Requests</td>
+                  <td class="gr">{reportData.packageRequests}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Reservations</td>
+                  <td class="gr">{reportData.reservations}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Inventory Items</td>
+                  <td class="gr">{reportData.inventoryItems}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Earnings</td>
+                  <td class="gr">{toMoney(reportData.earnings)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card shadow mb-4">
+          <div class="card-header shadow mb-4">
+            <h6 class="m-0 font-weight-bold text-primary">Charts</h6>
+          </div>
+          <div class="card-body">
+            <apex-chart
+              width="500"
+              :options="pieChartOptions"
+              :series="breakdownSeries"
+            ></apex-chart>
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
+  <script>
+    window.reportId = "{{.reportId}}";
+  </script>
   <script src="/js/admin/reports/report-data.js"></script>
 </html>
 

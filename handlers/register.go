@@ -134,7 +134,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 	router.GET("/reports", reportHandler.RenderReportPage)
 	router.POST("/reports", reportHandler.CreateReport)
-	router.GET("/reports/generated", reportHandler.RenderReportData)
+	router.GET("/reports/:id", reportHandler.RenderReportData)
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

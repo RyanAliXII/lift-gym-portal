@@ -6,6 +6,7 @@ import (
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -28,8 +29,32 @@ func(h * Report) RenderReportPage(c echo.Context) error {
 	})
 }
 func(h * Report) RenderReportData(c echo.Context) error {
-	return c.Render(http.StatusOK, "admin/reports/report-data", Data{	
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error())
+		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
+	}
 
+	data, err := h.reportRepo.GetReportById(id)
+	if err != nil{
+		logger.Error(err.Error())
+		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
+	}
+	contentType := c.Request().Header.Get("content-type")
+	if contentType == "application/json" {
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data:Data{
+				"reportData": data,
+			},
+			Message: "Report data fetched.",
+		})
+	
+	}
+	
+
+	return c.Render(http.StatusOK, "admin/reports/report-data", Data{
+		"reportId": id,
 	})
 }
 

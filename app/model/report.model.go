@@ -31,6 +31,8 @@ func (c ReportData) Value() (driver.Value, error) {
 type ReportData struct {
 	Id int64 `json:"id" db:"id"`
 	Clients int `json:"clients" db:"clients"`
+	StartDate string `json:"startDate" db:"start_date"`
+	EndDate string `json:"endDate" db:"start_date"`
 	Coaches int `json:"coaches" db:"coaches"`
 	Members int `json:"members" db:"members"`
 	InventoryItems int `json:"inventoryItems" db:"inventory_items"`
@@ -43,3 +45,24 @@ type ReportData struct {
 	PreparedBy string `json:"preparedBy" db:"prepared_by"`
 }
 
+
+type ReportDataJSON struct {
+	ReportData
+}
+
+func (instance * ReportDataJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = ReportDataJSON{}
+		}
+	} else {
+		*instance = ReportDataJSON{}
+	}
+	return nil
+
+}
+func (copy ReportDataJSON) Value() (driver.Value, error) {
+	return copy, nil
+}

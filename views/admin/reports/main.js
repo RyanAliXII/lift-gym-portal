@@ -1,6 +1,7 @@
 import { createApp, ref, onMounted } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+
 createApp({
   components: {
     VueDatePicker,
@@ -56,11 +57,13 @@ createApp({
       );
       dateRange.value = [startDate, endDate];
     };
+
     onMounted(() => {
       const endDate = new Date();
       const startDate = new Date(new Date().setDate(endDate.getDate() - 7));
       dateRange.value = [startDate, endDate];
     });
+
     return {
       dateRange,
       onSubmit,
