@@ -39,7 +39,14 @@
                 <i class="fas fa-arrow-right" style="font-size: 12px"></i
               ></a>
             </div>
+            {{end}} {{if .hasPenalty}}
+            <div class="alert alert-warning" role="alert">
+              This feature is disabled due to a penalty incurred for not
+              attending coaching session. Please settle this in the gym. Thank
+              you
+            </div>
             {{end}}
+
             <!-- DataTables Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -117,7 +124,7 @@
     window.csrf = "{{.csrf}}";
     window.publicUrl = "{{.objstorePublicUrl}}";
   </script>
-  {{if and .isVerified .isInfoComplete}}
+  {{if and .isVerified .isInfoComplete (not .hasPenalty)}}
   <script src="/js/client/hire-a-coach/main.js"></script>
   {{end}}
 </html>

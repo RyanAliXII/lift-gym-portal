@@ -86,7 +86,7 @@
                           <td class="flex" style="gap: 5px">
                             <button
                               class="btn btn-outline-danger"
-                              v-if="hiredCoach.statusId != 4 && hiredCoach.statusId != 3"
+                              v-if="hiredCoach.statusId != 4 && hiredCoach.statusId != 3 && hiredCoach.statusId != 5"
                               data-toggle="tooltip"
                               title="Cancel"
                               @click="initCancel(hiredCoach.id)"

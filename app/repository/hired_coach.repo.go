@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/status"
@@ -141,7 +140,72 @@ func(repo * HiredCoachRepository)MarkAppointmentAsPaid(appointment model.HiredCo
 }
 
 func(repo * HiredCoachRepository)CancelAppointment(appointment model.HiredCoach) error {
-	fmt.Println(appointment.Id)
 	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and coach_id = ?  and (status_id = 1 or status_id = 2)", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.CoachId)
 	return err
 }
+func(repo * HiredCoachRepository)MarkAsNoShow(appointment model.HiredCoach) error {
+	dbAppointment, err := repo.GetAppointmentById(appointment.Id)
+	if err != nil{
+		return err
+	}	
+	_, err = repo.db.Exec("UPDATE hired_coach SET status_id = ? where id = ? and coach_id = ? and status_id = 2", status.CoachAppointmentStatusNoShow, appointment.Id, appointment.CoachId)
+
+	if err != nil {
+		return err
+	}
+	err = repo.handlePenalty(dbAppointment)
+	if err  != nil {
+		return err
+	}
+	return nil
+}
+func (repo * HiredCoachRepository)getLastThreeAppointmentOfClient(clientId int ) ([]model.HiredCoach, error) {
+	appointments := make([]model.HiredCoach, 0)
+	err := repo.db.Select(&appointments, "SELECT status_id FROM hired_coach where client_id = ? order by created_at desc LIMIT 3", clientId)
+	return appointments, err
+} 
+
+func (repo *HiredCoachRepository)GetAppointmentById(id int )(model.HiredCoach, error){
+	appointment := model.HiredCoach{}
+	query := `
+	SELECT 
+		hired_coach.id, 
+		hired_coach.coach_id,
+		hired_coach.rate_id, 
+		hired_coach.rate_snapshot_id,
+		hired_coach.client_id,
+		hired_coach.status_id
+		from hired_coach where id = ?  LIMIT 1
+	`
+	err := repo.db.Get(&appointment, query, id)
+	return appointment, err
+}
+
+func (repo *HiredCoachRepository)handlePenalty(appointment model.HiredCoach) error{
+
+	appointments, err := repo.getLastThreeAppointmentOfClient(appointment.ClientId)
+	if err != nil { 
+		return err
+	}
+	MaxMissedAppointments := 3
+	missed := 0
+	for _, a := range appointments {
+		if (a.StatusId == status.CoachAppointmentStatusNoShow){
+			missed += 1
+		}
+	}
+	if missed < MaxMissedAppointments {
+		return nil
+	}
+	if (repo.HasPenalty(appointment.ClientId)){
+		return nil
+	}
+	_, err = repo.db.Exec("INSERT INTO coach_appointment_penalty(amount, client_id, coach_id) VALUES (?,?,?)", 100, appointment.ClientId, appointment.CoachId)
+	return err
+}
+
+func (repo *HiredCoachRepository) HasPenalty(clientId int) bool{
+	recordCount := 1
+	repo.db.Get(&recordCount, "SELECT count(1) as recordCount from coach_appointment_penalty where client_id = ? and settled_at is null", clientId)
+	return recordCount >= 1 
+}	

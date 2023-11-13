@@ -75,6 +75,38 @@ createApp({
       }
     };
 
+    const onSubmitNoShow = async (id) => {
+      try {
+        errors.value = {};
+        const response = await fetch(
+          `/coaches/appointments/${id}/status?statusId=5`,
+          {
+            method: "PATCH",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
+        }
+
+        swal.fire(
+          "Appointment Status Update",
+          "Appointment status has been mark as no show.",
+          "success"
+        );
+        fetchAppointments();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const onSubmitPaid = async (id) => {
       try {
         errors.value = {};
@@ -183,6 +215,23 @@ createApp({
     onMounted(() => {
       fetchAppointments();
     });
+    const initMarkAsNoShow = async (id) => {
+      form.value = id;
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, this client did not show up.",
+        title: "Mark as No-Show",
+        text: "Are you that you want this appointment to mark as no-show?",
+        cancelButtonText: "Cancel.",
+        icon: "question",
+      });
+      if (result.isConfirmed) {
+        onSubmitNoShow(id);
+      }
+    };
+    onMounted(() => {
+      fetchAppointments();
+    });
     const now = new Date().toISOString().slice(0, 16);
     return {
       appointments,
@@ -195,6 +244,7 @@ createApp({
       formatDate,
       initMarkAsPaid,
       initCancellation,
+      initMarkAsNoShow,
     };
   },
 }).mount("#Appointments");

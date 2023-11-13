@@ -18,7 +18,7 @@ const (
 	CoachAppointmentStatusApproved  = 2
 	CoachAppointmentStatusPaid  = 3
 	CoachAppointmentStatusCancelled = 4
-	CoachAppointmentNoShow = 5
+	CoachAppointmentStatusNoShow = 5
 )
 
 

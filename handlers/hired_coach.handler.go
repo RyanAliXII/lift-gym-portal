@@ -162,6 +162,8 @@ func (h *HiredCoachHandler) UpdateStatus(c echo.Context) error {
 			 return h.handleMarkingAsPaid(c, id, statusId, sessionData.User.Id)
 		case status.CoachAppointmentStatusCancelled:
 			 return h.handleCancellation(c, id,  statusId, sessionData.User.Id)
+		case status.CoachAppointmentStatusNoShow:
+			return h.handleNoShow(c, id, statusId, sessionData.User.Id)
 	}
 	return c.JSON(http.StatusBadRequest, JSONResponse{
 		Status: http.StatusBadRequest,
@@ -251,4 +253,23 @@ func (h *HiredCoachHandler)handleCancellation(c echo.Context, id int, statusId i
 		Message: "Status updated.",
 	})
 }
+func (h *HiredCoachHandler)handleNoShow(c echo.Context, id int, statusId int, coachId int) error {
+	body := model.HiredCoach{}
+	body.Id = id
+	body.StatusId = statusId
+	body.CoachId = coachId
+	err := h.hiredCoach.MarkAsNoShow(body)
+	if err != nil{ 
+		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsNoShow"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Status updated.",
+	})
+}
+
 

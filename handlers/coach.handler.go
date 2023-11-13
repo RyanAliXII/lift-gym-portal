@@ -43,6 +43,7 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
 		}
 		
+	
 		
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
@@ -53,7 +54,7 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		})
 	}
 	client, err := h.clientRepo.GetById(sessionData.User.Id)
-
+	hasPenalty := h.hiredCoachRepo.HasPenalty(sessionData.User.Id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error","GetById"))
 	}
@@ -64,7 +65,8 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		"module": "Coaches",
 		"objstorePublicUrl": objstore.PublicURL,
 		"isInfoComplete": isInfoComplete,
-		"isVerified": client.IsVerified,		
+		"isVerified": client.IsVerified,
+		"hasPenalty": hasPenalty,		
  	})
 }
 
