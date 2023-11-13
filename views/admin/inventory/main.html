@@ -64,6 +64,7 @@
                         <th>Quantity</th>
                         <th>Cost Price</th>
                         <th>Date Received</th>
+                        <th>Status</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -73,9 +74,26 @@
                         <tr>
                           <td>{equipment.name}</td>
                           <td>{equipment.model}</td>
-                          <td>{equipment.quantity}</td>
+
+                          <td
+                            v-if="equipment.quantity > equipment.quantityThreshold"
+                          >
+                            {equipment.quantity}
+                          </td>
+                          <td v-else class="text-danger font-weight-bold">
+                            {equipment.quantity}
+                          </td>
                           <td>₱ {formatCurrency(equipment.costPrice)}</td>
                           <td>{equipment.dateReceived}</td>
+                          <td
+                            v-if="equipment.quantity > equipment.quantityThreshold"
+                            class="text-success font-weight-bold"
+                          >
+                            Good
+                          </td>
+                          <td v-else class="text-danger font-weight-bold">
+                            Low Quantity
+                          </td>
                           <td>
                             <div>
                               {{if hasPermission "Inventory.Edit"
