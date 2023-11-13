@@ -54,10 +54,12 @@ func adminRoutes (router  * echo.Group){
 	timeSlotHandler := NewTimeSlotHandler()
 	reservationHandler := NewReservationHandler()
 	PaymentHistory := NewPaymentHistoryHandler()
+	reportHandler := NewReportHandler()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
 	router.POST("/reset-password", passwordHandler.ResetPassword)
+	router.GET("/reports/:id", reportHandler.RenderReportData)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.DELETE("/logout", logoutHandler.LogoutAdmin)
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
@@ -131,6 +133,9 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/reservations/date-slots/:dateSlotId", reservationHandler.GetReservationByDateSlot, middlewares.ValidatePermissions("Reservation.Read"))
 	router.PUT("/reservations/:id/status", reservationHandler.UpdateReservationStatus, middlewares.ValidatePermissions("Reservation.Edit"))
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
+	router.GET("/reports", reportHandler.RenderReportPage)
+	router.POST("/reports", reportHandler.CreateReport)
+
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

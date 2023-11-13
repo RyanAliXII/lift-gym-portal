@@ -1,0 +1,155 @@
+{{define "admin/reports/report-data"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="/css/sb-admin/sb-admin-2.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <style type="text/css">
+      .bl {
+        color: #454443;
+      }
+      .gr {
+        color: #5c5c5c;
+      }
+      div {
+        page-break-inside: avoid;
+      }
+      @media print {
+        .apexcharts-legend-marker {
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main id="ReportData">
+      <div class="container-fluid" id="Reports">
+        <div class="d-flex mb-2">
+          <div class="p-3 d-flex flex-column align-items-center rounded">
+            <small class="text-sm">Prepared By </small>
+            <span class="font-weight-bold"> {reportData.preparedBy}</span>
+          </div>
+          <div
+            class="p-3 d-flex flex-column align-items-center rounded"
+            style="flex: 1"
+          >
+            <small class="text-sm"> Date </small>
+            <span class="font-weight-bold"
+              >{formatDate(reportData.startDate)} to
+              {formatDate(reportData.endDate)}</span
+            >
+          </div>
+        </div>
+        <div class="card shadow mb-4">
+          <div class="card-header shadow mb-4">
+            <h6 class="m-0 font-weight-bold text-primary"></h6>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="bl font-weight-bold">New Clients</td>
+                  <td class="gr">{reportData.clients}</td>
+                </tr>
+
+                <tr>
+                  <td class="bl font-weight-bold">New Members</td>
+                  <td class="gr">{reportData.members}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Coaches</td>
+                  <td class="gr">{reportData.coaches}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Membership Requests</td>
+                  <td class="gr">{reportData.membershipRequests}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Package Requests</td>
+                  <td class="gr">{reportData.packageRequests}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Reservations</td>
+                  <td class="gr">{reportData.reservations}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">New Inventory Items</td>
+                  <td class="gr">{reportData.inventoryItems}</td>
+                </tr>
+                <tr>
+                  <td class="bl font-weight-bold">Earnings</td>
+                  <td class="gr">{toMoney(reportData.earnings)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div>
+            <div class="card shadow mb-4">
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Earnings Breakdown
+                </h6>
+              </div>
+              <div class="card-body">
+                <apex-chart
+                  class="d-flex justify-content-center"
+                  width="450"
+                  :options="pieChartOptions"
+                  :series="breakdownSeries"
+                ></apex-chart>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Number of clients per date.
+                </h6>
+              </div>
+              <!-- Card Body -->
+              <div class="card-body">
+                <apex-chart
+                  class="d-flex justify-content-center"
+                  width="450"
+                  :options="barChartOptions"
+                  :series="walkInSeries"
+                ></apex-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    window.reportId = "{{.reportId}}";
+  </script>
+  <script src="/js/admin/reports/report-data.js"></script>
+</html>
+
+{{end}}
