@@ -43,6 +43,30 @@ func (h *WorkoutHandler) RenderWorkoutPage(c echo.Context)  error {
 
 }
 
+func (h *WorkoutHandler) RenderCoachWorkoutPage(c echo.Context)  error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"{
+		workouts, err := h.workoutRepo.GetWorkouts()
+
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetWorkoutsErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"workouts": workouts,
+			},
+			Message: "Workouts fetched.",
+		})
+	}
+	return c.Render(http.StatusOK, "coach/workouts/main", Data{
+		"csrf" : c.Get("csrf"),
+		"title": "Workouts",
+		"module": "Workouts",
+		"publicURL": objstore.PublicURL,  
+	})
+
+}
 func (h *WorkoutHandler) NewWorkout(c echo.Context)  error {
 	workout := model.Workout{}
 	workout.Name = c.FormValue("name")

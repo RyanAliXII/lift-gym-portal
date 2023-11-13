@@ -39,6 +39,27 @@ func (h *WorkoutCategoryHandler) RenderCategoryPage(c echo.Context) error {
 		"module": "Workout Category",
 	})	
 }
+func (h *WorkoutCategoryHandler) RenderCoachCategoryPage(c echo.Context) error {
+
+	contentType := c.Request().Header.Get("Content-Type")
+	if contentType == "application/json"  {
+		categories, err := h.workoutCategoryRepo.GetCategories()
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetCategoriesErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"categories": categories,
+			},
+		})
+	}
+	return c.Render(http.StatusOK, "coach/workouts/category/main", Data{
+		"csrf": c.Get("csrf"),
+		"title": "Workout | Category",
+		"module": "Workout Category",
+	})	
+}
 func (h *WorkoutCategoryHandler) RenderClientWorkoutPage(c echo.Context)  error {
 
 	sessionData := mysqlsession.SessionData{}
