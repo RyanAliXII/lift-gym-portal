@@ -9950,9 +9950,11 @@ a:focus {
 }
 .bg-password-image {
   background: url("../../images/login-image.png");
-  background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-position: center;
+  background-size: contain;
+  background-blend-mode: lighten;
+  opacity: 85%;
 }
 form.user .custom-checkbox.small label {
   line-height: 1.5rem;
