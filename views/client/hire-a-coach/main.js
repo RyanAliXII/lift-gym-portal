@@ -1,5 +1,4 @@
 import { createApp, onMounted, ref } from "vue";
-
 import { Swiper, SwiperSlide } from "swiper/vue";
 import Choices from "choices.js";
 import swal from "sweetalert2";

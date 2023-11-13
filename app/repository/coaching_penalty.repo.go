@@ -46,3 +46,12 @@ func (repo * CoachingPenalty) GetPenalties ()([]model.CoachAppointmentPenalty, e
 	err := repo.db.Select(&penalties, query)
 	return penalties, err
 }
+
+func (repo * CoachingPenalty) MarkAsSettled (id int)error{
+	_,err := repo.db.Exec("UPDATE coach_appointment_penalty set settled_at = now() where id = ?", id)
+	return err
+}
+func (repo * CoachingPenalty) MarkAsUnSettled (id int)error{
+	_,err := repo.db.Exec("UPDATE coach_appointment_penalty set settled_at = null where id = ?", id)
+	return err
+}

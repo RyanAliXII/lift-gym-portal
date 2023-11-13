@@ -136,7 +136,9 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 	router.GET("/reports", reportHandler.RenderReportPage)
 	router.POST("/reports", reportHandler.CreateReport)
-	router.GET("/coaching-penalty", coachingPenaltyHandler.RenderPenaltyPage)
+	router.GET("/coaching-penalty", coachingPenaltyHandler.RenderPenaltyPage,middlewares.ValidatePermissions("Penalty.Read"))
+	router.PATCH("/coaching-penalty/:id/settlement", coachingPenaltyHandler.SettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
+	router.PATCH("/coaching-penalty/:id/unsettlement", coachingPenaltyHandler.UnsettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
 
 }
 func clientRoutes(router * echo.Group){

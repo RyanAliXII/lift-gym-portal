@@ -185,6 +185,8 @@
         <a class="collapse-item" href="/app/coaches">Coaches</a>
         {{end}} {{if hasPermission "Coach.Create" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/coaches/registration">New Coach</a>
+        {{end}} {{if hasPermission "Penalty.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/coaching-penalty">Penalties</a>
         {{end}}
       </div>
     </div>
