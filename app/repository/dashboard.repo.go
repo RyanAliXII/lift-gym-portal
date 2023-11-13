@@ -179,39 +179,45 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
       where subscription.valid_until >= NOW() 
       and subscription.cancelled_at is NULL and client_id = ? and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
         AND NOW()),0),
-        'package', COALESCE((SELECT SUM(price) from package_request 
-        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-        AND NOW()),0)
+        'package', COALESCE((SELECT SUM(package_snapshot.price) as total_price
+        FROM package_request
+        INNER JOIN package_snapshot ON package_request.package_snapshot_id = package_snapshot.id
+        WHERE client_id = ? 
+            AND package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()
+        GROUP BY client_id), 0)
       ) as annual_expenditures_breakdown,
         
         JSON_OBJECT(
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
         WHERE deleted_at is null and client_id = ? and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
-    'membership',  COALESCE((SELECT  SUM(price) from subscription
+        'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where client_id = ? and subscription.valid_until >= NOW() 
       and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
         AND NOW()),0),
-        'package', COALESCE((SELECT SUM(price) from package_request 
-        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-        AND NOW()),0)
+        'package',  COALESCE((SELECT SUM(package_snapshot.price) as total_price
+        FROM package_request
+        INNER JOIN package_snapshot ON package_request.package_snapshot_id = package_snapshot.id
+        WHERE client_id = ? 
+            AND package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()
+        GROUP BY client_id), 0)
       ) as monthly_expenditures_breakdown,
         JSON_OBJECT(	
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
         WHERE deleted_at is null and client_id = ? and  created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
-    'membership',  COALESCE((SELECT  SUM(price) from subscription
+     'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where client_id = ? and  subscription.valid_until >= NOW() 
       and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
         AND NOW()),0),
-        'package', COALESCE((SELECT SUM(price) from package_request 
-        INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-        where client_id = ? and package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-        AND NOW()),0)
+      'package',  COALESCE((SELECT SUM(package_snapshot.price) as total_price
+        FROM package_request
+        INNER JOIN package_snapshot ON package_request.package_snapshot_id = package_snapshot.id
+        WHERE client_id = ? 
+            AND package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()
+        GROUP BY client_id), 0)
   ) as weekly_expenditures_breakdown
   `
   err := repo.db.Get(&data, query, clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId, clientId, clientId, clientId, clientId )
