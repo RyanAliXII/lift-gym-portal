@@ -10,6 +10,7 @@ createApp({
   setup() {
     const reportId = window.reportId;
     const breakdownSeries = ref([]);
+    const walkInSeries = ref([]);
     const INITIAL_DATA = {
       id: 0,
       clients: 0,
@@ -20,7 +21,7 @@ createApp({
       inventoryItems: 0,
       reservations: 0,
       membershipRequests: 0,
-      walkIn: null,
+      walkIns: [],
       packageRequests: 0,
       earnings: 0,
       earningsBreakdown: {
@@ -30,6 +31,26 @@ createApp({
       },
       preparedBy: "0",
     };
+
+    const barChartOptions = {
+      chart: {
+        type: "bar",
+        toolbar: { show: false },
+      },
+      yaxis: {
+        labels: {
+          formatter: function (val) {
+            return val.toFixed(0);
+          },
+        },
+      },
+      plotOptions: {
+        bar: {
+          distributed: true,
+        },
+      },
+    };
+
     const reportData = ref({ ...INITIAL_DATA });
     const fetchReportData = async () => {
       const response = await fetch(`/app/reports/${reportId}`, {
@@ -46,7 +67,22 @@ createApp({
           reportData.value.earningsBreakdown.package,
           reportData.value.earningsBreakdown.walkIn,
         ];
+        const walkIns =
+          reportData.value?.walkIns?.map((walkIn) => ({
+            x: formatDate(walkIn.date),
+            y: walkIn.total,
+          })) ?? [];
+        walkInSeries.value = [{ name: "Walk-Ins", data: walkIns }];
       }
+    };
+    const formatDate = (date) => {
+      if (!date) return "No Date";
+      if (date.length === 0) return "No Date";
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      });
     };
     const pieChartOptions = {
       chart: {
@@ -85,6 +121,8 @@ createApp({
       reportData,
       pieChartOptions,
       breakdownSeries,
+      barChartOptions,
+      walkInSeries,
     };
   },
 }).mount("#ReportData");

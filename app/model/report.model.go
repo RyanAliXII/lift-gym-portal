@@ -38,7 +38,7 @@ type ReportData struct {
 	InventoryItems int `json:"inventoryItems" db:"inventory_items"`
 	Reservations int `json:"reservations" db:"reservations"`//
 	MembershipRequests int `json:"membershipRequests" db:"membership_requests"`
-	WalkIn []WalkInData `json:"walkIn" db:"walk_in"`
+	WalkIns []WalkInData `json:"walkIns" db:"walk_in"`
 	PackageRequests int `json:"packageRequests" db:"package_requests"` 
 	Earnings float64 `json:"earnings" db:"earnings"` 
 	EarningsBreakdown BreakDownJSON `json:"earningsBreakdown" db:"earnings_breakdown"`

@@ -108,3 +108,9 @@ func (repo * Report) GetReportById (id int) (model.ReportDataJSON, error ){
 	err := repo.db.Get(&data, "Select data from report where id = ? limit 1", id)
 	return data, err
 }
+func (repo *Report)GetWalkIns(startDate string, endDate string)([]model.WalkInData, error) {
+	data := make([]model.WalkInData, 0)
+	query := `SELECT COUNT(1) as total, cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date)  as date FROM client_log where date(created_at) BETWEEN ? AND ? GROUP BY DAY(created_at), cast(convert_tz(created_at, 'UTC', 'Asia/Manila') as date) `
+	err := repo.db.Select(&data, query, startDate, endDate)
+	return data, err
+}

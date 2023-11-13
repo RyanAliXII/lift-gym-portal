@@ -34,11 +34,14 @@ func(h * Report) RenderReportData(c echo.Context) error {
 		logger.Error(err.Error())
 		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
 	}
-
 	data, err := h.reportRepo.GetReportById(id)
 	if err != nil{
 		logger.Error(err.Error())
 		return c.Render(http.StatusNotFound, "partials/error/404-page", nil)
+	}
+	data.WalkIns, err = h.reportRepo.GetWalkIns(data.StartDate, data.EndDate)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getWalkInsErr"))
 	}
 	contentType := c.Request().Header.Get("content-type")
 	if contentType == "application/json" {
@@ -51,8 +54,6 @@ func(h * Report) RenderReportData(c echo.Context) error {
 		})
 	
 	}
-	
-
 	return c.Render(http.StatusOK, "admin/reports/report-data", Data{
 		"reportId": id,
 	})

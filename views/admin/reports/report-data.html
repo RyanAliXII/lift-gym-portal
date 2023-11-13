@@ -19,6 +19,9 @@
       .gr {
         color: #5c5c5c;
       }
+      div {
+        page-break-inside: avoid;
+      }
       @media print {
         .apexcharts-legend-marker {
           -webkit-print-color-adjust: exact;
@@ -30,7 +33,7 @@
   <body>
     <main id="ReportData">
       <div class="container-fluid" id="Reports">
-        <div class="w-100 d-flex justify-content-between">
+        <div>
           <div>Prepared By: {reportData.preparedBy}</div>
           <div>Date: {reportData.startDate} to {reportData.endDate}</div>
         </div>
@@ -84,17 +87,47 @@
             </table>
           </div>
         </div>
-
-        <div class="card shadow mb-4">
-          <div class="card-header shadow mb-4">
-            <h6 class="m-0 font-weight-bold text-primary">Charts</h6>
+        <div>
+          <div>
+            <div class="card shadow mb-4">
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Earnings Breakdown
+                </h6>
+              </div>
+              <div class="card-body">
+                <apex-chart
+                  class="d-flex justify-content-center"
+                  width="450"
+                  :options="pieChartOptions"
+                  :series="breakdownSeries"
+                ></apex-chart>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <apex-chart
-              width="500"
-              :options="pieChartOptions"
-              :series="breakdownSeries"
-            ></apex-chart>
+
+          <div>
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Number of clients per date.
+                </h6>
+              </div>
+              <!-- Card Body -->
+              <div class="card-body">
+                <apex-chart
+                  class="d-flex justify-content-center"
+                  width="450"
+                  :options="barChartOptions"
+                  :series="walkInSeries"
+                ></apex-chart>
+              </div>
+            </div>
           </div>
         </div>
       </div>
