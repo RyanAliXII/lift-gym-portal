@@ -9934,9 +9934,11 @@ a:focus {
 }
 .bg-login-image {
   background: url("../../images/login-image.png");
-  background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-position: center;
+  background-size: contain;
+  background-blend-mode: lighten;
+  opacity: 85%;
 }
 .bg-register-image {
   background: url("../../images/login-image.png");
@@ -10335,7 +10337,3 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
-
-
-
-

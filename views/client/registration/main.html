@@ -4,9 +4,9 @@
   {{template "partials/sb-head" .}}
   <body class="bg-primary">
     <div
-      class="d-flex align-items-center justify-content-center"
+      class="d-flex align-items-center justify-content-center bg-primary"
       id="RegistrationPage"
-      style="min-height: 80vh"
+      style="height: 100vh"
     >
       <div class="card text-center" v-if="displaySuccessMessage">
         <div class="card-body">
@@ -23,15 +23,17 @@
         </div>
       </div>
       <div
-        class="card o-hidden border-0 shadow-lg my-5 col-12 col-md-8"
+        class="border-0 shadow-lg w-100 h-100 bg-primary"
         v-if="!displaySuccessMessage"
       >
-        <div class="card-body p-0">
+        <div class="h-100">
           <!-- Nested Row within Card Body -->
-          <div class="row">
-            <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-            <div class="col-lg-7">
-              <div class="p-5">
+          <div class="d-flex h-100">
+            <div class="col-lg-6 d-none d-lg-block bg-register-image"></div>
+            <div
+              class="col-lg-6 bg-white d-flex align-items-center justify-content-center"
+            >
+              <div class="p-5 w-100" style="max-width: 600px">
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                 </div>
