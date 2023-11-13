@@ -79,7 +79,7 @@ func (h * ReservationHandler)RenderAdminReservationPage(c echo.Context) error {
 			Message: "Reservations fetched.",
 		})
 	}
-	dateSlots, err  := h.dateSlot.GetSlots()
+	dateSlots, err  := h.dateSlot.GetAllSlots()
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetSlotsErr"))
 	}

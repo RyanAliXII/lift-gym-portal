@@ -99,6 +99,13 @@ func (h * CoachHandler) HireCoach (c echo.Context ) error {
 			Message: "Unknown error occured.",
 		})
 	}
+	hasPenalty := h.hiredCoachRepo.HasPenalty(session.User.Id)
+	if (hasPenalty) {
+		return c.JSON(http.StatusForbidden, JSONResponse{
+			Status: http.StatusForbidden,
+			Message: "Unknown error occured.",
+		})
+	}
 	hiredCoach.ClientId  = session.User.Id
 	err = h.hiredCoachRepo.Hire(hiredCoach)
 	if err != nil {

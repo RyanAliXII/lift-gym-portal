@@ -62,7 +62,6 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    {{template "partials/sb-scripts" .}}
   </body>
   {{$hasDeletePermission := hasPermission "Client.Delete"
   .currentUser.Permissions }} {{$hasEditPermission := hasPermission
@@ -73,5 +72,6 @@
     window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
   <script src="/js/admin/clients/main.js"></script>
+  {{template "partials/sb-scripts" .}}
 </html>
 {{end}}

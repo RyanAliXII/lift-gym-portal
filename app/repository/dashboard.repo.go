@@ -174,7 +174,7 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
         WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW() and client_id = ?), 0), 
-    'membership',  COALESCE((SELECT  SUM(price) from subscription
+     'membership',  COALESCE((SELECT  SUM(price) from subscription
         INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
       where subscription.valid_until >= NOW() 
       and subscription.cancelled_at is NULL and client_id = ? and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 

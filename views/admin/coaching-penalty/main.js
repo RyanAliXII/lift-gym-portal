@@ -56,6 +56,7 @@ createApp({
         title: "",
         data: "isSettled",
         render: (value, event, row) => {
+          if (!window.hasEditPermission) return "";
           if (!value)
             return `<button class='btn btn-success settle-btn' data-id=${row.id}>Settle</button>`;
 

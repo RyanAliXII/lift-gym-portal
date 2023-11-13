@@ -57,12 +57,10 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
-  {{$hasDeletePermission := hasPermission "Client.Delete"
-  .currentUser.Permissions }} {{$hasEditPermission := hasPermission
-  "Client.Edit" .currentUser.Permissions}}
+  {{$hasEditPermission := hasPermission "Penalty.Edit"
+  .currentUser.Permissions}}
   <script>
     window.csrf = "{{.csrf}}";
-    window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
     window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
   <script src="/js/admin/coaching-penalty/main.js"></script>
