@@ -69,7 +69,7 @@ func main() {
 	e := echo.New()
 	defer e.Shutdown(context.Background())
 
-
+	e.AutoTLSManager.Cache = autocert.DirCache("var/www/.cache") 
 	logger := applog.Get()
 	defer logger.Sync()
 	e.Use(middlewares.LoggerMiddleware)
@@ -81,25 +81,7 @@ func main() {
 	}
 	handlers.RegisterHandlers(e)
 	registerNotFoundHandler(e)
-	autoTLSManager := autocert.Manager{
-		Prompt: autocert.AcceptTOS,
-		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
-		Cache: autocert.DirCache("/var/www/.cache"),
-		HostPolicy: autocert.HostWhitelist("localhost"),
-	}
-	s := http.Server{
-		Addr:    ":443",
-		Handler: e, // set Echo as handler
-		TLSConfig: &tls.Config{
-			//Certificates: nil, // <-- s.ListenAndServeTLS will populate this field
-			GetCertificate: autoTLSManager.GetCertificate,
-			NextProtos:     []string{acme.ALPNProto},
-		},
-		//ReadTimeout: 30 * time.Second, // use custom timeouts
-	}
-	if err := s.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
-		e.Logger.Fatal(err)
-	}
+	e.Logger.Fatal(e.Start(":5000"))	
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}

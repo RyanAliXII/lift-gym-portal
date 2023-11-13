@@ -31,7 +31,7 @@ RUN wget -q https://github.com/golang-migrate/migrate/releases/download/v4.16.2/
    
 
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE 5000
+
 
 CMD ["app/bin/main"]

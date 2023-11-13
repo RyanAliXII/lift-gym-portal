@@ -98,7 +98,7 @@ func(h  * Report) CreateReport (c echo.Context) error {
 		logger.Error(err.Error())
 	}
 	
-	url := fmt.Sprintf("http://localhost/app/reports/%d", data.Id )
+	url := fmt.Sprintf("http://localhost:5000/app/reports/%d", data.Id )
 	page, err := browser.Goto(url)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GotoErr"))
