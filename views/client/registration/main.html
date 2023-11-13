@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
-  <body class="bg-primary">
+  <body style="background-color: #03060f">
     <div
-      class="d-flex align-items-center justify-content-center bg-primary"
+      class="d-flex align-items-center justify-content-center"
       id="RegistrationPage"
-      style="height: 100vh"
+      style="height: 100vh; background-color: #03060f"
     >
       <div class="card text-center" v-if="displaySuccessMessage">
         <div class="card-body">
@@ -23,8 +23,9 @@
         </div>
       </div>
       <div
-        class="border-0 shadow-lg w-100 h-100 bg-primary"
+        class="border-0 shadow-lg w-100 h-100"
         v-if="!displaySuccessMessage"
+        style="background-color: #03060f"
       >
         <div class="h-100">
           <!-- Nested Row within Card Body -->
