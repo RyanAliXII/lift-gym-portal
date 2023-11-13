@@ -92,6 +92,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/membership-requests", membershipRequestHandler.RenderAdminMembershipRequest, middlewares.ValidatePermissions("MembershipRequest.Read"))
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.UpdateMembershipRequestStatus, middlewares.ValidatePermissions("MembershipRequest.Edit"))
 	router.GET("/package-requests", pkgRequestHandler.RenderAdminPackageRequestPage, middlewares.ValidatePermissions("PackageRequest.Read"))
+	router.POST("/package-requests", pkgRequestHandler.NewPackageRequestWalkIn, middlewares.ValidatePermissions("PackageRequest.Create"))
 	router.PATCH("/package-requests/:id/status", pkgRequestHandler.UpdatePackageRequestStatus, middlewares.ValidatePermissions("PackageRequest.Edit"))
 	router.GET("/staffs",  staffHandler.RenderStaffPage, middlewares.ValidatePermissions("Staff.Read"))
 	router.POST("/staffs",staffHandler.NewStaff, middlewares.ValidatePermissions("Staff.Create"))

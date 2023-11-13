@@ -125,6 +125,41 @@ func(h * PackageRequestHandler)NewPackageRequest(c echo.Context) error {
 		Message: "Package request submitted.",
 	})
 }
+
+func(h * PackageRequestHandler)NewPackageRequestWalkIn(c echo.Context) error {
+	pkgRequest := model.PackageRequest{}
+	err := c.Bind(&pkgRequest)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "bindErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	fieldErr, err := pkgRequest.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: Data{
+				"errors": fieldErr,
+			},
+			Message: "Validation error.",
+		})
+	}
+	pkgRequest.StatusId = status.PackageRequestStatusReceived
+	err = h.packageRequestRepo.NewPackageRequest(pkgRequest)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewPackageRequestErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Package request submitted.",
+	})
+}
 func (h *PackageRequestHandler) CancelPackageRequest(c echo.Context)error {
 	id,err := strconv.Atoi( c.Param("id"))
 	if err != nil {

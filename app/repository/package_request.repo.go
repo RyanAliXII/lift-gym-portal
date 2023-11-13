@@ -43,6 +43,37 @@ func (repo *PackageRequestRepository) NewPackageRequest(pkgRequest model.Package
 	transaction.Commit()
 	return nil
 }
+func (repo *PackageRequestRepository) NewPackageRequestWalkIn(pkgRequest model.PackageRequest)(error){
+	transaction, err := repo.db.Beginx()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	pkg := model.Package{}
+	err = transaction.Get(&pkg, "SELECT description, price from package where id = ?", pkgRequest.PackageId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	result, err := transaction.Exec("INSERT INTO package_snapshot (description, price) VALUES (?, ?)", pkg.Description, pkg.Price)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	snapshotId, err := result.LastInsertId()
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	query := `INSERT INTO package_request(client_id, package_id, status_id, package_snapshot_id, remarks) VALUES (?, ?, ?, ?, "")`
+	_, err = transaction.Exec(query, pkgRequest.ClientId, pkgRequest.PackageId, pkgRequest.StatusId, snapshotId)
+	if err != nil {
+		transaction.Rollback()
+		return err
+	}
+	transaction.Commit()
+	return nil
+}
 func (repo *PackageRequestRepository) GetPackageRequestsByClientId (clientId int)([]model.PackageRequest, error) {	
 	pkgRequests := make([]model.PackageRequest, 0)
 	query := `SELECT 

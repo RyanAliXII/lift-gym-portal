@@ -1,6 +1,7 @@
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
-
+import Choices from "choices.js";
+import { useDebounceFn } from "@vueuse/core";
 const updateStatus = async (
   id,
   status = 0,
@@ -28,6 +29,10 @@ const updateStatus = async (
 
 createApp({
   setup() {
+    const packageSelectElement = ref(null);
+    const clientSelectElement = ref(null);
+    let packageSelect = null;
+    let clientSelect = null;
     const packageRequests = ref([]);
     const Status = {
       Pending: 1,
@@ -35,6 +40,11 @@ createApp({
       Received: 3,
       Cancelled: 4,
     };
+    const form = ref({
+      clientId: 0,
+      packageId: 0,
+    });
+    const errors = ref({});
     const fetchPackageRequests = async () => {
       try {
         const response = await fetch("/app/package-requests", {
@@ -45,6 +55,50 @@ createApp({
       } catch (error) {
         console.error(error);
         packageRequests.value = [];
+      }
+    };
+    const newPackageRequests = async () => {
+      try {
+        errors.value = {};
+        const response = await fetch("/app/package-requests", {
+          body: JSON.stringify(form.value),
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        if (response.status === 400) {
+          const { data } = await response.json();
+          if (data?.errors) {
+            errors.value = data?.errors ?? {};
+          }
+          return;
+        }
+
+        $("#requestModal").modal("hide");
+        swal.fire(
+          "Package Request Created",
+          "Package request has been created.",
+          "success"
+        );
+        fetchPackageRequests();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const fetchPackages = async () => {
+      try {
+        const response = await fetch("/app/packages", {
+          headers: new Headers({
+            "content-type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
+        });
+        const { data } = await response.json();
+        return data?.packages ?? [];
+      } catch {
+        return [];
       }
     };
     const formatDate = (d) => {
@@ -129,9 +183,71 @@ createApp({
         );
       }
     };
-    const init = async () => {
-      fetchPackageRequests();
+    const fetchClientByKeyword = async (query) => {
+      const response = await fetch(
+        `/app/clients?${new URLSearchParams({
+          keyword: query,
+        }).toString()}`,
+        {
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        const { data } = await response.json();
+        const selectValues = (data?.clients ?? []).map((client) => ({
+          value: client.id,
+          label: `${client.givenName} ${client.surname} - ${client.email} - ${
+            client.isMember ? "Member" : "Non-Member"
+          }`,
+          customProperties: client,
+        }));
+        clientSelect.setChoices(selectValues, "value", "label", true);
+      }
     };
+    const search = useDebounceFn(fetchClientByKeyword, 500);
+    const init = async () => {
+      packageSelect = new Choices(packageSelectElement.value, {
+        allowHTML: false,
+      });
+      clientSelect = new Choices(clientSelectElement.value, {
+        allowHTML: false,
+        placeholder: "Seach Client",
+      });
+
+      const packages = await fetchPackages();
+      const packageOptions = packages.map((p) => ({
+        value: p.id,
+        label: p.description + " - " + p.price + " PHP",
+        id: p.id,
+        customProperties: p,
+      }));
+
+      clientSelect.passedElement.element.addEventListener("search", (event) => {
+        search(event.detail.value);
+      });
+      clientSelect.passedElement.element.addEventListener("change", (event) => {
+        delete errors.value.clientId;
+        form.value.clientId = event.detail.value;
+      });
+      packageSelect.passedElement.element.addEventListener(
+        "change",
+        (event) => {
+          delete errors.value.packageId;
+          form.value.packageId = event.detail.value;
+        }
+      );
+      packageSelect.setChoices(packageOptions);
+      fetchPackageRequests();
+      $("#requestModal").on("hidden.bs.modal", async () => {
+        packageSelect.removeActiveItems();
+        clientSelect.removeActiveItems();
+      });
+    };
+
     onMounted(() => {
       init();
     });
@@ -143,6 +259,13 @@ createApp({
       initApproval,
       initMarkAsReceived,
       formatDate,
+      packageSelect,
+      packageSelectElement,
+      clientSelectElement,
+      form,
+      errors,
+      newPackageRequests,
+      errors,
     };
   },
   compilerOptions: {
