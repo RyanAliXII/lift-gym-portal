@@ -24,6 +24,7 @@
       }
       @media print {
         .apexcharts-legend-marker {
+          print-color-adjust: exact;
           -webkit-print-color-adjust: exact;
         }
       }
@@ -33,9 +34,21 @@
   <body>
     <main id="ReportData">
       <div class="container-fluid" id="Reports">
-        <div>
-          <div>Prepared By: {reportData.preparedBy}</div>
-          <div>Date: {reportData.startDate} to {reportData.endDate}</div>
+        <div class="d-flex mb-2">
+          <div class="p-3 d-flex flex-column align-items-center rounded">
+            <small class="text-sm">Prepared By </small>
+            <span class="font-weight-bold"> {reportData.preparedBy}</span>
+          </div>
+          <div
+            class="p-3 d-flex flex-column align-items-center rounded"
+            style="flex: 1"
+          >
+            <small class="text-sm"> Date </small>
+            <span class="font-weight-bold"
+              >{formatDate(reportData.startDate)} to
+              {formatDate(reportData.endDate)}</span
+            >
+          </div>
         </div>
         <div class="card shadow mb-4">
           <div class="card-header shadow mb-4">
@@ -64,19 +77,19 @@
                   <td class="gr">{reportData.coaches}</td>
                 </tr>
                 <tr>
-                  <td class="bl font-weight-bold">Membership Requests</td>
+                  <td class="bl font-weight-bold">New Membership Requests</td>
                   <td class="gr">{reportData.membershipRequests}</td>
                 </tr>
                 <tr>
-                  <td class="bl font-weight-bold">Package Requests</td>
+                  <td class="bl font-weight-bold">New Package Requests</td>
                   <td class="gr">{reportData.packageRequests}</td>
                 </tr>
                 <tr>
-                  <td class="bl font-weight-bold">Reservations</td>
+                  <td class="bl font-weight-bold">New Reservations</td>
                   <td class="gr">{reportData.reservations}</td>
                 </tr>
                 <tr>
-                  <td class="bl font-weight-bold">Inventory Items</td>
+                  <td class="bl font-weight-bold">New Inventory Items</td>
                   <td class="gr">{reportData.inventoryItems}</td>
                 </tr>
                 <tr>

@@ -11,8 +11,9 @@ createApp({
   },
   setup() {
     const dateRange = ref([]);
-
+    const isSubmitting = ref(false);
     const onSubmit = async () => {
+      isSubmitting.value = true;
       try {
         if (dateRange.value.length != 2) return;
         const start = dateRange.value[0];
@@ -28,8 +29,23 @@ createApp({
             "X-CSRF-Token": window.csrf,
           }),
         });
+
+        if (
+          response.headers.get("content-type") === "application/pdf" &&
+          response.status === 200
+        ) {
+          const buffer = await response.arrayBuffer();
+          const a = document.createElement("a");
+          a.download = "app.pdf";
+          const blob = new Blob([buffer], { type: "application/pdf" });
+          const url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.click();
+        }
       } catch (err) {
         console.error(err);
+      } finally {
+        isSubmitting.value = false;
       }
     };
 
@@ -70,6 +86,7 @@ createApp({
       setToAnnually,
       setToWeekly,
       setToMonthly,
+      isSubmitting,
     };
   },
 }).mount("#Reports");

@@ -59,6 +59,7 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
 	router.POST("/reset-password", passwordHandler.ResetPassword)
+	router.GET("/reports/:id", reportHandler.RenderReportData)
 	router.Use(middlewares.AuthMiddleware("sid", "/app/login"))
 	router.DELETE("/logout", logoutHandler.LogoutAdmin)
 	router.GET("/dashboard", dashboardHandler.RenderDashboardPage,)
@@ -134,7 +135,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 	router.GET("/reports", reportHandler.RenderReportPage)
 	router.POST("/reports", reportHandler.CreateReport)
-	router.GET("/reports/:id", reportHandler.RenderReportData)
+
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

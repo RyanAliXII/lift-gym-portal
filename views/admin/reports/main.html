@@ -26,39 +26,15 @@
                 <div class="card-body">
                     <form @submit.prevent="onSubmit">
                         <div class="d-flex" style="gap:5px">
-                            <button class="btn btn-outline-secondary" @click="setToWeekly">Weekly</button>
-                            <button class="btn btn-outline-secondary" @click="setToMonthly">Monthly</button>
-                          
-                            <button class="btn btn-outline-secondary" @click="setToAnnually">Annually</button>
+                            <button type="button" class="btn btn-outline-secondary" @click="setToWeekly">Weekly</button>
+                            <button type="button" class="btn btn-outline-secondary" @click="setToMonthly">Monthly</button>
+                            <button type="button" class="btn btn-outline-secondary" @click="setToAnnually">Annually</button>
                         </div>
                         <div class="form-group mt-3">
                             <label>Date Range</label>
-                            <vue-date-picker v-model="dateRange"  :enableTimePicker="false" fixed-end range></vue-date-picker>
+                            <vue-date-picker v-model="dateRange"  :enableTimePicker="false"  range></vue-date-picker>
                         </div>
-
-                        <div class="form-group mt-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                                <label class="form-check-label">
-                                  Revenues and Earnings
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                                <label class="form-check-label">
-                                  Library Activity
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
-                                <label class="form-check-label">
-                                 Number of clients, coaches and members.
-                                </label>
-                            </div>
-                              
-                          
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button :disabled="isSubmitting" type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
                    

@@ -36,6 +36,9 @@ createApp({
       chart: {
         type: "bar",
         toolbar: { show: false },
+        animations: {
+          enabled: false,
+        },
       },
       yaxis: {
         labels: {
@@ -87,6 +90,9 @@ createApp({
     const pieChartOptions = {
       chart: {
         type: "pie",
+        animations: {
+          enabled: false,
+        },
       },
       tooltip: {
         y: {
@@ -95,6 +101,7 @@ createApp({
           },
         },
       },
+
       labels: ["Membership", "Package", "Walk-In"],
       legend: {
         position: "bottom",
@@ -123,6 +130,7 @@ createApp({
       breakdownSeries,
       barChartOptions,
       walkInSeries,
+      formatDate,
     };
   },
 }).mount("#ReportData");

@@ -7,6 +7,7 @@ COPY . .
 RUN go mod download && \
     go build -o app/bin/main app/cmd/main.go &&\
     go install github.com/cosmtrek/air@latest &&\ 
+    apk add chromium &&\
     wget -q https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz && \
     tar -xf migrate.linux-amd64.tar.gz  && \
     mv migrate /usr/local/bin/migrate &&\

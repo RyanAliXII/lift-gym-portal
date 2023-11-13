@@ -1,14 +1,19 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/browser"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/go-rod/rod/lib/proto"
 	"github.com/labstack/echo/v4"
+	"github.com/ysmood/gson"
 	"go.uber.org/zap"
 )
 
@@ -77,6 +82,14 @@ func(h  * Report) CreateReport (c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
+	browser, err  := browser.NewBrowser()
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "newBrowserErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
 	sessionData := c.Get("sessionData")
 	session := mysqlsession.SessionData{}
 	session.Bind(sessionData)
@@ -84,9 +97,44 @@ func(h  * Report) CreateReport (c echo.Context) error {
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	fmt.Println(data)
-	return c.JSON(http.StatusOK, JSONResponse{
-		Status: http.StatusOK,
-		Message: "Reports Generated.",
+	
+	url := fmt.Sprintf("http://localhost/app/reports/%d", data.Id )
+	page, err := browser.Goto(url)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "GotoErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = page.WaitStable(1 * time.Second)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "waitLoad"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	pdf, err := page.PDF(&proto.PagePrintToPDF{
+		PaperWidth: gson.Num(8.5),
+		PaperHeight: gson.Num(11),
 	})
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "ToPDFErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	var buffer bytes.Buffer;
+	_, err = buffer.ReadFrom(pdf)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "toBufferErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+
+	return c.Stream(http.StatusOK, "application/pdf", &buffer)
 }
