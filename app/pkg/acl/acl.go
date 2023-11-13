@@ -67,6 +67,8 @@ var Permissions = []string{
 	"Payment.Read",
 	"Penalty.Read",
 	"Penalty.Edit",
+	"Report.Read",
+	"Report.Create",
 }
 
 

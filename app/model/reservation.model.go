@@ -84,13 +84,14 @@ func IsTemporarilyBannedFromReservation(clientId int) (bool, time.Time) {
 	reservations := make([]Reservation, 0)
 	err := db.Select(&reservations,`SELECT date_slot.date, status_id FROM reservation  
 	INNER JOIN date_slot on reservation.date_slot_id = date_slot.id
-	where client_id = ? and  date_slot.date < curdate()
+	where client_id = ?
 	ORDER BY date desc LIMIT 3
 	`, clientId)
 	if err != nil {
 		logger.Error(err.Error())
 		return true, time.Time{}
 	}
+
 		
 	const MaxAllowedUnattendedReservations = 3
 	if len(reservations) < MaxAllowedUnattendedReservations{

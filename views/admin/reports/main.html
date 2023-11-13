@@ -34,7 +34,9 @@
                             <label>Date Range</label>
                             <vue-date-picker v-model="dateRange"  :enableTimePicker="false"  range></vue-date-picker>
                         </div>
+                        {{if hasPermission "Report.Read" .currentUser.Permissions}}
                         <button :disabled="isSubmitting" type="submit" class="btn btn-primary">Submit</button>
+                        {{end}}
                     </form>
                 </div>
                    
