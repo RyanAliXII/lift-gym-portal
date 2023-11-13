@@ -98,6 +98,16 @@
                               </button>
                               <button
                                 v-if="appointment.statusId === 2"
+                                class="btn btn-outline-warning"
+                                data-toggle="tooltip"
+                                title="Mark as No Show"
+                                @click="initMarkAsPaid(appointment.id)"
+                              >
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                              </button>
+
+                              <button
+                                v-if="appointment.statusId === 2"
                                 class="btn btn-outline-success"
                                 data-toggle="tooltip"
                                 title="Mark as Paid"
@@ -106,9 +116,10 @@
                                 <i class="fas fa-money-check-alt"></i>
                               </button>
                               <button
-                                v-if="appointment.statusId === 1"
+                                v-if="appointment.statusId != 3 && appointment.statusId != 4"
                                 class="btn btn-outline-danger"
                                 data-toggle="tooltip"
+                                @click="initCancellation(appointment.id)"
                                 title="Cancel"
                               >
                                 <i class="fas fa-times"></i>

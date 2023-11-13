@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/status"
@@ -159,6 +160,8 @@ func (h *HiredCoachHandler) UpdateStatus(c echo.Context) error {
 			 return h.handleApproval(c, id, statusId, sessionData.User.Id)
 		case status.CoachAppointmentStatusPaid:
 			 return h.handleMarkingAsPaid(c, id, statusId, sessionData.User.Id)
+		case status.CoachAppointmentStatusCancelled:
+			 return h.handleCancellation(c, id,  statusId, sessionData.User.Id)
 	}
 	return c.JSON(http.StatusBadRequest, JSONResponse{
 		Status: http.StatusBadRequest,
@@ -213,6 +216,31 @@ func (h *HiredCoachHandler)handleMarkingAsPaid(c echo.Context, id int, statusId 
 	err := h.hiredCoach.MarkAppointmentAsPaid(body)
 	if err != nil{ 
 		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsApproved"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Status updated.",
+	})
+}
+
+func (h *HiredCoachHandler)handleCancellation(c echo.Context, id int, statusId int, coachId int) error {
+	body := model.HiredCoach{}
+	body.Remarks = c.FormValue("remarks")
+	body.Id = id
+	body.StatusId = statusId
+	body.CoachId = coachId
+	if(len(body.Remarks) > 0){
+		body.Remarks = fmt.Sprintf("Cancelled by coach: %s ", body.Remarks )
+	}else{
+		body.Remarks = "Cancelled by coach"	
+	}
+	err := h.hiredCoach.CancelAppointment( body)
+	if err != nil{ 
+		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsCancelled"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",

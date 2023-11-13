@@ -1,0 +1,1 @@
+INSERT INTO hired_coaches_status(id, description)VALUES(5, "No-Show")

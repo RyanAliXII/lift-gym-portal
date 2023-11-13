@@ -1,5 +1,6 @@
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
+import { te } from "date-fns/locale";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -98,6 +99,33 @@ createApp({
         console.error(error);
       }
     };
+    const onSubmitCancellation = async (id, remarks) => {
+      try {
+        errors.value = {};
+        const formData = new FormData();
+        formData.append("remarks", remarks);
+        const response = await fetch(
+          `/coaches/appointments/${id}/status?statusId=4`,
+          {
+            body: formData,
+            method: "PATCH",
+            headers: new Headers({
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          swal.fire(
+            "Appointment Status Update",
+            "Appointment status has been cancelled.",
+            "success"
+          );
+          fetchAppointments();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const formatDate = (date) => {
       if (!date) return "";
       return new Date(date).toLocaleDateString("en-US", {
@@ -119,6 +147,24 @@ createApp({
     const initApproval = (id) => {
       form.value.id = id;
       $("#meetingDateModal").modal("show");
+    };
+
+    const initCancellation = async (id) => {
+      const { value: text, isConfirmed } = await swal.fire({
+        input: "textarea",
+        inputLabel: "Remarks",
+        title: "Cancellation Remarks",
+        confirmButtonText: "Submit",
+        inputPlaceholder: "Enter the reason for cancellation.",
+        inputAttributes: {
+          "aria-label": "Enter the reason for cancellation.",
+          maxlength: "150",
+        },
+        showCancelButton: true,
+        confirmButtonColor: "#d9534f",
+      });
+      if (!isConfirmed) return;
+      onSubmitCancellation(id, text);
     };
     const initMarkAsPaid = async (id) => {
       form.value = id;
@@ -148,6 +194,7 @@ createApp({
       errors,
       formatDate,
       initMarkAsPaid,
+      initCancellation,
     };
   },
 }).mount("#Appointments");

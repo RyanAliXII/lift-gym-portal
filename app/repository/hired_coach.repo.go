@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/status"
@@ -136,5 +137,11 @@ func(repo * HiredCoachRepository)MarkAppointmentAsApproved(appointment model.Hir
 }
 func(repo * HiredCoachRepository)MarkAppointmentAsPaid(appointment model.HiredCoach) error {
 	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusPaid,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusApproved)
+	return err
+}
+
+func(repo * HiredCoachRepository)CancelAppointment(appointment model.HiredCoach) error {
+	fmt.Println(appointment.Id)
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and coach_id = ?  and (status_id = 1 or status_id = 2)", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.CoachId)
 	return err
 }
