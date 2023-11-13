@@ -32,14 +32,14 @@
                   @input="handleSearch"
                 />
                 <div class="table-responsive mt-2">
-                  <!-- <data-table
+                  <data-table
                     ref="table"
                     class="table table-bordered"
-                    :data="clients"
+                    :data="penalties"
                     :options="tableConfig"
                     :columns="columns"
                   >
-                  </data-table> -->
+                  </data-table>
                 </div>
               </div>
             </div>
@@ -65,6 +65,6 @@
     window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
     window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
-  <!-- <script src="/js/admin/clients/main.js"></script> -->
+  <script src="/js/admin/coaching-penalty/main.js"></script>
 </html>
 {{end}}

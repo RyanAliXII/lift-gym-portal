@@ -192,7 +192,7 @@ type CoachAppointmentPenalty struct {
 	Id int `json:"id" db:"id"` 
 	IsSettled bool `json:"isSetttled" db:"is_settled"`
 	CoachId int `json:"coachId" db:"coach_id"`
-	ClientId int `json:"clientId" db:"clien_id"`
+	ClientId int `json:"clientId" db:"client_id"`
 	Amount float64 `json:"amount" db:"amount"`
 	Coach CoachJSON `json:"coach" db:"coach"`
 	Client ClientJSON `json:"client" db:"client"`

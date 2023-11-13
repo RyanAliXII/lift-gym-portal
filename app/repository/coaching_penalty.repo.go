@@ -19,13 +19,12 @@ func NewCoachingPenalty() CoachingPenalty{
 
 func (repo * CoachingPenalty) GetPenalties ()([]model.CoachAppointmentPenalty, error) {
 	penalties := make([]model.CoachAppointmentPenalty,0)
-
-
 	query := `
 	SELECT
 	coach_appointment_penalty.id, 
 	client_id, 
 	coach_id, 
+	amount,
 	(case when settled_at is null then false else true end) as is_settled,  
 	JSON_OBJECT(
 	   'publicId', client.public_id, 
@@ -42,8 +41,8 @@ func (repo * CoachingPenalty) GetPenalties ()([]model.CoachAppointmentPenalty, e
 	FROM coach_appointment_penalty
 	INNER JOIN client on coach_appointment_penalty.client_id = client.id
 	INNER JOIN coach on coach_appointment_penalty.coach_id = coach.id
-	order by created_at desc
-	 `
-	err := repo.db.Select(&penalties, query )
+	order by coach_appointment_penalty.created_at desc
+	`
+	err := repo.db.Select(&penalties, query)
 	return penalties, err
 }
