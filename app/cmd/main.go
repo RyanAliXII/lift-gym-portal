@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"html/template"
 	"io"
@@ -24,6 +25,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/acme"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type TemplateRegistry struct {
@@ -65,6 +68,8 @@ func main() {
 	defer browser.GetLauncher().Close()
 	e := echo.New()
 	defer e.Shutdown(context.Background())
+
+
 	logger := applog.Get()
 	defer logger.Sync()
 	e.Use(middlewares.LoggerMiddleware)
@@ -76,7 +81,25 @@ func main() {
 	}
 	handlers.RegisterHandlers(e)
 	registerNotFoundHandler(e)
-	e.Logger.Fatal(e.Start(":80"))	
+	autoTLSManager := autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+		Cache: autocert.DirCache("/var/www/.cache"),
+		HostPolicy: autocert.HostWhitelist("localhost"),
+	}
+	s := http.Server{
+		Addr:    ":443",
+		Handler: e, // set Echo as handler
+		TLSConfig: &tls.Config{
+			//Certificates: nil, // <-- s.ListenAndServeTLS will populate this field
+			GetCertificate: autoTLSManager.GetCertificate,
+			NextProtos:     []string{acme.ALPNProto},
+		},
+		//ReadTimeout: 30 * time.Second, // use custom timeouts
+	}
+	if err := s.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
+		e.Logger.Fatal(err)
+	}
 }
 func loadTemplates(path string) * template.Template{
 	templateList := []string{}
@@ -129,4 +152,36 @@ func noRouteFunc (c echo.Context) error {
 	}
 	
 	return c.Render(http.StatusNotFound,"partials/error/404-page", nil)
+}
+
+func customHTTPServer() {
+	e := echo.New()
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, `
+			<h1>Welcome to Echo!</h1>
+			<h3>TLS certificates automatically installed from Let's Encrypt :)</h3>
+		`)
+	})
+
+	autoTLSManager := autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+		Cache: autocert.DirCache("/var/www/.cache"),
+		//HostPolicy: autocert.HostWhitelist("<DOMAIN>"),
+	}
+	s := http.Server{
+		Addr:    ":443",
+		Handler: e, // set Echo as handler
+		TLSConfig: &tls.Config{
+			//Certificates: nil, // <-- s.ListenAndServeTLS will populate this field
+			GetCertificate: autoTLSManager.GetCertificate,
+			NextProtos:     []string{acme.ALPNProto},
+		},
+		//ReadTimeout: 30 * time.Second, // use custom timeouts
+	}
+	if err := s.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
+		e.Logger.Fatal(err)
+	}
 }
