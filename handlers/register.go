@@ -55,6 +55,7 @@ func adminRoutes (router  * echo.Group){
 	reservationHandler := NewReservationHandler()
 	PaymentHistory := NewPaymentHistoryHandler()
 	reportHandler := NewReportHandler()
+	coachingPenaltyHandler := NewCoachingPenalty()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
 	router.GET("/reset-password", passwordHandler.RenderResetPasswordPage)
@@ -135,6 +136,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/payments", PaymentHistory.RenderPayments, middlewares.ValidatePermissions("Payment.Read"))
 	router.GET("/reports", reportHandler.RenderReportPage)
 	router.POST("/reports", reportHandler.CreateReport)
+	router.GET("/coaching-penalty", coachingPenaltyHandler.RenderPenaltyPage)
 
 }
 func clientRoutes(router * echo.Group){

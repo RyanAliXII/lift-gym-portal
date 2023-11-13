@@ -42,9 +42,6 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		if err != nil {
 			logger.Error(err.Error(), zap.String("error", "GetCoachesErr"))
 		}
-		
-	
-		
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
