@@ -142,6 +142,10 @@ func (repo *ClientRepository) MarkAsVerified(id int ) error{
 	_, err := repo.db.Exec("UPDATE client set verified_at = NOW() where id = ?", id)
 	return err
 }
+func (repo *ClientRepository) MarkAsUnverified(id int ) error{
+	_, err := repo.db.Exec("UPDATE client set verified_at = null where id = ?", id)
+	return err
+}
 
 func (repo * ClientRepository)Delete(id int)(error) {
 	_, err := repo.db.Exec("UPDATE client set deleted_at = NOW() where id = ?", id)

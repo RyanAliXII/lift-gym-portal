@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/smtp"
 	"os"
+	"time"
 )
 
 
@@ -31,11 +32,15 @@ func SendEmailVerification(to []string, recieverName string, publicId string) er
 		fmt.Println(err)
 		return err
 	}
+	fmt.Println("Sending email verification.")
+	start := time.Now()
 	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", SMTPEmail, SMTPPassword,  SMTPHost), SMTPEmail, to, body.Bytes())
 	if err != nil {
 		fmt.Println(err)
         return err
     }
+	elapsed := time.Since(start)
+	fmt.Printf("Email verification has been sent. %v", elapsed)
 	return nil
 }
 
@@ -60,11 +65,15 @@ func SendEmailPasswordReset(to []string, recieverName string, publicId string) e
 		fmt.Println(err)
 		return err
 	}
+	fmt.Println("Sending password reset email.")
+	start := time.Now()
 	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", SMTPEmail, SMTPPassword,  SMTPHost), SMTPEmail, to, body.Bytes())
 	if err != nil {
 		fmt.Println(err)
         return err
     }
+	elapsed := time.Since(start)
+	fmt.Printf("Password reset email has been sent. %v", elapsed)
 	return nil
 }
 

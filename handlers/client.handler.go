@@ -97,6 +97,57 @@ func (h * ClientHandler) DeleteClient( c echo.Context) error {
 		Message: "Client deleted.",
 	})
 }
+
+
+func (h * ClientHandler) VerifyClient( c echo.Context) error {
+	id := c.Param("id")
+	clientId, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
+	
+	err := h.clientRepo.MarkAsVerified(clientId)
+	if err != nil{
+		logger.Error(err.Error(), zap.String("error","verifyClient"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",	
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client verified.",
+	})
+}
+
+func (h * ClientHandler) RemoveVerification( c echo.Context) error {
+	id := c.Param("id")
+	clientId, convErr := strconv.Atoi(id)
+	if convErr != nil {
+		logger.Error(convErr.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest, Data{
+			"status": http.StatusBadRequest,
+			"message": "Unknown error occured.",
+		})
+	}
+	
+	err := h.clientRepo.MarkAsUnverified(clientId)
+	if err != nil{
+		logger.Error(err.Error(), zap.String("error","removeVerification"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",	
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client unverified.",
+	})
+}
 func (h * ClientHandler) RenderClientRegistrationForm(c echo.Context) error {
 	csrf := c.Get("csrf")
 
