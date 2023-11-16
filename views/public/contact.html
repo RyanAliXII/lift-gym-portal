@@ -1,0 +1,295 @@
+{{define "public/contactus"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--FAVICON-->
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        <!--FAVICON-->
+        <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+    
+        <!--REMIXICON-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+          rel="stylesheet"
+        />
+    
+        <!--CSS-->
+        <link rel="stylesheet" href="/css/landing-page/styles.css" />
+    
+        <title>LIFT FITNESS GYM - Contact Us</title>
+      </head>
+  <body>
+    <!--HEADER-->
+    <header class="header" id="header">
+        <nav class="nav container">
+          <a href="#" class="nav__logo">
+            <img src="/images/logo-nav.png" alt="logo" />LIFT FITNESS
+          </a>
+  
+          <div class="nav__menu" id="nav-menu">
+            <ul class="nav__list">
+              <li class="nav__item">
+                <a href="/#home" class="nav__link active-link">Home</a>
+              </li>
+              <li class="nav__item">
+                <a href="/#program" class="nav__link">Program</a>
+              </li>
+              <li class="nav__item">
+                <a href="/#choose" class="nav__link">Choose Us</a>
+              </li>
+              <ul class="dropdown">
+                <li class="nav__item">
+                  <a href="#" class="nav__link">More</a>
+                  <ul class="submenu">
+                    <li class="nav__item">
+                      <a href="/#pricing" class="nav__link">Pricing</a>
+                    </li>
+                    <li class="nav__item">
+                      <a href="/contact-us" class="nav__link">Contact Us</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+              <div class="nav__link">
+                <a href="/clients/login" class="button nav__button"> Sign in </a>
+              </div>
+  
+              <div class="nav__link">
+                <a href="/clients/registration" class="button nav__button">
+                  Register Now
+                </a>
+              </div>
+            </ul>
+  
+            <div class="nav__close" id="nav-close">
+              <i class="ri-close-line"></i>
+            </div>
+          </div>
+  
+          <!--Toggle button!-->
+          <div class="nav__toggle" id="nav-toggle">
+            <i class="ri-menu-line"></i>
+          </div>
+        </nav>
+      </header>
+    <!--MAIN-->
+    <main class="main">
+      <!--MAP-->
+      <section class="location">
+        <div class="section__data">
+          <h2 class="section__subtitle">LOCATION</h2>
+          <div class="section__titles">
+            <h1 class="section__title-border">OUR</h1>
+            <h1 class="section__title">SPECIAL PLAN</h1>
+          </div>
+        </div>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.303028837884!2d120.97414189934358!3d14.638732264062352!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b5c4c98e4393%3A0x6ca41fd70c08d197!2s198%20A.%20Mabini%20St%2C%20Maypajo%2C%20Caloocan%2C%201405%20Metro%20Manila!5e0!3m2!1sen!2sph!4v1691538537974!5m2!1sen!2sph"
+          width="600"
+          height="450"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </section>
+
+      <!--CONTACT-->
+      <section class="calculate section">
+        <div class="section__data">
+          <h2 class="section__subtitle1">CONTACT</h2>
+          <div class="section__titles">
+            <h1 class="section__title-border">OUR</h1>
+            <h1 class="section__title">SPECIAL PLAN</h1>
+          </div>
+        </div>
+        <div class="calculate__container container grid">
+          <div class="contact-col calculate__content">
+            <div>
+              <i class="fa fa-home"></i>
+              <span>
+                <h5>198 A. Mabini St. Maypajo Caloocan City</h5>
+                <p>(Fronting Martinez Hospital), Caloocan, Philippines</p>
+              </span>
+            </div>
+            <div>
+              <i class="fa fa-phone"></i>
+              <span>
+                <h5>09300461279</h5>
+                <p>Monday to Saturday, 10AM to 6PM</p>
+              </span>
+            </div>
+            <div>
+              <i class="fa fa-envelope-o"></i>
+              <span>
+                <h5>gymliftfitness@gmail.com</h5>
+                <p>Email us if you have a question!</p>
+              </span>
+            </div>
+          </div>
+          <div class="contact-col choose__content">
+            <form action="#" method="post">
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email address"
+                required
+              />
+          
+              <textarea
+                rows="8"
+                name="message"
+                placeholder="Message"
+                required
+              ></textarea>
+              <button
+                type="submit"
+                class="button button__flex calculate__button"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!--FOOTER-->
+    <footer class="footer section" id="footer">
+      <div class="footer__container container grid">
+        <div>
+          <a href="#" class="footer__logo">
+            <img src="assets/img/logo-nav.png" alt="" /> LIFT FITNESS
+          </a>
+          <p class="footer__description">
+            Subscribe for company <br />
+            updates below.
+          </p>
+
+          <form action="" class="footer__form" id="contact-form">
+            <input
+              type="email"
+              name="user_email"
+              placeholder="Your Email"
+              class="footer__input"
+              id="contact-user"
+            />
+            <button type="submit" class="button">Submit</button>
+          </form>
+
+          <p class="footer__message" id="contact-message"></p>
+        </div>
+
+        <div class="footer__content">
+          <div>
+            <h3 class="footer__title">SERVICES</h3>
+
+            <ul class="footer__links">
+              <li>
+                <a href="#" class="footer__link">Flex Muscle</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Cardio Exercise</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Basic Yoga</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Weight Lifting</a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="footer__title">PRICING</h3>
+
+            <ul class="footer__links">
+              <li>
+                <a href="#" class="footer__link">Basic</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Premium</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Diamond</a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="footer__title">COMPANY</h3>
+
+            <ul class="footer__links">
+              <li>
+                <a href="contact.html" class="footer__link">Contact Us</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">About Us</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Careers</a>
+              </li>
+              <li>
+                <a href="#" class="footer__link">Customers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="footer__group">
+          <ul class="footer__social">
+            <a
+              href="https://www.facebook.com/lift.fitness.gym.ph"
+              target="_blank"
+              class="footer__social-link"
+            >
+              <i class="ri-facebook-circle-fill"></i>
+            </a>
+            <a
+              href="https://www.instagram.com/lift.fitness.gym.ph"
+              target="_blank"
+              class="footer__social-link"
+            >
+              <i class="ri-instagram-line"></i>
+            </a>
+          </ul>
+
+          <span class="footer_copy">
+            © 2023 Lift Fitness Gym 198 A. Mabini St. Maypajo Caloocan City,
+            Caloocan, Philippines.
+          </span>
+        </div>
+      </div>
+    </footer>
+    <!--SCROLL UP-->
+    <a href="#" class="scrollup" id="scroll-up">
+      <i class="ri-arrow-up-line"></i>
+    </a>
+    <!--SCROLLREVEAL-->
+    <!--SCROLLREVEAL-->
+    <script src="/js/landing-page/scrollreveal.min.js"></script>
+
+    <!--EMAIL JS-->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+    <!--MAIN JS-->
+    <script src="/js/landing-page/main.js"></script>
+  </body>
+</html>
+{{end}}

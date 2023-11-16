@@ -9,6 +9,7 @@ import (
 
 func RegisterHandlers(router *echo.Echo) {
 	passwordHandler := NewPasswordHandler()
+	contactUsHandler := NewContactUsHandler()
 	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			contentType := c.Request().Header.Get("Content-Type")
@@ -23,6 +24,8 @@ func RegisterHandlers(router *echo.Echo) {
 	router.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
+
+	router.GET("/contact-us", contactUsHandler.RenderContactUs )
 
 	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
 	router.POST("/change-password", passwordHandler.ChangePassword)
