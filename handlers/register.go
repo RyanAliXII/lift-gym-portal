@@ -150,11 +150,11 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/coaching-penalty/:id/settlement", coachingPenaltyHandler.SettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
 	router.PATCH("/coaching-penalty/:id/unsettlement", coachingPenaltyHandler.UnsettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
 	router.GET("/messages", messageHandler.RenderPage, middlewares.ValidatePermissions("Message.Read"))
-	router.GET("/coach-logs", coachLogs.RenderCoachLogPage )
-	router.POST("/coach-logs", coachLogs.NewLog)
-	router.PUT("/coach-logs/:id", coachLogs.UpdateLog)
-	router.DELETE("/coach-logs/:id", coachLogs.DeleteLog)
-	router.PATCH("/coach-logs/:id/logout", coachLogs.Logout)
+	router.GET("/coach-logs", coachLogs.RenderCoachLogPage, middlewares.ValidatePermissions("CoachLog.Read"))
+	router.POST("/coach-logs", coachLogs.NewLog, middlewares.ValidatePermissions("CoachLog.Create"))
+	router.PUT("/coach-logs/:id", coachLogs.UpdateLog, middlewares.ValidatePermissions("CoachLog.Edit"))
+	router.DELETE("/coach-logs/:id", coachLogs.DeleteLog , middlewares.ValidatePermissions("CoachLog.Delete"))
+	router.PATCH("/coach-logs/:id/logout", coachLogs.Logout, middlewares.ValidatePermissions("CoachLog.Edit"))
 }	
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

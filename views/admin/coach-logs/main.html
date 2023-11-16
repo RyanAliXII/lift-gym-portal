@@ -17,7 +17,7 @@
           <div class="container-fluid">
             {{template "partials/dashboard-page-heading" .}}
             <div class="mb-3 ml-2">
-              {{if hasPermission "ClientLog.Create" .currentUser.Permissions}}
+              {{if hasPermission "CoachLog.Create" .currentUser.Permissions}}
               <button
                 class="btn btn-primary"
                 data-toggle="modal"
@@ -69,9 +69,9 @@
     </a>
     {{template "partials/sb-scripts" .}}
   </body>
-  {{ $hasDeletePermission := hasPermission "ClientLog.Delete"
+  {{ $hasDeletePermission := hasPermission "CoachLog.Delete"
   .currentUser.Permissions}} {{ $hasEditPermission := hasPermission
-  "ClientLog.Edit" .currentUser.Permissions}}
+  "CoachLog.Edit" .currentUser.Permissions}}
   <script>
     window.csrf = "{{.csrf}}";
     window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";

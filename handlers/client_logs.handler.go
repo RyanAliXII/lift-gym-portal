@@ -186,7 +186,6 @@ func (h * ClientLogHandler)Logout(c echo.Context)error {
 			Message: "Unknown error occured.",
 		})
 	}
-
 	err = h.clientLogRepo.LogoutClient(id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "LogoutClient"))

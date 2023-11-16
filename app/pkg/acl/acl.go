@@ -70,6 +70,10 @@ var Permissions = []string{
 	"Report.Read",
 	"Report.Create",
 	"Message.Read",
+	"CoachLog.Read",
+	"CoachLog.Edit",
+	"CoachLog.Create",
+	"CoachLog.Delete",
 }
 
 
