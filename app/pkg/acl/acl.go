@@ -74,6 +74,10 @@ var Permissions = []string{
 	"CoachLog.Edit",
 	"CoachLog.Create",
 	"CoachLog.Delete",
+	"StaffLog.Read",
+	"StaffLog.Edit",
+	"StaffLog.Create",
+	"StaffLog.Delete",
 }
 
 

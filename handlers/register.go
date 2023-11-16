@@ -156,11 +156,11 @@ func adminRoutes (router  * echo.Group){
 	router.PUT("/coach-logs/:id", coachLogs.UpdateLog, middlewares.ValidatePermissions("CoachLog.Edit"))
 	router.DELETE("/coach-logs/:id", coachLogs.DeleteLog , middlewares.ValidatePermissions("CoachLog.Delete"))
 	router.PATCH("/coach-logs/:id/logout", coachLogs.Logout, middlewares.ValidatePermissions("CoachLog.Edit"))
-	router.GET("/staff-logs", staffLogs.RenderStaffLogPage)
-	router.POST("/staff-logs", staffLogs.NewLog)
-	router.PUT("/staff-logs/:id", staffLogs.UpdateLog)
-	router.DELETE("/staff-logs/:id", staffLogs.DeleteLog)
-	router.PATCH("/staff-logs/:id/logout", staffLogs.Logout)
+	router.GET("/staff-logs", staffLogs.RenderStaffLogPage, middlewares.ValidatePermissions("StaffLog.Read"))
+	router.POST("/staff-logs", staffLogs.NewLog, middlewares.ValidatePermissions("StaffLog.Create"))
+	router.PUT("/staff-logs/:id", staffLogs.UpdateLog, middlewares.ValidatePermissions("StaffLog.Edit"))
+	router.DELETE("/staff-logs/:id", staffLogs.DeleteLog, middlewares.ValidatePermissions("StaffLog.Delete"))
+	router.PATCH("/staff-logs/:id/logout", staffLogs.Logout, middlewares.ValidatePermissions("StaffLog.Edit"))
 }	
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

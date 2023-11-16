@@ -356,7 +356,7 @@ createApp({
 
           form.value = {
             ...form.value,
-            coachId: select.value,
+            staffId: select.value,
           };
           delete errors.clientId;
         }

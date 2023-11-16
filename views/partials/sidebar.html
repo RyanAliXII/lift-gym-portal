@@ -243,7 +243,7 @@
       aria-controls="collapseAcl"
     >
       <i class="fas fa-list"></i>
-      <span>Access Control</span>
+      <span>Staff</span>
     </a>
     <div
       id="collapseAcl"
@@ -256,6 +256,8 @@
         <a class="collapse-item" href="/app/staffs">Staffs</a>
         {{end}} {{if hasPermission "Role.Read" .currentUser.Permissions}}
         <a class="collapse-item" href="/app/roles">Roles</a>
+        {{end}} {{if hasPermission "StaffLog.Read" .currentUser.Permissions}}
+        <a class="collapse-item" href="/app/staff-logs">Staff Logs</a>
         {{end}}
       </div>
     </div>
