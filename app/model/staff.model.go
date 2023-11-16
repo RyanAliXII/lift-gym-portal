@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"lift-fitness-gym/app/db"
 	"time"
@@ -114,3 +116,25 @@ func (m Staff) ValidateUpdate() (error, map[string]string) {
 	)
 }
 
+
+
+type StaffJSON struct {
+	Staff
+}
+
+func (instance *StaffJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance =StaffJSON{}
+		}
+	} else {
+		*instance = StaffJSON{}
+	}
+	return nil
+
+}
+func (copy StaffJSON) Value(value interface{}) (driver.Value, error) {
+	return copy, nil
+}

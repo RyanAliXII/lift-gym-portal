@@ -20,6 +20,21 @@ type StaffHandler struct {
 func (h *StaffHandler) RenderStaffPage(c echo.Context)error {
 	contentType := c.Request().Header.Get("Content-Type")
 	if contentType == "application/json" {
+		
+		keyword := c.QueryParam("keyword")
+
+		if len(keyword) > 0 {
+			staffs, err := h.staffRepo.Search(keyword)
+			if err != nil {
+				logger.Error(err.Error(), zap.String("error", "searchStaffError"))
+			}
+			return c.JSON(http.StatusOK, JSONResponse{
+				Status: http.StatusOK,
+				Data: Data{
+					"staffs": staffs, 
+				},
+			})
+		}
 		staffs, _ := h.staffRepo.GetStaffs()
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,

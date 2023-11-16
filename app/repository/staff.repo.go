@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
@@ -110,6 +111,19 @@ func (repo * StaffRepository) UpdatePassword(newPassword string, userId int) err
 	}
 	transaction.Commit()
 	return nil	
+}
+
+func (repo * StaffRepository)Search(keyword string)([]model.Staff, error) {
+	staffs:= make([]model.Staff , 0)
+	keywordLike := fmt.Sprintf("%s%s%s","%", keyword, "%")
+	selectQuery := `SELECT staff.id, staff.given_name, staff.middle_name, staff.surname,
+	staff.date_of_birth, staff.address, staff.emergency_contact,staff.mobile_number, staff.gender, staff.public_id,
+	account.email, account.id as account_id from user as staff
+	INNER JOIN account on staff.account_id = account.id
+	where (staff.given_name LIKE ? OR staff.middle_name LIKE ? OR staff.surname LIKE ? OR staff.mobile_number LIKE ? OR account.email LIKE ? OR staff.public_id LIKE ?) and staff.deleted_at is null and is_root = false
+	ORDER BY staff.updated_at DESC LIMIT 50`
+	selectErr := repo.db.Select(&staffs, selectQuery, keywordLike, keywordLike, keywordLike, keywordLike, keywordLike, keywordLike)
+	return staffs, selectErr 
 }
 func NewStaffRepository()StaffRepository{
 	return StaffRepository{

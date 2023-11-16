@@ -1,0 +1,48 @@
+{{define "admin/staff-logs/edit-log-modal"}}
+<div
+  class="modal fade"
+  id="editLogModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editLogModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Staff Log</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="updateLog">
+          <div class="form-group">
+            <label>Client</label>
+            <select ref="editLogClientSelectElement"></select>
+            <div class="invalid-feedback" :class="{'d-block': errors?.staffId}">
+              {errors?.staffId}
+            </div>
+          </div>
+
+          <div class="d-flex" style="gap: 5px">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

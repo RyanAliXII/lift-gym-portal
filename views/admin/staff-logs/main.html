@@ -1,0 +1,82 @@
+{{define "admin/staff-logs/main"}}
+<!DOCTYPE html>
+<html lang="en">
+  {{template "partials/sb-head" .}}
+  <body>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      {{template "partials/sidebar" .}}
+      <!-- End of Sidebar -->
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="ClientLog">
+          {{template "partials/dashboard-topbar" .}}
+
+          <div class="container-fluid">
+            {{template "partials/dashboard-page-heading" .}}
+            <div class="mb-3 ml-2">
+              {{if hasPermission "CoachLog.Create" .currentUser.Permissions}}
+              <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#logClientModal"
+              >
+                <i class="fas fa-plus"></i>
+                Log Staff
+              </button>
+              {{end}}
+            </div>
+            <!-- DataTables Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  List of Logged Staff
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <input
+                    type="text"
+                    @input="searchLogs"
+                    class="form-control mt-2 mb-2"
+                    placeholder="Search"
+                  />
+                  <data-table
+                    ref="table"
+                    :options="tableConfig"
+                    class="table table-bordered"
+                    :data="logs"
+                    :columns="columns"
+                  ></data-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{template "admin/staff-logs/log-modal" .}} {{template
+          "admin/staff-logs/edit-log-modal" .}}
+        </div>
+        <!-- End of Main Content -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    {{template "partials/sb-scripts" .}}
+  </body>
+  {{ $hasDeletePermission := hasPermission "CoachLog.Delete"
+  .currentUser.Permissions}} {{ $hasEditPermission := hasPermission
+  "CoachLog.Edit" .currentUser.Permissions}}
+  <script>
+    window.csrf = "{{.csrf}}";
+    window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
+    window.hasEditPermission = "{{$hasEditPermission}}" === "true";
+  </script>
+  <script src="/js/admin/staff-logs/main.js"></script>
+</html>
+{{end}}
