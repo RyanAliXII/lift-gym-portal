@@ -26,6 +26,7 @@ func RegisterHandlers(router *echo.Echo) {
 	})
 
 	router.GET("/contact-us", contactUsHandler.RenderContactUs )
+	router.POST("/contact-us", contactUsHandler.NewMessage )
 
 	router.GET("/change-password", passwordHandler.RenderChangePasswordPage)
 	router.POST("/change-password", passwordHandler.ChangePassword)
@@ -58,6 +59,7 @@ func adminRoutes (router  * echo.Group){
 	reservationHandler := NewReservationHandler()
 	PaymentHistory := NewPaymentHistoryHandler()
 	reportHandler := NewReportHandler()
+	messageHandler := NewMessageHandler()
 	coachingPenaltyHandler := NewCoachingPenalty()
 	router.GET("/login", loginHandler.RenderAdminLoginPage)
 	router.POST("/login", loginHandler.Login)
@@ -126,6 +128,7 @@ func adminRoutes (router  * echo.Group){
 	router.POST("/client-logs", clientLogHandler.NewLog, middlewares.ValidatePermissions("ClientLog.Create"))
 	router.PUT("/client-logs/:id", clientLogHandler.UpdateLog, middlewares.ValidatePermissions("ClientLog.Edit"))
 	router.DELETE("/client-logs/:id", clientLogHandler.DeleteLog, middlewares.ValidatePermissions("ClientLog.Delete"))
+	router.PATCH("/client-logs/:id/logout", clientLogHandler.Logout, middlewares.ValidatePermissions("ClientLog.Edit"))
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage, middlewares.ValidatePermissions("DateSlot.Read"))
@@ -145,7 +148,8 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/coaching-penalty", coachingPenaltyHandler.RenderPenaltyPage,middlewares.ValidatePermissions("Penalty.Read"))
 	router.PATCH("/coaching-penalty/:id/settlement", coachingPenaltyHandler.SettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
 	router.PATCH("/coaching-penalty/:id/unsettlement", coachingPenaltyHandler.UnsettlePenalty, middlewares.ValidatePermissions("Penalty.Edit"))
-
+	router.GET("/messages", messageHandler.RenderPage, middlewares.ValidatePermissions("Message.Read"))
+	
 }
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()

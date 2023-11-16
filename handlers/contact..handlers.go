@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 
@@ -24,8 +25,11 @@ func(h * ContactUs) RenderContactUs(c echo.Context) error{
 }
 func (h * ContactUs) NewMessage (c echo.Context) error {
 	message := model.ContactUs{}
+
+	c.Bind(&message)
 	fields, err := message.Validate()
 	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "ValidateError"))
 		return c.JSON(http.StatusBadRequest, JSONResponse{
 			Status: http.StatusBadRequest,
 			Data: Data{
@@ -36,6 +40,7 @@ func (h * ContactUs) NewMessage (c echo.Context) error {
 	}
 	err = h.messageRepo.NewMessage(message)
 	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewMessageErr"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,
 			Message: "Unknown error occured.",

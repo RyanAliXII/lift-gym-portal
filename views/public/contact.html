@@ -23,6 +23,12 @@
         <link rel="stylesheet" href="/css/landing-page/styles.css" />
     
         <title>LIFT FITNESS GYM - Contact Us</title>
+        <style>
+            .error-text{
+                color: red
+            }
+
+        </style>
       </head>
   <body>
     <!--HEADER-->
@@ -79,7 +85,7 @@
         </nav>
       </header>
     <!--MAIN-->
-    <main class="main">
+    <main class="main" id="ContactPage">
       <!--MAP-->
       <section class="location">
         <div class="section__data">
@@ -134,26 +140,31 @@
             </div>
           </div>
           <div class="contact-col choose__content">
-            <form action="#" method="post">
+            <form @submit.prevent="onSubmit">
               <input
                 type="text"
                 name="name"
+                v-model="form.name"
                 placeholder="Enter your name"
                 required
               />
+           
               <input
                 type="email"
+                v-model="form.email"
                 name="email"
                 placeholder="Enter your email address"
                 required
               />
-          
+        
               <textarea
                 rows="8"
                 name="message"
+                v-model="form.message"
                 placeholder="Message"
                 required
               ></textarea>
+            
               <button
                 type="submit"
                 class="button button__flex calculate__button"
@@ -281,15 +292,19 @@
     </a>
     <!--SCROLLREVEAL-->
     <!--SCROLLREVEAL-->
-    <script src="/js/landing-page/scrollreveal.min.js"></script>
+    <!-- <script src="/js/landing-page/scrollreveal.min.js"></script> -->
 
     <!--EMAIL JS-->
+    <script>
+        window.csrf = "{{.csrf}}"
+    </script>
     <script
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
     ></script>
     <!--MAIN JS-->
     <script src="/js/landing-page/main.js"></script>
+    <script src="/js/public/contact.js"></script>
   </body>
 </html>
 {{end}}

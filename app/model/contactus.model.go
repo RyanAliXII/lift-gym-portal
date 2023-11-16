@@ -5,9 +5,11 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 type ContactUs struct {
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Message string `json:"message"`
+	Id int `json:"id" db:"id"`
+	Name string `json:"name" db:"name"`
+	Email string `json:"email" db:"email"`
+	Message string `json:"message" db:"value"`
+	CreatedAt string `json:"createdAt" db:"created_at"`
 	Model
 }
 func (m ContactUs) Validate () (map[string]string, error){

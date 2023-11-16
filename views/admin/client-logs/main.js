@@ -33,6 +33,17 @@ createApp({
         },
       },
       {
+        title: "Logged Out At",
+        data: "isLoggedOut",
+        render: (value, _, row) => {
+          if (value) {
+            return `<span>${formatDate(row.loggedOutAt)}</span>`;
+          }
+
+          return "Not logged out.";
+        },
+      },
+      {
         title: "Client ID",
         data: "client.publicId",
       },
@@ -62,6 +73,17 @@ createApp({
             <i class="fas fa-edit"></i>
           </button>`;
           }
+
+          if (window.hasEditPermission && !row.isLoggedOut) {
+            buttons += `<button
+            class="btn btn-outline-secondary logout-btn"
+            data-toggle="tooltip"
+            title="Logout"
+          
+          >
+          <i class="fas fa-sign-out-alt"></i>
+          </button>`;
+          }
           if (window.hasDeletePermission) {
             buttons += `
             <button
@@ -75,6 +97,7 @@ createApp({
           </button>
             `;
           }
+
           return buttons + `</div>`;
         },
       },
@@ -233,6 +256,33 @@ createApp({
         console.error(error);
       }
     };
+    const logoutClient = async (id) => {
+      errors.value = {};
+      try {
+        const response = await fetch(`/app/client-logs/${id}/logout`, {
+          method: "PATCH",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        const { data } = await response.json();
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
+        }
+        swal.fire(
+          "Client Logged Out",
+          "Client log has been logged out.",
+          "success"
+        );
+        fetchLogs();
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const initModalListeners = () => {
       $("#logClientModal").on("hidden.bs.modal", () => {
         logClientSelect.value.removeActiveItems();
@@ -328,6 +378,22 @@ createApp({
       $(dt.table().body()).on("click", "button.edit-log", async (event) => {
         let data = dt.row(event.target.closest("tr")).data();
         initEdit(data);
+      });
+
+      $(dt.table().body()).on("click", "button.logout-btn", async (event) => {
+        let data = dt.row(event.target.closest("tr")).data();
+        const result = await swal.fire({
+          showCancelButton: true,
+          confirmButtonText: "Yes, logout client.",
+          title: "Client Logout",
+          text: "Are you sure you want to logout client?",
+          confirmButtonColor: "#295ad6",
+          cancelButtonText: "I don't want to logout client.",
+          icon: "question",
+        });
+        if (result.isConfirmed) {
+          logoutClient(data.id);
+        }
       });
     });
 

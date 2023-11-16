@@ -15,7 +15,10 @@ createApp({
     });
     const fetchWorkouts = async () => {
       const response = await fetch(url.pathname, {
-        headers: new Headers({ "Content-Type": "application/json" }),
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        }),
       });
       if (response.status === 200) {
         const { data } = await response.json();

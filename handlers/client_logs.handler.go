@@ -155,9 +155,41 @@ func (h * ClientLogHandler) UpdateLog(c echo.Context)error {
 
 func (h * ClientLogHandler)DeleteLog(c echo.Context)error {
 	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest,JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
 	err = h.clientLogRepo.DeleteLog(id)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "DeleteLogErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,		
+			Message: "Unknown error occured",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Client Logged",
+	})
+}
+
+
+func (h * ClientLogHandler)Logout(c echo.Context)error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convErr"))
+		return c.JSON(http.StatusBadRequest,JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+
+	err = h.clientLogRepo.LogoutClient(id)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "LogoutClient"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
 			Status: http.StatusInternalServerError,		
 			Message: "Unknown error occured",

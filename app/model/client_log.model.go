@@ -13,6 +13,8 @@ type ClientLog struct {
 	Client ClientJSON `json:"client" db:"client"`
 	AmountPaid float64 	`json:"amountPaid" db:"amount_paid"`
 	CreatedAt string `json:"createdAt,omitempty" db:"created_at"`
+	IsLoggedOut bool `json:"isLoggedOut" db:"is_logged_out"`
+	LoggedOutAt string `json:"loggedOutAt" db:"logged_out_at"`
 	Model
 }
 
