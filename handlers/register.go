@@ -133,6 +133,7 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/client-logs/:id/logout", clientLogHandler.Logout, middlewares.ValidatePermissions("ClientLog.Edit"))
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
+	router.POST("/profile/avatar", adminProfileHandler.ChangeAvatar)
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage, middlewares.ValidatePermissions("DateSlot.Read"))
 	router.POST("/date-slots", dateSlotHandler.NewSlot, middlewares.ValidatePermissions("DateSlot.Create"))
 	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot,  middlewares.ValidatePermissions("DateSlot.Delete"))

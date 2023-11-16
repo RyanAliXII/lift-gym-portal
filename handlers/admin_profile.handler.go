@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -15,15 +18,68 @@ import (
 
 type AdminProfileHandler struct {
 	userRepo repository.UserRepository
+	objstore objstore.ObjectStorer
 }
 
 func NewAdminProfileHandler() AdminProfileHandler {
+	store, _ := objstore.GetObjectStorage()
 	return AdminProfileHandler{
 		userRepo: repository.NewUserRepository(),
+		objstore: store,
 	}
 }
 func (h * AdminProfileHandler) RenderAdminProfile (c echo.Context) error {
-	return c.Render(http.StatusBadRequest, "admin/profile/main",nil)
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	return c.Render(http.StatusBadRequest, "admin/profile/main",Data{})
+}
+func (h * AdminProfileHandler)ChangeAvatar (c echo.Context) error {
+	fileHeader, err := c.FormFile("filepond")
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	file, err := fileHeader.Open()
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	defer file.Close()
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	uuid := uuid.New()
+
+	result, err  := h.objstore.Upload(context.Background(), file, objstore.UploadConfig{
+		FolderName: "avatars",
+		Filename: uuid.String(),
+		AllowedFormats: []string{"jpg", "png", "webp", "jpeg"},
+	} )
+
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.userRepo.UpdateAvatar(sessionData.User.Id, result)
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Avatar changed successfully",
+	})
 }
 
 func (h * AdminProfileHandler) ChangePassword (c echo.Context) error {

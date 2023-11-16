@@ -45,6 +45,13 @@ func (repo *UserRepository) UpdateAdminPasswordByAccountId (id int, newPassword 
 	_, err := repo.db.Exec("UPDATE account SET password = ? WHERE id = ?", newPassword, id)
 	return err
 }
+
+func (repo *UserRepository) UpdateAvatar (id int, avatarPath string) error {
+	_, err := repo.db.Exec("UPDATE user SET avatar = ? WHERE id = ?", avatarPath, id)
+	return err
+}
+
+
 func (repo  * UserRepository) GetUserTypeByAccountId(accountId int)(string , error){
 		query := `
 			SELECT user_type FROM (SELECT account_id , 'admin' as user_type FROM user
