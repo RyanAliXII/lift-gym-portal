@@ -17,9 +17,7 @@ createApp({
   setup() {
     const initialForm = {
       id: 0,
-      clientId: 0,
-      isMember: false,
-      amountPaid: 0,
+      coachId: 0,
     };
 
     const table = ref(null);
@@ -44,19 +42,14 @@ createApp({
         },
       },
       {
-        title: "Client ID",
-        data: "client.publicId",
+        title: "Coach ID",
+        data: "coach.publicId",
       },
       {
-        title: "Client",
+        title: "Coach",
         data: null,
         render: (value, event, row) =>
-          `${row.client.givenName} ${row.client.surname}`,
-      },
-      {
-        title: "Amount Paid",
-        data: "amountPaid",
-        render: (value) => toMoney(value),
+          `${row.coach.givenName} ${row.coach.surname}`,
       },
       {
         title: "",
@@ -127,19 +120,19 @@ createApp({
     };
     const fetchLogs = async () => {
       try {
-        const response = await fetch("/app/client-logs", {
+        const response = await fetch("/app/coach-logs", {
           headers: new Headers({ "Content-Type": "application/json" }),
         });
         if (response.status >= 400) return;
         const { data } = await response.json();
-        logs.value = data?.clientLogs ?? [];
+        logs.value = data?.coachLogs ?? [];
       } catch (error) {
         console.error(error);
       }
     };
-    const fetchClientByKeyword = async (query) => {
+    const fetchCoachByKeyword = async (query) => {
       const response = await fetch(
-        `/app/clients?${new URLSearchParams({
+        `/app/coaches?${new URLSearchParams({
           keyword: query,
         }).toString()}`,
         {
@@ -152,12 +145,10 @@ createApp({
 
       if (response.status === 200) {
         const { data } = await response.json();
-        const selectValues = (data?.clients ?? []).map((client) => ({
-          value: client.id,
-          label: `${client.givenName} ${client.surname} - ${client.email} - ${
-            client.isMember ? "Member" : "Non-Member"
-          }`,
-          customProperties: client,
+        const selectValues = (data?.coaches ?? []).map((coach) => ({
+          value: coach.id,
+          label: `${coach.givenName} ${coach.surname} - ${coach.email}`,
+          customProperties: coach,
         }));
         logClientSelect.value.setChoices(selectValues, "value", "label", true);
         editLogClientSelect.value.setChoices(
@@ -168,11 +159,11 @@ createApp({
         );
       }
     };
-    const search = useDebounceFn(fetchClientByKeyword, 500);
+    const search = useDebounceFn(fetchCoachByKeyword, 500);
     const submitLog = async () => {
       errors.value = {};
       try {
-        const response = await fetch("/app/client-logs", {
+        const response = await fetch("/app/coach-logs", {
           method: "POST",
           body: JSON.stringify(form.value),
           headers: new Headers({
@@ -188,8 +179,8 @@ createApp({
           return;
         }
         swal.fire(
-          "Client Loggged In",
-          "Client has been loggged in successfully",
+          "Coach Loggged In",
+          "Coach has been loggged in successfully",
           "success"
         );
         form.value = {
@@ -204,7 +195,7 @@ createApp({
     const updateLog = async () => {
       errors.value = {};
       try {
-        const response = await fetch(`/app/client-logs/${form.value.id}`, {
+        const response = await fetch(`/app/coach-logs/${form.value.id}`, {
           method: "PUT",
           body: JSON.stringify(form.value),
           headers: new Headers({
@@ -219,7 +210,11 @@ createApp({
           }
           return;
         }
-        swal.fire("Client Log Updated", "Client has been updated.", "success");
+        swal.fire(
+          "Coach Log Updated",
+          "Coach log has been updated.",
+          "success"
+        );
         form.value = {
           ...initialForm,
         };
@@ -232,7 +227,7 @@ createApp({
     const deleteLog = async (id) => {
       errors.value = {};
       try {
-        const response = await fetch(`/app/client-logs/${id}`, {
+        const response = await fetch(`/app/coach-logs/${id}`, {
           method: "DELETE",
           headers: new Headers({
             "Content-Type": "application/json",
@@ -247,8 +242,8 @@ createApp({
           return;
         }
         swal.fire(
-          "Client Log Deleted",
-          "Client log has been deleted.",
+          "Coach Log Deleted",
+          "Coach log has been deleted.",
           "success"
         );
         fetchLogs();
@@ -259,7 +254,7 @@ createApp({
     const logoutClient = async (id) => {
       errors.value = {};
       try {
-        const response = await fetch(`/app/client-logs/${id}/logout`, {
+        const response = await fetch(`/app/coach-logs/${id}/logout`, {
           method: "PATCH",
           headers: new Headers({
             "Content-Type": "application/json",
@@ -274,8 +269,8 @@ createApp({
           return;
         }
         swal.fire(
-          "Client Logged Out",
-          "Client log has been logged out.",
+          "Coach Logged Out",
+          "Coach log has been logged out.",
           "success"
         );
         fetchLogs();
@@ -346,10 +341,9 @@ createApp({
           const select = logClientSelect.value.getValue();
           form.value = {
             ...form.value,
-            clientId: select.value,
-            isMember: select.customProperties.isMember,
+            coachId: select.value,
           };
-          delete errors.clientId;
+          delete errors.coachId;
         }
       );
 
@@ -362,8 +356,7 @@ createApp({
 
           form.value = {
             ...form.value,
-            clientId: select.value,
-            isMember: select.customProperties.isMember,
+            coachId: select.value,
           };
           delete errors.clientId;
         }
@@ -384,11 +377,11 @@ createApp({
         let data = dt.row(event.target.closest("tr")).data();
         const result = await swal.fire({
           showCancelButton: true,
-          confirmButtonText: "Yes, logout client.",
-          title: "Client Logout",
-          text: "Are you sure you want to logout client?",
+          confirmButtonText: "Yes, logout coach.",
+          title: "Coach Logout",
+          text: "Are you sure you want to logout coach?",
           confirmButtonColor: "#295ad6",
-          cancelButtonText: "I don't want to logout client.",
+          cancelButtonText: "I don't want to logout coach.",
           icon: "question",
         });
         if (result.isConfirmed) {
@@ -404,20 +397,18 @@ createApp({
     const initEdit = async (log) => {
       form.value = {
         id: log.id,
-        clientId: log.clientId,
-        amountPaid: log.amountPaid,
-        isMember: log.isMember,
+        coachId: log.coachId,
       };
-      await fetchClientByKeyword(log.client.givenName);
-      editLogClientSelect.value.setChoiceByValue(log.clientId);
+      await fetchCoachByKeyword(log.coach.publicId);
+      editLogClientSelect.value.setChoiceByValue(log.coach.id);
       $("#editLogModal").modal("show");
     };
     const initDelete = async (id) => {
       const result = await swal.fire({
         showCancelButton: true,
         confirmButtonText: "Yes, delete it",
-        title: "Delete Client Log",
-        text: "Are you sure you want to delete client log?",
+        title: "Delete Coach Log",
+        text: "Are you sure you want to delete coach log?",
         confirmButtonColor: "#d9534f",
         cancelButtonText: "I don't want to delete the log",
         icon: "warning",

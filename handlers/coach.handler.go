@@ -23,8 +23,35 @@ type CoachHandler struct {
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
 	csrf := c.Get("csrf")
 
-
 	coaches,_ := h.coachRepo.GetCoaches()
+	contentType := c.Request().Header.Get("content-type")
+	if(contentType == "application/json") {
+
+		keyword := c.QueryParam("keyword")
+		if len(keyword) > 0 {
+			coaches, err := h.coachRepo.Search(keyword)
+			if err != nil {
+				logger.Error(err.Error(), zap.String("error", "searchErr"))
+			}
+			return c.JSON(http.StatusOK, JSONResponse{
+				Status: http.StatusOK,
+				Data: Data{
+					"coaches": coaches,
+				},
+				Message: "Coaches fetched.",
+			})
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"coaches": coaches,
+			},
+			Message: "Coaches fetched.",
+		})
+		
+
+	}
+
 	return c.Render(http.StatusOK, "admin/coach/main", Data{
 		"title": "Coaches",
 		"module": "Coaches",

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"lift-fitness-gym/app/db"
 	"lift-fitness-gym/app/model"
 
@@ -47,6 +48,21 @@ func (repo *CoachRepository) GetCoaches() ([]model.Coach, error){
 	GROUP BY coach.id
 	ORDER BY coach.updated_at DESC`
 	selectErr := repo.db.Select(&coaches, selectQuery)
+	return coaches, selectErr 
+}
+
+func (repo * CoachRepository)Search(keyword string)([]model.Coach, error) {
+	coaches := make([]model.Coach , 0)
+	keywordLike := fmt.Sprintf("%s%s%s","%", keyword, "%")
+	selectQuery := `SELECT coach.id, coach.given_name, coach.middle_name, coach.surname,
+	coach.date_of_birth, coach.address, coach.emergency_contact,coach.mobile_number, coach.gender, coach.public_id,
+	account.email, account.id as account_id, description, COALESCE(CONCAT('[',GROUP_CONCAT('"',coach_image.path,'"'),']'), '[]') as images from coach
+	INNER JOIN account on coach.account_id = account.id
+	LEFT JOIN coach_image on coach.id = coach_image.coach_id
+	where (coach.given_name LIKE ? OR coach.middle_name LIKE ? OR coach.surname LIKE ? OR coach.mobile_number LIKE ? OR account.email LIKE ? OR coach.public_id LIKE ?) and coach.deleted_at is null
+	GROUP BY coach.id
+	ORDER BY coach.updated_at DESC LIMIT 50`
+	selectErr := repo.db.Select(&coaches, selectQuery, keywordLike, keywordLike, keywordLike, keywordLike, keywordLike, keywordLike)
 	return coaches, selectErr 
 }
 func (repo *CoachRepository)GetCoachById (id int) (model.Coach, error) {

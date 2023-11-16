@@ -31,12 +31,12 @@ func (h *CoachLogHandler) RenderCoachLogPage(c echo.Context) error{
 		return c.JSON(http.StatusOK, JSONResponse{
 			Status: http.StatusOK,
 			Data: Data{
-				"clientLogs": logs,
+				"coachLogs": logs,
 			},
 			Message: "Coach logs fetched.",
 		})
 	}
-	return c.Render(http.StatusOK, "admin/client-logs/main", Data{
+	return c.Render(http.StatusOK, "admin/coach-logs/main", Data{
 		 "title": "Coach Logs",
 		 "module": "Coach Logs",
 		 "csrf": c.Get("csrf"),
@@ -62,10 +62,16 @@ func (h * CoachLogHandler) NewLog(c echo.Context)error {
 			},
 			Message: "Validation error.",
 		})
+	}	
+	err = h.coachLogRepo.NewLog(log)
+	
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "getById"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured",
+		})
 	}
-	
-
-	
 	return c.JSON(http.StatusOK, JSONResponse{
 		Status: http.StatusOK,
 		Message: "Coach Logged",
@@ -103,7 +109,7 @@ func (h * CoachLogHandler) UpdateLog(c echo.Context)error {
 			Message: "Validation error.",
 		})
 	}
-
+	err = h.coachLogRepo.UpdateLog(log)
 
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "getById"))

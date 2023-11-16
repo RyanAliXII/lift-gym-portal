@@ -1,4 +1,4 @@
-{{define "admin/client-logs/main"}}
+{{define "admin/coach-logs/main"}}
 <!DOCTYPE html>
 <html lang="en">
   {{template "partials/sb-head" .}}
@@ -24,7 +24,7 @@
                 data-target="#logClientModal"
               >
                 <i class="fas fa-plus"></i>
-                Log Client
+                Log Coach
               </button>
               {{end}}
             </div>
@@ -54,8 +54,8 @@
               </div>
             </div>
           </div>
-          {{template "admin/client-logs/log-modal" .}} {{template
-          "admin/client-logs/edit-log-modal" .}}
+          {{template "admin/coach-logs/log-modal" .}} {{template
+          "admin/coach-logs/edit-log-modal" .}}
         </div>
         <!-- End of Main Content -->
       </div>
@@ -77,6 +77,6 @@
     window.hasDeletePermission = "{{$hasDeletePermission}}" === "true";
     window.hasEditPermission = "{{$hasEditPermission}}" === "true";
   </script>
-  <script src="/js/admin/client-logs/main.js"></script>
+  <script src="/js/admin/coach-logs/main.js"></script>
 </html>
 {{end}}
