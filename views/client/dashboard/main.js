@@ -142,14 +142,22 @@ createApp({
       chart: {
         type: "pie",
       },
+      legend: {
+        position: "bottom",
+      },
+      responsive: [
+        {
+          breakpoint: 450,
+          options: {
+            width: 600,
+          },
+        },
+      ],
       tooltip: {
         y: {
           formatter: function (value) {
             return `${toMoney(value)}`;
           },
-        },
-        legend: {
-          position: "bottom",
         },
       },
       labels: ["Membership", "Package", "Walk In"],

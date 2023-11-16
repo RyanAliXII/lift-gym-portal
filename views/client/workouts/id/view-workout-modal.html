@@ -10,18 +10,25 @@
 >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header" id="workoutTitle">Workout:</div>
+      <div class="modal-header" id="workoutTitle">
+        Workout: {selectedWorkout.title}
+      </div>
       <div class="p-4 border d-flex justify-content-center align-items-center">
         <img
           class="img-fluid"
+          :src="selectedWorkout.imageUrl"
           style="max-height: 300px"
           alt="workoutImage"
           id="workoutImage"
         />
       </div>
       <div>
-        <h2 class="text-center mt-3 text-gray-800" id="workoutName"></h2>
-        <div class="px-4 pb-3 text-center" id="workoutDescription"></div>
+        <h2 class="text-center mt-3 text-gray-800" id="workoutName">
+          {selectedWorkout.name}
+        </h2>
+        <div class="px-4 pb-3 text-center" id="workoutDescription">
+          {selectedWorkout.description}
+        </div>
       </div>
     </div>
   </div>

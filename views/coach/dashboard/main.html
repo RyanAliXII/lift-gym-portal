@@ -130,8 +130,8 @@
                           <button class="btn btn-outline-secondary" @click="switchCoachedClientTab('Monthly')" id="coachedClientMonthly">Monthly</button>
                           
                       </div>
-                      <section class="mt-4">
-                        <div class="text-center font-weight-bold"> {coachClientTab} Trained Clients</div>
+                      <section class="mt-4"  style="overflow-x: auto;">
+                        <div class="text-center font-weight-bold" > {coachClientTab} Trained Clients</div>
                         <apex-chart width="600"  :options="barChartOptions" :series="coachedClientSeries"></apex-chart>
                          </div>
                       </section>

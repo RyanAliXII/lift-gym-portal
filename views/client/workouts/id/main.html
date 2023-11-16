@@ -18,7 +18,7 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid">
+          <div class="container-fluid" id="Workouts">
             <!-- Page Heading -->
             {{template "partials/dashboard-page-heading" .}}
 
@@ -45,33 +45,32 @@
                     </thead>
 
                     <tbody>
-                      {{range $workout := .category.Workouts}}
-                      <tr>
-                        <td>{{$workout.Name}}</td>
+                      <tr v-for="workout of workouts">
+                        <td>{workout.name}</td>
                         <td>
                           <button
                             class="btn btn-outline-primary"
                             data-toggle="tooltip"
                             title="View Workouts"
-                            onclick="openModal('{{$workout.Name}}','{{$workout.Description}}','{{$workout.ImagePath}}')"
+                            @click="initView(workout)"
                           >
                             <i class="fas fa-eye"></i>
                           </button>
                         </td>
                       </tr>
-                      {{end}}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
             <!-- Content Row -->
+            {{template "client/workouts/id/view-workout-modal" .}}
           </div>
           <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->
       </div>
-      {{template "client/workouts/id/view-workout-modal" .}}
+
       <!-- End of Content Wrapper -->
     </div>
     <!-- End of Page Wrapper -->
@@ -84,6 +83,10 @@
 
   {{template "partials/sb-scripts"}}
   <script>
+    window.publicURL = "{{.publicURL}}";
+  </script>
+  <script src="/js/client/workouts/id/main.js"></script>
+  <!-- <script>
     const workoutTitle = document.querySelector("#workoutTitle");
     const workoutImage = document.querySelector("#workoutImage");
     const workoutName = document.querySelector("#workoutName");
@@ -96,6 +99,6 @@
       workoutDescription.innerText = desc;
       $("#viewWorkoutModal").modal("show");
     };
-  </script>
+  </script> -->
 </html>
 {{end}}

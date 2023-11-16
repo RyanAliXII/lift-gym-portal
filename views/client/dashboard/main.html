@@ -150,8 +150,8 @@
                           <button  class="btn btn-outline-secondary" @click="switchExpendituresOverviewTab('Annual')" id="earningsAnnual">Annual</button>
                       </div>
                       <section class="mt-4">
-                        <div class="text-center font-weight-bold"> {expendituresOverviewActiveTab} Expenditures</div>
-                        <apex-chart width="500"  :options="pieChartOptions" :series="expendituresOverviewSeries"></apex-chart>
+                        <div class="text-center font-weight-bold" style="overflow-x: auto;"> {expendituresOverviewActiveTab} Expenditures</div>
+                        <apex-chart    :options="pieChartOptions" :series="expendituresOverviewSeries"></apex-chart>
                          </div>
                       </section>
                   </div>

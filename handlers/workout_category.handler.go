@@ -96,7 +96,9 @@ func (h *WorkoutCategoryHandler) RenderClientWorkoutsByCategoryId(c echo.Context
 		logger.Error(err.Error(), zap.String("error", "convErr"))
 		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
 	}
+	contentType := c.Request().Header.Get("Content-Type")
 
+	
 	sessionData := mysqlsession.SessionData{}
 	bindErr := sessionData.Bind(c.Get("sessionData"))
 	if bindErr != nil {
@@ -114,9 +116,18 @@ func (h *WorkoutCategoryHandler) RenderClientWorkoutsByCategoryId(c echo.Context
 		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
 	}
 	workoutCategory, err := h.workoutCategoryRepo.GetCategoryById(id)
+	fmt.Println(workoutCategory.Workouts)
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "GetCategoryByIdError"))
 		c.Render(http.StatusNotFound,"partials/error/404-page", nil )
+	}
+
+	if contentType == "application/json" {
+		return c.JSON(http.StatusOK, JSONResponse{
+			Data: Data{
+			  "workouts": workoutCategory.Workouts,
+			},
+		})
 	}
 	title := fmt.Sprintf("Workout: %s", workoutCategory.Name)
 	return c.Render(http.StatusOK, "client/workouts/id/main", Data{

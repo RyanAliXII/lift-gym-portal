@@ -151,9 +151,9 @@
                           <button class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Monthly')" id="earningsMonthly">Monthly</button>
                           <button  class="btn btn-outline-secondary" @click="switchEarningsOverviewTab('Annual')" id="earningsAnnual">Annual</button>
                       </div>
-                      <section class="mt-4">
+                      <section class="mt-4" style="overflow-x: auto;">
                         <div class="text-center font-weight-bold"> {earningsOverviewActiveTab} Earnings</div>
-                        <apex-chart width="500"  :options="pieChartOptions" :series="earningsOverviewSeries"></apex-chart>
+                        <apex-chart  :options="pieChartOptions" :series="earningsOverviewSeries"></apex-chart>
                          </div>
                       </section>
                   </div>
@@ -177,7 +177,9 @@
                       <button class="btn btn-primary" id="walkInWeekly" @click="switchWalkInTab('Weekly')">Weekly</button>
                       <button class="btn btn-outline-secondary" id="walkInMonthly" @click="switchWalkInTab('Monthly')">Monthly</button>
                    </div>
+                   <section style="overflow-x: auto;">
                     <apex-chart width="500"  :options="barChartOptions" :series="walkInSeries"></apex-chart>
+                  </section>
                   </div>
                 </div>
               </div>
