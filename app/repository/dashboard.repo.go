@@ -170,6 +170,7 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
   (SELECT count(1) from reservation where client_id = ?) as reservations,
   (SELECT count(1) from hired_coach where client_id = ?) as coach_appointments,
   (SELECT count(1) from membership_request where client_id = ?) as membership_requests,
+  (SELECT SUM(amount) from coach_appointment_penalty where client_id = ? and settled_at is null) as penalty,
   JSON_OBJECT(
         'walkIn', COALESCE((SELECT SUM(amount_paid) 
         FROM client_log  
@@ -220,7 +221,7 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
         GROUP BY client_id), 0)
   ) as weekly_expenditures_breakdown
   `
-  err := repo.db.Get(&data, query, clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId, clientId, clientId, clientId, clientId )
+  err := repo.db.Get(&data, query, clientId,clientId, clientId, clientId, clientId,clientId,clientId,clientId,clientId,clientId, clientId, clientId, clientId, clientId )
 	return data, err
 
 }
@@ -242,6 +243,7 @@ func(repo Dashboard)GetCoachDashboardData (coachId int) (model.CoachDashboardDat
   query := `
      SELECT 
     (SELECT COUNT(DISTINCT client_id) from hired_coach where coach_id = ?) as clients,
+    (SELECT SUM(amount) from coach_appointment_penalty where coach_id = ? and settled_at is not null) as penalty,
     (SELECT COUNT(1) from hired_coach where coach_id = ?) as appointments,
     (SELECT 
     SUM(coaching_rate_snapshot.price) 
@@ -250,7 +252,7 @@ func(repo Dashboard)GetCoachDashboardData (coachId int) (model.CoachDashboardDat
     on hired_coach.rate_snapshot_id = coaching_rate_snapshot.id 
     where hired_coach.coach_id = ? and status_id = 3 ) as earnings
   `
-  err := repo.db.Get(&data, query, coachId, coachId, coachId)
+  err := repo.db.Get(&data, query, coachId, coachId, coachId, coachId)
   return data, err
 }
 

@@ -17,6 +17,7 @@ createApp({
       reservations: 0,
       packages: 0,
       coachAppointments: 0,
+      penalty: 0,
       annualExpendituresBreakdown: {
         walkIn: 0,
         package: 0,
@@ -176,6 +177,7 @@ createApp({
       expendituresOverviewSeries,
       table,
       columns,
+      toMoney,
       tableConfig,
     };
   },

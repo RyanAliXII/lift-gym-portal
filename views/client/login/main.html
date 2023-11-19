@@ -4,8 +4,8 @@
   {{template "partials/sb-head"}}
 
   <style></style>
-  <body style="background-color: #03060F;" id="LoginPage">    
-    <div style="height: 100vh">
+  <body style="background-color: #03060F;" >    
+    <div style="height: 100vh" id="LoginPage">
       <!-- Outer Row -->
               <div class="row" style="height: 100vh;">
                 <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
@@ -39,6 +39,7 @@
                       </div>
                       <div class="form-group">
                         <input
+                          v-if="!showPassword"
                           type="password"
                           v-model="form.password"
                           class="form-control form-control-user"
@@ -47,6 +48,24 @@
                           required
                           placeholder="Password"
                         />
+                        <input
+                        v-else
+                        type="text"
+                        v-model="form.password"
+                        class="form-control form-control-user"
+                        name="password"
+                        id="password"
+                        required
+                        placeholder="Password"
+                      />
+                      </div>
+                      <div class="form-group d-flex ml-2" style="gap: 5px; align-items: center;" >
+                        <input
+                          type="checkbox"
+                          v-model="showPassword"
+                        />
+                        <span >
+                          Show Password </span>
                       </div>
                       <button type="submit" class="btn btn-primary btn-block">
                         Sign In
@@ -74,12 +93,13 @@
         </div>
     </div>
 
-    {{template "partials/sb-scripts"}}
+    
   </body>
   {{template "partials/scripts"}}
   <script>
     window.csrf = "{{.csrf}}";
   </script>
+  {{template "partials/sb-scripts"}}
   <script src="/js/client/login/main.js"></script>
 </html>
 

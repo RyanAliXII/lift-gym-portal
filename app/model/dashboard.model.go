@@ -20,6 +20,7 @@ type AdminDashboardData struct {
 
 type ClientDashboardData struct {
 	Reservations int `json:"reservations" db:"reservations"`
+	Penalty float64 `json:"penalty" db:"penalty"`
 	Packages int `json:"packages" db:"packages"`
 	MembershipRequests int `json:"membershipRequests" db:"membership_requests"`
 	CoachAppointments int `json:"coachAppointments" db:"coach_appointments"`
@@ -31,6 +32,7 @@ type ClientDashboardData struct {
 
 type CoachDashboardData struct {
 	Appointments int `json:"appointments" db:"appointments"`
+	Penalty float64 `json:"penalty" db:"penalty"`
 	Clients int `json:"clients" db:"clients"`
 	Earnings float64 `json:"earnings" db:"earnings"`
 	WeeklyCoachClients  []CoachClient `json:"weeklyCoachClients"`

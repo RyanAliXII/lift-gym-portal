@@ -183,24 +183,24 @@ func (repo *HiredCoachRepository)GetAppointmentById(id int )(model.HiredCoach, e
 
 func (repo *HiredCoachRepository)handlePenalty(appointment model.HiredCoach) error{
 
-	appointments, err := repo.getLastThreeAppointmentOfClient(appointment.ClientId)
-	if err != nil { 
-		return err
-	}
-	MaxMissedAppointments := 3
-	missed := 0
-	for _, a := range appointments {
-		if (a.StatusId == status.CoachAppointmentStatusNoShow){
-			missed += 1
-		}
-	}
-	if missed < MaxMissedAppointments {
-		return nil
-	}
-	if (repo.HasPenalty(appointment.ClientId)){
-		return nil
-	}
-	_, err = repo.db.Exec("INSERT INTO coach_appointment_penalty(amount, client_id, coach_id) VALUES (?,?,?)", 100, appointment.ClientId, appointment.CoachId)
+	// appointments, err := repo.getLastThreeAppointmentOfClient(appointment.ClientId)
+	// if err != nil { 
+	// 	return err
+	// }
+	// MaxMissedAppointments := 3
+	// missed := 0
+	// for _, a := range appointments {
+	// 	if (a.StatusId == status.CoachAppointmentStatusNoShow){
+	// 		missed += 1
+	// 	}
+	// }
+	// if missed < MaxMissedAppointments {
+	// 	return nil
+	// }
+	// if (repo.HasPenalty(appointment.ClientId)){
+	// 	return nil
+	// }
+	_, err := repo.db.Exec("INSERT INTO coach_appointment_penalty(amount, client_id, coach_id) VALUES (?,?,?)", 100, appointment.ClientId, appointment.CoachId)
 	return err
 }
 

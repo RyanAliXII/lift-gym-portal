@@ -6,6 +6,7 @@ createApp({
       email: "",
       password: "",
     });
+    const showPassword = ref(false);
     const message = ref("");
     const onSubmit = async () => {
       const response = await fetch("/clients/login", {
@@ -27,6 +28,7 @@ createApp({
       form,
       message,
       onSubmit,
+      showPassword,
     };
   },
   compilerOptions: {

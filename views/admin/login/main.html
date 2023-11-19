@@ -38,6 +38,7 @@
                       </div>
                       <div class="form-group">
                         <input
+                          v-if="!showPassword"
                           type="password"
                           v-model="loginForm.password"
                           class="form-control form-control-user"
@@ -46,6 +47,25 @@
                           required
                           placeholder="Password"
                         />
+
+                       <input
+                        v-else
+                        type="text"
+                        v-model="loginForm.password"
+                        class="form-control form-control-user"
+                        name="password"
+                        id="password"
+                        required
+                        placeholder="Password"
+                      />
+                      </div>
+                      <div class="form-group d-flex ml-2" style="gap: 5px; align-items: center;" >
+                        <input
+                          type="checkbox"
+                          v-model="showPassword"
+                        />
+                        <span >
+                          Show Password </span>
                       </div>
                       <button type="submit" class="btn btn-primary btn-block">
                         Sign In
@@ -76,6 +96,7 @@
           email: "",
           password: "",
         });
+        const showPassword = ref(false)
         message = ref("");
         const onSubmit = async () => {
           try {
@@ -103,6 +124,7 @@
           loginForm,
           onSubmit,
           message,
+          showPassword
         };
       },
       compilerOptions: {

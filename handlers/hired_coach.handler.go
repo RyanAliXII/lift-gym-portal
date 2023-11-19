@@ -258,7 +258,7 @@ func (h *HiredCoachHandler)handleNoShow(c echo.Context, id int, statusId int, co
 	body.Id = id
 	body.StatusId = statusId
 	body.CoachId = coachId
-	err := h.hiredCoach.MarkAsNoShow(body)
+err := h.hiredCoach.MarkAsNoShow(body)
 	if err != nil{ 
 		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsNoShow"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{
