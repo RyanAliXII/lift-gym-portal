@@ -276,6 +276,77 @@ func (h * CoachProfileHandler) UpdatePublicProfile(c echo.Context) error {
 
 }
 
+func (h * CoachProfileHandler)ChangeAvatar (c echo.Context) error {
+	fileHeader, err := c.FormFile("filepond")
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	file, err := fileHeader.Open()
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	defer file.Close()
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	uuid := uuid.New()
+
+	result, err  := h.objStorage.Upload(context.Background(), file, objstore.UploadConfig{
+		FolderName: "avatars",
+		Filename: uuid.String(),
+		AllowedFormats: []string{"jpg", "png", "webp", "jpeg"},
+	} )
+
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.coachRepo.UpdateAvatar(sessionData.User.Id, result)
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Avatar changed successfully",
+	})
+}
+func (h * CoachProfileHandler) GetAvatar (c echo.Context) error {
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	avatarPath, err  := h.coachRepo.GetUserAvatar(sessionData.User.Id)
+	if err != nil{
+		logger.Error(err.Error())
+	}
+	avatarUrl := ``
+	if(len(avatarPath) == 0){
+		avatarUrl = fmt.Sprintf("https://ui-avatars.com/api/?name=%s+%s", sessionData.User.GivenName, sessionData.User.Surname)
+	}else{
+	  avatarUrl  = fmt.Sprintf("%s/%s", objstore.PublicURL, avatarPath)
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"avatarUrl": avatarUrl,
+		},
+		Message: "Avatar fetched.",
+	})
+} 
+
+
 func NewCoachProfileHandler() CoachProfileHandler {
 	objectStorage, _ := objstore.GetObjectStorage()
 	return CoachProfileHandler{

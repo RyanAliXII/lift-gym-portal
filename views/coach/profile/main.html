@@ -316,6 +316,25 @@
     });
   </script>
 
-  <script></script>
+  <script>
+    const avatarFp = FilePond.create(document.querySelector("#avatarUpload"), {
+      labelIdle:
+        "Drag and drop your avatar here, or click this to update avatar.",
+      maxFiles: 1,
+
+      allowMultiple: false,
+      allowFileTypeValidation: true,
+      acceptedFileTypes: ["image/png", "image/jpeg", "image/jpg"],
+      server: {
+        url: "/coaches/profile/avatar",
+        headers: {
+          "X-CSRF-Token": "{{.csrf}}",
+        },
+      },
+    });
+    avatarFp.on("processfile", () => {
+      location.reload();
+    });
+  </script>
 </html>
 {{end}}

@@ -45,6 +45,7 @@ createApp({
         labelIdle:
           "Drag and drop your avatar here, or click this to update avatar.",
         maxFiles: 1,
+
         allowMultiple: false,
         allowFileTypeValidation: true,
         acceptedFileTypes: ["image/png", "image/jpeg", "image/jpg"],
@@ -54,6 +55,9 @@ createApp({
             "X-CSRF-Token": window.csrf,
           },
         },
+      });
+      fp.on("processfile", () => {
+        location.reload();
       });
     });
     return {

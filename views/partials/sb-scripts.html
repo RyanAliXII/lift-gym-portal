@@ -74,5 +74,29 @@
     });
   });
 </script> -->
+<script>
+  const fetchAdminAvatar = async (startUrl) => {
+    const response = await fetch(`${startUrl}/profile/avatar`);
+    const { data } = await response.json();
+    const avatarImgs = document.querySelectorAll(".avatar-img");
+
+    avatarImgs?.forEach((avatar) => {
+      avatar.src = data?.avatarUrl;
+    });
+  };
+
+  const isAdminApp = window.location.pathname.startsWith("/app");
+  const isClientsApp = window.location.pathname.startsWith("/clients");
+  const isCoachApp = window.location.pathname.startsWith("/coaches");
+  if (isAdminApp) {
+    fetchAdminAvatar("/app");
+  }
+  if (isClientsApp) {
+    fetchAdminAvatar("/clients");
+  }
+  if (isCoachApp) {
+    fetchAdminAvatar("/coaches");
+  }
+</script>
 <script src="/js/sb-admin/sb-admin-2.min.js"></script>
 {{end}}

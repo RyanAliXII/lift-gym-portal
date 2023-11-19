@@ -1,14 +1,17 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/mailer"
 	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nyaruka/phonenumbers"
 	"go.uber.org/zap"
@@ -20,6 +23,7 @@ type ProfileHandler struct {
 	verificationRepo  repository.VerificationRepository
 	memberRepo repository.MemberRepository
 	coachRepo repository.CoachRepository
+	objstore objstore.ObjectStorer
 }
 
 func (h *ProfileHandler) RenderClientProfilePage(c echo.Context) error{
@@ -242,11 +246,84 @@ func ValidateMobile (value interface {}) error {
 	return nil
 }
 
+func (h * ProfileHandler)ChangeAvatar(c echo.Context) error {
+	fileHeader, err := c.FormFile("filepond")
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	file, err := fileHeader.Open()
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Message: "Unknown error occured.",
+		})
+	}
+	defer file.Close()
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	uuid := uuid.New()
+
+	result, err  := h.objstore.Upload(context.Background(), file, objstore.UploadConfig{
+		FolderName: "avatars",
+		Filename: uuid.String(),
+		AllowedFormats: []string{"jpg", "png", "webp", "jpeg"},
+	} )
+
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	err = h.clientRepo.UpdateAvatar(sessionData.User.Id, result)
+	if err != nil {
+		logger.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Message: "Unknown error occured.",
+		})
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Message: "Avatar changed successfully",
+	})
+}
+
+func (h * ProfileHandler) GetAvatar (c echo.Context) error {
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	avatarPath, err  := h.clientRepo.GetUserAvatar(sessionData.User.Id)
+	if err != nil{
+		logger.Error(err.Error())
+	}
+	avatarUrl := ``
+	if(len(avatarPath) == 0){
+		avatarUrl = fmt.Sprintf("https://ui-avatars.com/api/?name=%s+%s", sessionData.User.GivenName, sessionData.User.Surname)
+	}else{
+	  avatarUrl  = fmt.Sprintf("%s/%s", objstore.PublicURL, avatarPath)
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"avatarUrl": avatarUrl,
+		},
+		Message: "Avatar fetched.",
+	})
+} 
+
 func NewProfileHandler()ProfileHandler {
+	objstore, _ := objstore.GetObjectStorage()
 	return ProfileHandler{
 		clientRepo: repository.NewClientRepository(),
 		verificationRepo: repository.NewVerificationRepository() ,
 		memberRepo: repository.NewMemberRepository(),
 		coachRepo: repository.NewCoachRepository(),
+		objstore: objstore,
 	}
 }

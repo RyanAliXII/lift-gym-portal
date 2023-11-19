@@ -134,6 +134,7 @@ func adminRoutes (router  * echo.Group){
 	router.GET("/profile", adminProfileHandler.RenderAdminProfile)
 	router.PATCH("/profile/password", adminProfileHandler.ChangePassword)
 	router.POST("/profile/avatar", adminProfileHandler.ChangeAvatar)
+	router.GET("/profile/avatar", adminProfileHandler.GetAvatar)
 	router.GET("/date-slots", dateSlotHandler.RenderDateSlotPage, middlewares.ValidatePermissions("DateSlot.Read"))
 	router.POST("/date-slots", dateSlotHandler.NewSlot, middlewares.ValidatePermissions("DateSlot.Create"))
 	router.DELETE("/date-slots/:id", dateSlotHandler.DeleteSlot,  middlewares.ValidatePermissions("DateSlot.Delete"))
@@ -193,6 +194,8 @@ func clientRoutes(router * echo.Group){
 	router.POST("/profile/verification", profileHandler.CreateEmailVerification)
 	router.PATCH("/profile/password", profileHandler.ChangePassword)
 	router.PATCH("/profile", profileHandler.UpdateProfile)
+	router.POST("/profile/avatar", profileHandler.ChangeAvatar)
+	router.GET("/profile/avatar", profileHandler.GetAvatar)
 	router.GET("/membership-requests", membershipRequestHandler.RenderClientMembershipRequest)
 	router.PATCH("/membership-requests/:id/status", membershipRequestHandler.CancelMembershipRequestStatus)
 	router.POST("/membership-requests", membershipRequestHandler.NewRequest)
@@ -252,4 +255,6 @@ func coachRoutes(router * echo.Group) {
 	router.POST("/workouts", workoutHandler.NewWorkout)
 	router.PUT("/workouts/:id", workoutHandler.UpdateWorkout)
 	router.DELETE("/workouts/:id", workoutHandler.DeleteWorkout)
+	router.POST("/profile/avatar", coachProfileHandler.ChangeAvatar)
+	router.GET("/profile/avatar", coachProfileHandler.GetAvatar)
 }

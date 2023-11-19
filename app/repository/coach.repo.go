@@ -128,6 +128,15 @@ func (repo * CoachRepository)Delete(id int )error {
 	_, err := repo.db.Exec("UPDATE coach set deleted_at = now() where id = ?", id)
 	return err
 }
+func (repo *CoachRepository) UpdateAvatar (id int, avatarPath string) error {
+	_, err := repo.db.Exec("UPDATE coach SET avatar = ? WHERE id = ?", avatarPath, id)
+	return err
+}
+func (repo *CoachRepository) GetUserAvatar(id int) (string, error) {
+	avatarPath := ""
+	err := repo.db.Get(&avatarPath, "SELECT avatar from coach where id  = ?", id)
+	return avatarPath, err
+}
 func NewCoachRepository()CoachRepository {
 
 	return CoachRepository{

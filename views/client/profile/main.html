@@ -93,6 +93,12 @@
   </body>
 
   {{template "partials/sb-scripts"}}
+
+  <script src="https://unpkg.com/filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+  <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
   <script>
     const isVerified = "{{.profile.IsVerified}}" === "true";
     const lastEmailVerificationSentExpiry = new Date(
@@ -282,6 +288,30 @@
         $("#editAddressModal").modal("show");
       });
     }
+  </script>
+  <script>
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+    FilePond.registerPlugin(FilePondPluginFileRename);
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
+    const fp = FilePond.create(document.querySelector("#avatarUpload"), {
+      labelIdle:
+        "Drag and drop your avatar here, or click this to update avatar.",
+      maxFiles: 1,
+
+      allowMultiple: false,
+      allowFileTypeValidation: true,
+      acceptedFileTypes: ["image/png", "image/jpeg", "image/jpg"],
+      server: {
+        url: "/clients/profile/avatar",
+        headers: {
+          "X-CSRF-Token": "{{.csrf}}",
+        },
+      },
+    });
+    fp.on("processfile", () => {
+      location.reload();
+    });
   </script>
 </html>
 {{end}}

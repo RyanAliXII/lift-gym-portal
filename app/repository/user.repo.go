@@ -51,6 +51,13 @@ func (repo *UserRepository) UpdateAvatar (id int, avatarPath string) error {
 	return err
 }
 
+func (repo *UserRepository) GetUserAvatar(id int) (string, error) {
+	avatarPath := ""
+	err := repo.db.Get(&avatarPath, "SELECT avatar from user where id  = ?", id)
+	return avatarPath, err
+}
+
+
 
 func (repo  * UserRepository) GetUserTypeByAccountId(accountId int)(string , error){
 		query := `

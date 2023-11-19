@@ -171,6 +171,16 @@ func (repo * ClientRepository)UpdateAddressOnce(clientId int, address string) er
 	_, err := repo.db.Exec("UPDATE client set address = ? WHERE LENGTH(address) = 0 AND id = ?", address, clientId)
 	return err
 }
+
+func (repo *ClientRepository) UpdateAvatar (id int, avatarPath string) error {
+	_, err := repo.db.Exec("UPDATE client SET avatar = ? WHERE id = ?", avatarPath, id)
+	return err
+}
+func (repo *ClientRepository) GetUserAvatar(id int) (string, error) {
+	avatarPath := ""
+	err := repo.db.Get(&avatarPath, "SELECT avatar from client where id  = ?", id)
+	return avatarPath, err
+}
 func NewClientRepository () ClientRepository{
 	return ClientRepository{
 		db: db.GetConnection(),

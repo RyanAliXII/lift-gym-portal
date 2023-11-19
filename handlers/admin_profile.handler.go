@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"lift-fitness-gym/app/pkg/mysqlsession"
 	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
@@ -141,3 +142,25 @@ func (h * AdminProfileHandler) ChangePassword (c echo.Context) error {
 		Message: "OK",
 	})
 }
+func (h * AdminProfileHandler) GetAvatar (c echo.Context) error {
+	
+	sessionData := mysqlsession.SessionData{}
+	sessionData.Bind(c.Get("sessionData"))
+	avatarPath, err  := h.userRepo.GetUserAvatar(sessionData.User.Id)
+	if err != nil{
+		logger.Error(err.Error())
+	}
+	avatarUrl := ``
+	if(len(avatarPath) == 0){
+		avatarUrl = fmt.Sprintf("https://ui-avatars.com/api/?name=%s+%s", sessionData.User.GivenName, sessionData.User.Surname)
+	}else{
+	  avatarUrl  = fmt.Sprintf("%s/%s", objstore.PublicURL, avatarPath)
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"avatarUrl": avatarUrl,
+		},
+		Message: "Avatar fetched.",
+	})
+} 
