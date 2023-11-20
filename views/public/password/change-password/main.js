@@ -6,9 +6,15 @@ createApp({
   },
   setup() {
     const errors = ref({});
+    const showPassword = ref(false);
+    const formValue = ref({
+      password: "",
+      confirmPassword: "",
+    });
     const displaySuccessMessage = ref(false);
     const onSubmit = async (event) => {
       const form = new FormData(event.target);
+
       const searchParams = new URLSearchParams(window.location.search);
       const key = searchParams.get("key");
       form.set("publicKey", key);
@@ -37,6 +43,8 @@ createApp({
     return {
       onSubmit,
       errors,
+      showPassword,
+      formValue,
       displaySuccessMessage,
     };
   },
