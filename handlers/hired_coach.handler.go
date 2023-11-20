@@ -173,29 +173,29 @@ func (h *HiredCoachHandler) UpdateStatus(c echo.Context) error {
 
 func (h *HiredCoachHandler)handleApproval(c echo.Context, id int, statusId int, coachId int) error {
 	body := model.HiredCoach{}
-	err := c.Bind(&body)
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "bindErr"))
-		return c.JSON(http.StatusBadRequest, JSONResponse{
-			Status: http.StatusBadRequest,
-			Message: "Unknown error occured.",
-		})
-	}
+	// err := c.Bind(&body)
+	// if err != nil {
+	// 	logger.Error(err.Error(), zap.String("error", "bindErr"))
+	// 	return c.JSON(http.StatusBadRequest, JSONResponse{
+	// 		Status: http.StatusBadRequest,
+	// 		Message: "Unknown error occured.",
+	// 	})
+	// }
 
-	err, fields := body.ValidateMeetingTime()
-	if err != nil {
-		logger.Error(err.Error(), zap.String("error", "validation error"))
-		return c.JSON(http.StatusBadRequest, JSONResponse{
-			Status: http.StatusBadRequest,
-			Data: Data{
-				"errors": fields,
-			},
-		})
-	}
+	// err, fields := body.ValidateMeetingTime()
+	// if err != nil {
+	// 	logger.Error(err.Error(), zap.String("error", "validation error"))
+	// 	return c.JSON(http.StatusBadRequest, JSONResponse{
+	// 		Status: http.StatusBadRequest,
+	// 		Data: Data{
+	// 			"errors": fields,
+	// 		},
+	// 	})
+	// }
 	body.Id = id
 	body.StatusId = statusId
 	body.CoachId = coachId
-	err = h.hiredCoach.MarkAppointmentAsApproved(body)
+	err := h.hiredCoach.MarkAppointmentAsApproved(body)
 	if err != nil{ 
 		logger.Error(err.Error(), zap.String("error", "MarkAppointmentAsApproved"))
 		return c.JSON(http.StatusInternalServerError, JSONResponse{

@@ -2,6 +2,7 @@ import { createApp, onMounted, ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import Choices from "choices.js";
 import swal from "sweetalert2";
+import { format } from "date-fns";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -24,7 +25,12 @@ createApp({
     const form = ref({
       coachId: 0,
       rateId: 0,
+      meetingTime: "",
     });
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    const minDate = today.toISOString().slice(0, -8);
+
     const slideTemplate = ref(null);
     const hireSelectElement = ref(null);
     const hireSelect = ref(null);
@@ -70,7 +76,10 @@ createApp({
     const onSubmit = async () => {
       try {
         const response = await fetch("/clients/hire-a-coach", {
-          body: JSON.stringify(form.value),
+          body: JSON.stringify({
+            ...form.value,
+            meetingTime: new Date(form.value.meetingTime).toISOString(),
+          }),
           method: "POST",
           headers: new Headers({
             "Content-Type": "application/json",
@@ -118,6 +127,9 @@ createApp({
       publicUrl: window.publicUrl,
       onSubmit,
       errors,
+      form,
+
+      minDate,
     };
   },
 }).mount("#HireCoach");

@@ -6,7 +6,7 @@ createApp({
     delimiters: ["{", "}"],
   },
   setup() {
-    const form = ref({ id: 0, meetingTime: "" });
+    const form = ref({ id: 0 });
     const errors = ref({});
     const appointments = ref([]);
     const fetchAppointments = async () => {
@@ -38,13 +38,12 @@ createApp({
       form.value[name] = value;
       delete errors.value[name];
     };
-    const onSubmitApproval = async () => {
+    const onSubmitApproval = async (id) => {
       try {
         errors.value = {};
         const response = await fetch(
-          `/coaches/appointments/${form.value.id}/status?statusId=2`,
+          `/coaches/appointments/${id}/status?statusId=2`,
           {
-            body: JSON.stringify(form.value),
             method: "PATCH",
             headers: new Headers({
               "Content-Type": "application/json",
@@ -176,9 +175,20 @@ createApp({
       });
     };
 
-    const initApproval = (id) => {
+    const initApproval = async (id) => {
       form.value.id = id;
-      $("#meetingDateModal").modal("show");
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, approve it.",
+        title: "Approve Coaching Request",
+        text: "Are you sure you want to approve the coaching request?",
+        confirmButtonColor: "#295ad6",
+        cancelButtonText: "I don't want to approve the request.",
+        icon: "question",
+      });
+      if (!result.isConfirmed) return;
+      onSubmitApproval(id);
+      // $("#meetingDateModal").modal("show");
     };
 
     const initCancellation = async (id) => {

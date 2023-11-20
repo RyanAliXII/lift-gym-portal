@@ -157,10 +157,30 @@ type HiredCoach struct {
 }
 
 
-func(m HiredCoach) Validate() (error, map[string]string) {
-	return m.Model.ValidationRules(&m,
+func(m * HiredCoach) Validate() (error, map[string]string) {
+	return m.Model.ValidationRules(m,
 		 validation.Field(&m.CoachId, validation.Required.Error("Coach is required."), validation.Min(1).Error("Coach is required.")), 
-		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")))
+		 validation.Field(&m.RateId, validation.Required.Error("Rate is required."), validation.Min(1).Error("Rate is required.")),
+		 validation.Field(&m.MeetingTime, validation.Required.Error("Meeting time is required."), validation.By(func(value interface{}) error {
+			t, err := time.Parse(time.RFC3339, value.(string))
+		
+			if err != nil {
+				return fmt.Errorf("Meeting time is required.")
+			}
+			location, err := time.LoadLocation("Asia/Manila")
+			if err != nil {
+				return fmt.Errorf("Unknown error occured")
+			}
+			now := time.Now().In(location)
+			t = t.In(location)
+
+			if t.Before(now) {
+				return fmt.Errorf("Meeting time cannot be past current date.")
+			}
+			m.MeetingTime = t.Format(time.DateTime)
+			return nil
+		 })),
+		)
 }
 
 func(m * HiredCoach) ValidateMeetingTime() (error, map[string]string) {

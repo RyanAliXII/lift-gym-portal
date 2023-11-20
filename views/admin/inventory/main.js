@@ -22,6 +22,7 @@ createApp({
         costPrice: 0,
         condition: 100,
         quantityThreshold: 0,
+        conditionThreshold: 0,
         dateReceived: format(new Date(), "yyyy-MM-dd"),
       },
       validationSchema: object({}),
@@ -34,6 +35,9 @@ createApp({
     const costPrice = defineInputBinds("costPrice", { validateOnChange: true });
     const condition = defineInputBinds("condition", { validateOnChange: true });
     const quantityThreshold = defineInputBinds("quantityThreshold", {
+      validateOnChange: true,
+    });
+    const conditionThreshold = defineInputBinds("conditionThreshold", {
       validateOnChange: true,
     });
     const dateReceived = defineInputBinds("dateReceived", {
@@ -181,6 +185,7 @@ createApp({
       onSubmitUpdate,
       initDelete,
       initEdit,
+      conditionThreshold,
       stat,
       quantityThreshold,
       condition,

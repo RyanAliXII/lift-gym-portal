@@ -84,7 +84,24 @@
               {errors?.condition}
             </div>
           </div>
-
+          <div class="form-group">
+            <label for="quantity" class="col-form-label"
+              >Condition Threshold (%)</label
+            >
+            <input
+              type="number"
+              name="conditionThreshold"
+              class="form-control"
+              v-bind="conditionThreshold"
+              :class="{'is-invalid': errors?.conditionThreshold}"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors.conditionThreshold}"
+            >
+              {errors?.conditionThreshold}
+            </div>
+          </div>
           <div class="form-group">
             <label for="quantityThreshold" class="col-form-label"
               >Quantity Threshold</label

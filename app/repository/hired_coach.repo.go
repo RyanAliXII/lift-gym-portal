@@ -38,7 +38,7 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 		transaction.Rollback()
 		return err
 	}
-	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id, remarks) VALUES(?, ?, ?, ?, ?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId, hiredCoach.Remarks)
+	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id, remarks, meeting_time) VALUES(?, ?, ?, ?, ?,?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId, hiredCoach.Remarks, hiredCoach.MeetingTime)
 	if err != nil {
 		transaction.Rollback()
 		return err
@@ -131,7 +131,7 @@ func(repo * HiredCoachRepository)CancelAppointmentByClient(appointment model.Hir
 }
 
 func(repo * HiredCoachRepository)MarkAppointmentAsApproved(appointment model.HiredCoach) error {
-	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, meeting_time = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusApproved,appointment.MeetingTime,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusPending)
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ? where id = ? and coach_id = ? and status_id = ?", status.CoachAppointmentStatusApproved,appointment.Id, appointment.CoachId, status.CoachAppointmentStatusPending)
 	return err
 }
 func(repo * HiredCoachRepository)MarkAppointmentAsPaid(appointment model.HiredCoach) error {
@@ -174,8 +174,11 @@ func (repo *HiredCoachRepository)GetAppointmentById(id int )(model.HiredCoach, e
 		hired_coach.rate_id, 
 		hired_coach.rate_snapshot_id,
 		hired_coach.client_id,
-		hired_coach.status_id
-		from hired_coach where id = ?  LIMIT 1
+		hired_coach.status_id,
+		JSON_OBJECT('id', coaching_rate_snapshot.id, 'description', coaching_rate_snapshot.description, 'price', coaching_rate_snapshot.price) as rate_snapshot
+		from hired_coach
+		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
+		where hired_coach.id = ? LIMIT 1
 	`
 	err := repo.db.Get(&appointment, query, id)
 	return appointment, err
@@ -200,7 +203,7 @@ func (repo *HiredCoachRepository)handlePenalty(appointment model.HiredCoach) err
 	// if (repo.HasPenalty(appointment.ClientId)){
 	// 	return nil
 	// }
-	_, err := repo.db.Exec("INSERT INTO coach_appointment_penalty(amount, client_id, coach_id) VALUES (?,?,?)", 100, appointment.ClientId, appointment.CoachId)
+	_, err := repo.db.Exec("INSERT INTO coach_appointment_penalty(amount, client_id, coach_id) VALUES (?,?,?)", appointment.RateSnapshot.Price, appointment.ClientId, appointment.CoachId)
 	return err
 }
 

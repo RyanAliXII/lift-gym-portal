@@ -39,6 +39,7 @@ createApp({
           "Coach appointment has been cancelled.",
           "success"
         );
+        fetchHiredCoaches();
       } catch (err) {
         console.error(err);
       }

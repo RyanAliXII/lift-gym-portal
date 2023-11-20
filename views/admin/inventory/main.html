@@ -64,7 +64,8 @@
                         <th>Quantity</th>
                         <th>Cost Price</th>
                         <th>Date Received</th>
-                        <th>Status</th>
+                        <th>Quantity Status</th>
+                        <th>Condition Status</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -93,6 +94,15 @@
                           </td>
                           <td v-else class="text-danger font-weight-bold">
                             Low Quantity
+                          </td>
+                          <td
+                            v-if="equipment.condition > equipment.conditionThreshold"
+                            class="text-success font-weight-bold"
+                          >
+                            Good Quality
+                          </td>
+                          <td v-else class="text-danger font-weight-bold">
+                            For Repair
                           </td>
                           <td>
                             <div>

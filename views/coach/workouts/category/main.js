@@ -31,7 +31,7 @@ createApp({
     const categories = ref([]);
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch("/app/workouts", {
+        const response = await fetch("/coaches/workouts", {
           headers: new Headers({
             "Content-Type": "application/json",
             "Cache-Control": "no-cache",
