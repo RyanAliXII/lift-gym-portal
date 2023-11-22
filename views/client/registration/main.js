@@ -8,6 +8,7 @@ createApp({
   },
   setup() {
     const displaySuccessMessage = ref(false);
+    const showPassword = ref(false);
     const isSubmitting = ref(false);
     const form = ref({
       givenName: "",
@@ -61,6 +62,7 @@ createApp({
       displaySuccessMessage,
       isSubmitting,
       handleFormInput,
+      showPassword,
     };
   },
 }).mount("#RegistrationPage");

@@ -146,7 +146,17 @@
                   <div class="form-group">
                     <label>Password</label>
                     <input
+                      v-if="!showPassword"
                       type="password"
+                      name="password"
+                      class="form-control form-control-user"
+                      :value="form.password"
+                      @input="handleFormInput"
+                      :class="{'is-invalid': errors?.password}"
+                    />
+                    <input
+                      v-else
+                      type="text"
                       name="password"
                       class="form-control form-control-user"
                       :value="form.password"
@@ -158,6 +168,13 @@
                       :class="{'d-block': errors?.password}"
                     >
                       {errors?.password}
+                    </div>
+                    <div
+                      class="d-flex align-items-center py-2"
+                      style="gap: 5px"
+                    >
+                      <input type="checkbox" v-model="showPassword" />
+                      <label style="margin-bottom: 0">Show Password</label>
                     </div>
                   </div>
                   <button
