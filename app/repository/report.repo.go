@@ -60,10 +60,11 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 		INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
 		where subscription.valid_until >= NOW() 
 		and subscription.cancelled_at is NULL and date(subscription.created_at)  BETWEEN ? AND ?),0),
-
-		'package', COALESCE((SELECT SUM(price) from package_request 
-		INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-		where date(package_request.created_at)  BETWEEN ? AND ?),0)
+		'package', COALESCE((
+			SELECT  SUM(package_snapshot.price) from package_request 
+			INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+			where date(package_request.created_at) BETWEEN ?
+			AND ? and status_id = 3 ),0)
 	) as earnings_breakdown;
 	`
 	data := model.ReportData{}

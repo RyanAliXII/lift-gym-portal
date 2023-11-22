@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"lift-fitness-gym/app/model"
 	"lift-fitness-gym/app/pkg/acl"
 	"lift-fitness-gym/app/pkg/mysqlsession"
@@ -78,12 +79,14 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		HttpOnly: true,
 	}
 	permissions := []string{}
-
+	fmt.Println(dbUser.Id)
+	
 	if dbUser.IsRoot {
 		permissions = acl.Permissions
 	}else{
-		role, err := h.roleRepository.GetRoleByUserId(dbUser.Id)
-		if err != nil {
+		role, err := h.roleRepository.GetRoleById(dbUser.RoleId)
+		fmt.Println(role)
+		if err != nil {	
 			if err != sql.ErrNoRows{
 				logger.Error(err.Error(), zap.String("error", "getRoleByUserIdErr"))
 				return c.JSON(http.StatusInternalServerError, Data{

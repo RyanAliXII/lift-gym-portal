@@ -40,10 +40,10 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
       AND NOW()),0)
       + 
       COALESCE((
-      SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-      AND NOW()),0)
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as annual_earnings,
     (
      COALESCE((SELECT SUM(amount_paid) 
@@ -57,10 +57,10 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
       AND NOW()),0)
       + 
       COALESCE((
-      SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-      AND NOW()),0)
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as monthly_earnings,
       
 	 (
@@ -75,10 +75,10 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
       AND NOW()),0)
       + 
       COALESCE((
-      SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-      AND NOW()),0)
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as weekly_earnings,
       
 	  JSON_OBJECT(
@@ -90,10 +90,11 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	  where subscription.valid_until >= NOW() 
 	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
       AND NOW()),0),
-      'package', COALESCE((SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-      AND NOW()),0)
+      'package',  COALESCE((
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as annual_earnings_breakdown,
       
       JSON_OBJECT(
@@ -105,10 +106,11 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	  where subscription.valid_until >= NOW() 
 	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
       AND NOW()),0),
-      'package', COALESCE((SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-      AND NOW()),0)
+      'package', COALESCE((
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as monthly_earnings_breakdown,
       
       JSON_OBJECT(	
@@ -120,10 +122,11 @@ func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error)
 	  where subscription.valid_until >= NOW() 
 	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
       AND NOW()),0),
-      'package', COALESCE((SELECT SUM(price) from package_request 
-      INNER JOIN package_snapshot on package_request.package_snapshot_id = package_snapshot_id 
-      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-      AND NOW()),0)
+      'package', COALESCE((
+        SELECT  SUM(package_snapshot.price) from package_request 
+        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+        AND NOW() and status_id = 3 ),0)
 	  ) as weekly_earnings_breakdown;	   
 	`
 	err := repo.db.Get(&data, query)
