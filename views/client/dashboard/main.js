@@ -39,9 +39,17 @@ createApp({
     const table = ref(null);
     const columns = [
       {
-        title: "Created At",
+        title: "In",
         data: "createdAt",
         render: (value) => {
+          return `<span>${formatDate(value)}</span>`;
+        },
+      },
+      {
+        title: "Out",
+        data: "loggedOutAt",
+        render: (value) => {
+          if (value.length === 0) return "Not logged out";
           return `<span>${formatDate(value)}</span>`;
         },
       },

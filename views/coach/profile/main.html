@@ -336,5 +336,15 @@
       location.reload();
     });
   </script>
+  <script>
+    const showpasswordCheckbox = document.querySelector("#showPasswordChk");
+    const passwordInputs = document.querySelectorAll('input[type="password"]');
+    showpasswordCheckbox?.addEventListener("change", (event) => {
+      const isChecked = event.target.checked;
+      for (const input of passwordInputs) {
+        input.type = isChecked ? "text" : "password";
+      }
+    });
+  </script>
 </html>
 {{end}}

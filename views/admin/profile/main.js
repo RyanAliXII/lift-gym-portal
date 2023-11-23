@@ -12,6 +12,8 @@ createApp({
   setup() {
     const avatarUpload = ref(null);
     const errors = ref({});
+    const showPassword = ref(false);
+    const passwordForm = ref({ old: "", new: "" });
     const onSubmit = async (event) => {
       errors.value = {};
       const form = new FormData(event.target);
@@ -63,6 +65,8 @@ createApp({
     return {
       onSubmit,
       errors,
+      showPassword,
+      passwordForm,
       avatarUpload,
     };
   },

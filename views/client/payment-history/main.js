@@ -19,7 +19,7 @@ createApp({
     };
     const columns = [
       {
-        title: "Created At",
+        title: "Date",
         data: "createdAt",
         render: (value) => {
           return formatDate(value);
@@ -33,7 +33,7 @@ createApp({
         },
       },
       {
-        title: "Amount",
+        title: "Amount Paid",
         data: "amount",
         render: (value) => {
           return toMoney(value);

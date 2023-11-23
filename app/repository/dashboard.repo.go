@@ -21,113 +21,112 @@ func NewDashboard() Dashboard{
 func (repo * Dashboard)GetAdminDashboardData() (model.AdminDashboardData, error) {
 	data := model.AdminDashboardData{}
 	query := `
-	SELECT  
-    (SELECT COUNT(1) FROM client where deleted_at is null ) AS clients, 
-    (SELECT COUNT(1) 
-     FROM client 
-     INNER JOIN subscription ON subscription.client_id = client.id  
-     WHERE subscription.valid_until >= NOW() AND subscription.cancelled_at IS NULL and client.deleted_at is null) AS members,
-	
-     (
-     COALESCE((SELECT SUM(amount_paid) 
-     FROM client_log  
-     WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0) 
-     + 
-     COALESCE((SELECT  SUM(price) from subscription
-     INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-      AND NOW()),0)
-      + 
-      COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as annual_earnings,
+  SELECT  
+  (SELECT COUNT(1) FROM client where deleted_at is null ) AS clients, 
+  (SELECT COUNT(1) 
+   FROM client 
+   INNER JOIN subscription ON subscription.client_id = client.id  
+   WHERE subscription.valid_until >= NOW() AND subscription.cancelled_at IS NULL and client.deleted_at is null) AS members,
+
+   (
+   COALESCE((SELECT SUM(amount_paid) 
+   FROM client_log  
+   WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0) 
+   + 
+   COALESCE((SELECT  SUM(price) from subscription
+   INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+    AND NOW()),0)
+    + 
+    COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+      AND NOW() and status_id = 3 ),0)
+  ) as annual_earnings,
     (
-     COALESCE((SELECT SUM(amount_paid) 
-     FROM client_log  
-     WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0) 
-     + 
-     COALESCE((SELECT  SUM(price) from subscription
-     INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-      AND NOW()),0)
-      + 
-      COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as monthly_earnings,
-      
-	 (
-     COALESCE((SELECT SUM(amount_paid) 
-     FROM client_log  
-     WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0) 
-     + 
-     COALESCE((SELECT  SUM(price) from subscription
-     INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-      AND NOW()),0)
-      + 
-      COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as weekly_earnings,
-      
-	  JSON_OBJECT(
-      'walkIn', COALESCE((SELECT SUM(amount_paid) 
-      FROM client_log  
-      WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0), 
-	 'membership',  COALESCE((SELECT  SUM(price) from subscription
-      INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-      AND NOW()),0),
-      'package',  COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as annual_earnings_breakdown,
-      
-      JSON_OBJECT(
-      'walkIn', COALESCE((SELECT SUM(amount_paid) 
-      FROM client_log  
-      WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
-	 'membership',  COALESCE((SELECT  SUM(price) from subscription
-      INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-      AND NOW()),0),
-      'package', COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as monthly_earnings_breakdown,
-      
-      JSON_OBJECT(	
-      'walkIn', COALESCE((SELECT SUM(amount_paid) 
-      FROM client_log  
-      WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
-	 'membership',  COALESCE((SELECT  SUM(price) from subscription
-      INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
-	  where subscription.valid_until >= NOW() 
-	  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-      AND NOW()),0),
-      'package', COALESCE((
-        SELECT  SUM(package_snapshot.price) from package_request 
-        INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
-        where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
-        AND NOW() and status_id = 3 ),0)
-	  ) as weekly_earnings_breakdown;	   
+   COALESCE((SELECT SUM(amount_paid) 
+   FROM client_log  
+   WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0) 
+   + 
+   COALESCE((SELECT  SUM(price) from subscription
+   INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+    AND NOW()),0)
+    + 
+    COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+      AND NOW() and status_id = 3 ),0)
+  ) as monthly_earnings,
+ (
+   COALESCE((SELECT SUM(amount_paid) 
+   FROM client_log  
+   WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0) 
+   + 
+   COALESCE((SELECT  SUM(price) from subscription
+   INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+    AND NOW()),0)
+    + 
+    COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+      AND NOW() and status_id = 3 ),0)
+  ) as weekly_earnings,
+    
+  JSON_OBJECT(
+    'walkIn', COALESCE((SELECT SUM(amount_paid) 
+    FROM client_log  
+    WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) AND NOW()), 0), 
+ 'membership',  COALESCE((SELECT  SUM(price) from subscription
+    INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+    AND NOW()),0),
+    'package',  COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 YEAR) 
+      AND NOW() and status_id = 3 ),0)
+  ) as annual_earnings_breakdown,
+    
+    JSON_OBJECT(
+    'walkIn', COALESCE((SELECT SUM(amount_paid) 
+    FROM client_log  
+    WHERE deleted_at is null and created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()), 0), 
+ 'membership',  COALESCE((SELECT  SUM(price) from subscription
+    INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+    AND NOW()),0),
+    'package', COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+      AND NOW() and status_id = 3 ),0)
+  ) as monthly_earnings_breakdown,
+    
+    JSON_OBJECT(	
+    'walkIn', COALESCE((SELECT SUM(amount_paid) 
+    FROM client_log  
+    WHERE created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()), 0), 
+ 'membership',  COALESCE((SELECT  SUM(price) from subscription
+    INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+  where subscription.valid_until >= NOW() 
+  and subscription.cancelled_at is NULL and subscription.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+    AND NOW()),0),
+    'package', COALESCE((
+      SELECT  SUM(package_snapshot.price) from package_request 
+      INNER JOIN package_snapshot on package_snapshot_id = package_snapshot.id
+      where package_request.created_at BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) 
+      AND NOW() and status_id = 3 ),0)
+  ) as weekly_earnings_breakdown;	   
 	`
 	err := repo.db.Get(&data, query)
 	return data, err
@@ -231,7 +230,7 @@ func (repo * Dashboard)GetClientDashboardData(clientId int) (model.ClientDashboa
 
 func (repo * Dashboard)GetClientWalkIns(clientId int) ([]model.ClientLog, error){
 	logs := make([]model.ClientLog, 0)
-	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, client_log.is_member, JSON_OBJECT('publicId',client.public_id ,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client,  convert_tz(client_log.created_at, 'UTC', 'Asia/Manila') as created_at from client_log
+	query := `SELECT client_log.id, client_log.client_id, client_log.amount_paid, COALESCE(client_log.logged_out_at, '') as logged_out_at, client_log.is_member, JSON_OBJECT('publicId',client.public_id ,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client,  convert_tz(client_log.created_at, 'UTC', 'Asia/Manila') as created_at from client_log
 		INNER JOIN client on client_log.client_id = client.id
 		INNER JOIN account on client.account_id = account.id
 		where client_log.deleted_at is null and client_id = ?

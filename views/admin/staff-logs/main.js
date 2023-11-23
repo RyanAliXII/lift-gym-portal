@@ -24,14 +24,14 @@ createApp({
     let dt;
     const columns = [
       {
-        title: "Created At",
+        title: "In",
         data: "createdAt",
         render: (value) => {
           return `<span>${formatDate(value)}</span>`;
         },
       },
       {
-        title: "Logged Out At",
+        title: "Out",
         data: "isLoggedOut",
         render: (value, _, row) => {
           if (value) {

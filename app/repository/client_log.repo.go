@@ -24,7 +24,7 @@ func (repo * ClientLogRepository)UpdateLog(log model.ClientLog) error{
 	_, err := repo.db.Exec("UPDATE client_log set client_id = ?, amount_paid = ?, is_member = ? WHERE id = ?" ,log.ClientId, log.AmountPaid, log.IsMember, log.Id)
 	return err
 }
-func (repo * ClientLogRepository)GetLogs() ([]model.ClientLog, error){
+func (repo * ClientLogRepository)GetLogs()([]model.ClientLog, error){
 	logs := make([]model.ClientLog, 0)
 	query := `SELECT client_log.id, 
 	client_log.client_id, 

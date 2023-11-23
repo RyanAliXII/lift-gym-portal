@@ -33,7 +33,7 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 		COALESCE(
 			(SELECT SUM(amount_paid) 
 			FROM client_log  
-			WHERE created_at BETWEEN ? AND ?), 0) 
+			WHERE deleted_at  is null and DATE(created_at) BETWEEN ? AND ?), 0) 
 		+
 		COALESCE(
 			(SELECT SUM(price) 
