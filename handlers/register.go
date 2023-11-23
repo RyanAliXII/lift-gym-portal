@@ -24,6 +24,12 @@ func RegisterHandlers(router *echo.Echo) {
 	router.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "public/landing", nil)
 	})
+	router.GET("/about-us", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "public/aboutus", nil)
+	})
+	router.GET("/user-manual", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "public/usermanual", nil)
+	})
 
 	router.GET("/contact-us", contactUsHandler.RenderContactUs )
 	router.POST("/contact-us", contactUsHandler.NewMessage )
