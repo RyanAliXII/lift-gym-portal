@@ -64,25 +64,25 @@ createApp({
         data: "validUntil",
         render: (value) => formatDate(value),
       },
-      {
-        title: "",
-        data: null,
-        render: () => {
-          if (window.hasDeletePermission) {
-            return `<button
-            type="button"
-            class="btn btn-outline-danger cancel-sub"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="Cancel subscription"
-            @click="initCancellation(member)"
-          >
-            <i class="fas fa-trash"></i>
-          </button>`;
-          }
-          return "";
-        },
-      },
+      // {
+      //   title: "",
+      //   data: null,
+      //   render: () => {
+      //     if (window.hasDeletePermission) {
+      //       return `<button
+      //       type="button"
+      //       class="btn btn-outline-danger cancel-sub"
+      //       data-toggle="tooltip"
+      //       data-placement="top"
+      //       title="Cancel subscription"
+      //       @click="initCancellation(member)"
+      //     >
+      //       <i class="fas fa-trash"></i>
+      //     </button>`;
+      //     }
+      //     return "";
+      //   },
+      // },
     ];
     const searchMembers = (event) => {
       const query = event.target.value;

@@ -22,7 +22,7 @@ func (repo * MemberRepository)GetMembers()([]model.Member,  error){
 	JSON_OBJECT('id', membership_plan.id, 'description', membership_plan.description, 'months', membership_plan.months, 'price', membership_plan.price) as membership_plan, 
 	JSON_OBJECT('id', membership_plan_snapshot.id, 'description', membership_plan_snapshot.description, 'months', membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan_snaphot,
 	subscription.created_at FROM subscription
-	INNER JOIN client on subscription.client_id = client.id
+	INNER JOIN client on subscription.client_id = client.id and client.deleted_at is null
 	INNER JOIN account on client.account_id = account.id
 	INNER JOIN membership_plan on subscription.membership_plan_id = membership_plan.id
 	INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
