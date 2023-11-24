@@ -34,7 +34,7 @@ func (m Staff) Validate() (error, map[string]string) {
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name must be 1 to 255 characters.")),
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname must be 1 to 255 characters.")),
-		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
+		//validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
 		validation.Field(&m.RoleId, validation.Required.Error("Role is required."), validation.Min(1).Error("Role is required.")),
 		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			strDate ,_ := value.(string)
@@ -78,7 +78,7 @@ func (m Staff) ValidateUpdate() (error, map[string]string) {
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name must be 1 to 255 characters.")),
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname must be 1 to 255 characters.")),
-		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
+		//validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name must be 1 to 255 characters.")),
 		validation.Field(&m.RoleId, validation.Required.Error("Role is required."), validation.Min(1).Error("Role is required.")),
 		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			strDate ,_ := value.(string)

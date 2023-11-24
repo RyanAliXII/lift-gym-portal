@@ -36,7 +36,7 @@ func (m Client) Validate() (error, map[string]string) {
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
-		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+	//		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
 		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			format := "2006-01-02"
@@ -82,7 +82,7 @@ func (m Client) ValidateUpdate() (error, map[string]string) {
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
-		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+		//validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
 		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {
 			format := "2006-01-02"
@@ -126,7 +126,7 @@ func (m Client) ValidateRegistration () (error, map[string]string){
 	db := db.GetConnection()
 	return m.Model.ValidationRules(&m, 
 		validation.Field(&m.GivenName, validation.Required.Error("Given name is required."), validation.Length(1, 255).Error("Given name is required.")), 
-		validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
+		//validation.Field(&m.MiddleName, validation.Required.Error("Middle name is required."), validation.Length(1, 255).Error("Middle name is required.")), 
 		validation.Field(&m.Surname, validation.Required.Error("Surname is required."), validation.Length(1, 255).Error("Surname is required.")), 
 		validation.Field(&m.Password, validation.Required.Error("Password is required."), validation.Length(10, 30).Error("Password must be atleast 10 characters to 30 characters long.")),
 		validation.Field(&m.DateOfBirth, validation.Required.Error("Date of birth is required."), validation.By(func(value interface{}) error {

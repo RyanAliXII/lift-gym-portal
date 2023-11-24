@@ -39,7 +39,7 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 			(SELECT SUM(price) 
 			FROM subscription
 			INNER JOIN membership_plan_snapshot 
-			ON subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+			ON subscription.membership_plan_snapshot_id = membership_plan_snapshot.id	
 			WHERE subscription.valid_until >= NOW() 
 			AND subscription.cancelled_at IS NULL 
 			AND DATE(subscription.created_at) BETWEEN ? AND ?), 0)
@@ -49,7 +49,7 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 			FROM package_request 
 			INNER JOIN package_snapshot 
 			ON package_request.package_snapshot_id = package_snapshot.id 
-			WHERE DATE(package_request.created_at) BETWEEN ? AND ?), 0)
+			WHERE (DATE(package_request.created_at) BETWEEN ? AND ? ) and status_id = 3), 0)
 	) AS earnings,
 	JSON_OBJECT(
 		'walkIn', COALESCE((SELECT SUM(amount_paid) 

@@ -126,7 +126,7 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 }
 
 func(repo * HiredCoachRepository)CancelAppointmentByClient(appointment model.HiredCoach) error {
-	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and client_id = ? and status_id = ?", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.ClientId, status.CoachAppointmentStatusPending)
+	_, err := repo.db.Exec("UPDATE hired_coach SET status_id = ?, remarks = ? where id = ? and client_id = ? and (status_id = ? OR status_id = ?)", status.CoachAppointmentStatusCancelled, appointment.Remarks, appointment.Id, appointment.ClientId, status.CoachAppointmentStatusPending, status.CoachAppointmentStatusApproved)
 	return err
 }
 

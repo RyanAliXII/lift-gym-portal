@@ -58,6 +58,7 @@
                 name="middleName"
                 :class="{'is-invalid':errors.middleName}"
                 v-bind="middleName"
+                placeholder="Optional"
               />
               <div
                 class="invalid-feedback"
@@ -205,6 +206,13 @@
               data-dismiss="modal"
             >
               Close
+            </button>
+            <button
+              class="btn btn-info"
+              type="button"
+              @click="initResetPassword"
+            >
+              Reset Password
             </button>
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
