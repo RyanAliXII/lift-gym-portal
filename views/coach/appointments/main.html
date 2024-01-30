@@ -61,9 +61,8 @@
                       <template v-for="appointment of appointments">
                         <tr>
                           <td>
-                            { (appointment?.meetingTime?.length ?? 0) === 0 ?
-                            "No date set" : formatDate(appointment.meetingTime)
-                            }
+                            {toReadableDate(appointment.schedule.date)}
+                            {to12HR(appointment.schedule.time)}
                           </td>
                           <td>
                             {appointment.client.givenName}

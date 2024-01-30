@@ -38,7 +38,7 @@ func (repo * HiredCoachRepository) Hire(hiredCoach model.HiredCoach) error {
 		transaction.Rollback()
 		return err
 	}
-	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id, remarks, meeting_time) VALUES(?, ?, ?, ?, ?,?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId, hiredCoach.Remarks, hiredCoach.MeetingTime)
+	_, err = transaction.Exec("INSERT INTO hired_coach(coach_id, rate_id, rate_snapshot_id, client_id, remarks,schedule_id) VALUES(?, ?, ?, ?, ?,?)", coachRate.CoachId, coachRate.Id, snapshotId, hiredCoach.ClientId, hiredCoach.Remarks, hiredCoach.ScheduleId)
 	if err != nil {
 		transaction.Rollback()
 		return err
@@ -67,10 +67,16 @@ func (repo * HiredCoachRepository)GetCoachReservationByClientId(clientId int )([
 		'email', account.email,
 		'mobileNumber', coach.mobile_number
 	) as coach,
+	JSON_OBJECT(
+		'id', coach_schedule.id,
+		'time', CAST(coach_schedule.time as NCHAR),
+		'date', coach_schedule.date
+	) as schedule,
 	JSON_OBJECT('id', coaching_rate.id, 'description', coaching_rate.description, 'price', coaching_rate.price, 'coachId', coaching_rate.coach_id) as rate,
 	JSON_OBJECT('id', coaching_rate_snapshot.id, 'description', coaching_rate_snapshot.description, 'price', coaching_rate_snapshot.price) as rate_snapshot
 	FROM hired_coach
 	INNER JOIN coach ON hired_coach.coach_id = coach.id
+	INNER JOIN coach_schedule on hired_coach.schedule_id = coach_schedule.id and hired_coach.coach_id = coach_schedule.coach_id
 	INNER JOIN account ON coach.account_id = account.id
 	INNER JOIN coaching_rate ON hired_coach.rate_id = coaching_rate.id
 	INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
@@ -106,11 +112,17 @@ func (repo * HiredCoachRepository)GetCoachAppointments(coachId int )([]model.Hir
 			'email', account.email,
 			'mobileNumber', client.mobile_number
 		) as client,
+		JSON_OBJECT(
+			'id', coach_schedule.id,
+			'time', CAST(coach_schedule.time as NCHAR),
+			'date', coach_schedule.date
+		) as schedule,
 		JSON_OBJECT('id', coaching_rate.id, 'description', coaching_rate.description, 'price', coaching_rate.price, 'coachId', coaching_rate.coach_id) as rate,
 		JSON_OBJECT('id', coaching_rate_snapshot.id, 'description', coaching_rate_snapshot.description, 'price', coaching_rate_snapshot.price) as rate_snapshot
 		FROM hired_coach
 		INNER JOIN client ON hired_coach.client_id = client.id
 		INNER JOIN account ON client.account_id = account.id
+		INNER JOIN coach_schedule on hired_coach.schedule_id = coach_schedule.id and hired_coach.coach_id = coach_schedule.coach_id
 		INNER JOIN coaching_rate ON hired_coach.rate_id = coaching_rate.id
 		INNER JOIN coaching_rate_snapshot ON hired_coach.rate_snapshot_id = coaching_rate_snapshot.id
 		INNER JOIN hired_coaches_status as hcs on hired_coach.status_id = hcs.id

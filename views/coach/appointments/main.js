@@ -1,6 +1,6 @@
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
-import { te } from "date-fns/locale";
+import { parse, format } from "date-fns";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -174,7 +174,31 @@ createApp({
         maximumFractionDigits: 2,
       });
     };
+    const toReadableDate = (d) => {
+      if (!d) return "";
+      const dt = new Date(d);
+      try {
+        return dt.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+          day: "2-digit",
+        });
+      } catch (error) {
+        return "";
+      }
+    };
 
+    const to12HR = (timeStr) => {
+      if (!timeStr) return "";
+      try {
+        const parsedTime = parse(timeStr, "HH:mm:ss", new Date());
+        const formattedTime = format(parsedTime, "h:mm a");
+        return formattedTime;
+      } catch (error) {
+        console.error(error);
+        return "";
+      }
+    };
     const initApproval = async (id) => {
       form.value.id = id;
       const result = await swal.fire({
@@ -255,6 +279,8 @@ createApp({
       initMarkAsPaid,
       initCancellation,
       initMarkAsNoShow,
+      to12HR,
+      toReadableDate,
     };
   },
 }).mount("#Appointments");

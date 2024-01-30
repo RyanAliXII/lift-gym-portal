@@ -1,5 +1,6 @@
 import { createApp, onMounted, ref } from "vue";
 import swal from "sweetalert2";
+import { parse, format } from "date-fns";
 createApp({
   compilerOptions: {
     delimiters: ["{", "}"],
@@ -75,6 +76,31 @@ createApp({
         minute: "2-digit",
       });
     };
+    const toReadableDate = (d) => {
+      if (!d) return "";
+      const dt = new Date(d);
+      try {
+        return dt.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+          day: "2-digit",
+        });
+      } catch (error) {
+        return "";
+      }
+    };
+
+    const to12HR = (timeStr) => {
+      if (!timeStr) return "";
+      try {
+        const parsedTime = parse(timeStr, "HH:mm:ss", new Date());
+        const formattedTime = format(parsedTime, "h:mm a");
+        return formattedTime;
+      } catch (error) {
+        console.error(error);
+        return "";
+      }
+    };
     onMounted(() => {
       fetchHiredCoaches();
     });
@@ -83,6 +109,8 @@ createApp({
       toMoney,
       initCancel,
       formatDate,
+      toReadableDate,
+      to12HR,
     };
   },
 }).mount("#HiredCoaches");

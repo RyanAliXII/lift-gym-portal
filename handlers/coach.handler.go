@@ -18,6 +18,7 @@ type CoachHandler struct {
 	coachRepo repository.CoachRepository
 	hiredCoachRepo repository.HiredCoachRepository
 	clientRepo repository.ClientRepository
+	coachScheduleRepo repository.CoachSchedule
 }
 
 func (h *CoachHandler) RenderCoachPage(c echo.Context) error {
@@ -93,7 +94,28 @@ func (h * CoachHandler) RenderClientHireCoachPage (c echo.Context ) error {
 		"hasPenalty": hasPenalty,		
  	})
 }
-
+func (h * CoachHandler)GetAppointmentScheduleByCoachId(c echo.Context) error {
+	coachId, err :=strconv.Atoi( c.Param("coachId"))
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "convertErr"))
+		return c.JSON(http.StatusBadRequest, JSONResponse{
+			Status: http.StatusBadRequest,
+			Data: nil,
+			Message: "Unknown error occurred.",
+		})
+	}
+	scheds, err := h.coachScheduleRepo.GetSchedulesByCoachId(coachId)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error","GetScheduleError"))
+	}
+	return c.JSON(http.StatusOK, JSONResponse{
+		Status: http.StatusOK,
+		Data: Data{
+			"schedules": scheds,
+		},
+		Message: "Schedules fetched.",
+	})
+}
 func (h * CoachHandler) HireCoach (c echo.Context ) error {
 	hiredCoach := model.HiredCoach{}
 	err := c.Bind(&hiredCoach)
@@ -325,5 +347,6 @@ func NewCoachHandler() CoachHandler{
 		coachRepo: repository.NewCoachRepository(),
 		hiredCoachRepo: repository.NewHiredCoachRepository(),
 		clientRepo: repository.NewClientRepository(),
+		coachScheduleRepo: repository.NewCoachSchedule(),
 	}
 }

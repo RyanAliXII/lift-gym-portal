@@ -34,3 +34,5 @@ func(repo * CoachSchedule)GetSchedulesByCoachId(coachId int ) ([]model.CoachSche
 	where coach_id = ? and deleted_at is null order by created_at desc`, coachId)
 	return schedules, err
 }
+
+

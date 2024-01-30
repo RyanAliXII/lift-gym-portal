@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -38,4 +39,21 @@ func (m * CoachSchedule) Validate()(map[string]string, error) {
 	}),
 	))
 	
+}
+type CoachScheduleJSON struct {
+	CoachSchedule
+}
+
+func (instance *CoachScheduleJSON) Scan(value interface{}) error {
+	val, valid := value.([]byte)
+	if valid {
+		unmarshalErr := json.Unmarshal(val, instance)
+		if unmarshalErr != nil {
+			*instance = CoachScheduleJSON{}
+		}
+	} else {
+		*instance = CoachScheduleJSON{}
+	}
+	return nil
+
 }

@@ -61,7 +61,10 @@
                     <tbody>
                       <template v-for="hiredCoach of hiredCoaches">
                         <tr>
-                          <td>{ formatDate(hiredCoach.meetingTime) }</td>
+                          <td>
+                            { toReadableDate(hiredCoach.schedule.date)}
+                            {to12HR(hiredCoach.schedule.time)}
+                          </td>
                           <td>
                             {hiredCoach.coach.givenName}
                             {hiredCoach.coach.surname}

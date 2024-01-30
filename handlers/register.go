@@ -214,6 +214,7 @@ func clientRoutes(router * echo.Group){
 	router.GET("/workouts/:id", workoutCategoryHandler.RenderClientWorkoutsByCategoryId)
 	router.GET("/hire-a-coach", coachHandler.RenderClientHireCoachPage)
 	router.POST("/hire-a-coach", coachHandler.HireCoach)
+	router.GET("/coaches/:coachId/schedules", coachHandler.GetAppointmentScheduleByCoachId)
 	router.GET("/coaches/:coachId/rates", coachRateHandler.GetCoachRatesByCoachId)
 	router.GET("/hired-coaches", hiredCoachHandler.RenderClientHiredCoachesPage)
 	router.DELETE("/hired-coaches/:id", hiredCoachHandler.CancelAppointmentByClient)
