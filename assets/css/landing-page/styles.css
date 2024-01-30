@@ -600,7 +600,7 @@ img {
 }
 
 .banner_slider .slick-next {
-  background: url("../img/right.png") center center no-repeat;
+  background: url("../../images/right.png") center center no-repeat;
   font-size: 0px;
   background-size: 70%;
   border: 0px;
@@ -614,7 +614,7 @@ img {
 }
 
 .banner_slider .slick-prev {
-  background: url("../img/left.png") center center no-repeat;
+  background: url("../../images/left.png") center center no-repeat;
   font-size: 0px;
   background-size: 70%;
   border: 0px;

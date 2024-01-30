@@ -16,8 +16,9 @@
     />
 
     <!--CSS-->
-    <link rel="stylesheet" href="/css/landing-page/styles.css" />
     <link rel="stylesheet" href="/css/landing-page/slick.css" />
+    <link rel="stylesheet" href="/css/landing-page/styles.css" />
+
     <title>LIFT FITNESS GYM</title>
   </head>
   <body>
@@ -41,16 +42,16 @@
             </li>
             <ul class="dropdown">
               <li class="nav__item">
-                <a href="#" class="nav__link">More</a>
+                <a href="#" class="nav__linkk">More</a>
                 <ul class="submenu">
                   <li class="nav__item">
                     <a href="#pricing" class="nav__link">Pricing</a>
                   </li>
                   <li class="nav__item">
-                    <a href="/contact-us" class="nav__link">Contact Us</a>
+                    <a href="/about-us" class="nav__link">About us</a>
                   </li>
                   <li class="nav__item">
-                    <a href="/about-us" class="nav__link">About Us</a>
+                    <a href="/contact-us" class="nav__link">Contact Us</a>
                   </li>
                   <li class="nav__item">
                     <a href="/user-manual" class="nav__link">User Manual</a>
@@ -93,7 +94,7 @@
               In here we will help you to shape and build your ideal body and
               live your life to the fullest.
             </p>
-            <a href="#" class="button button__flex">
+            <a href="#program" class="button button__flex">
               Get Started <i class="ri-arrow-right-line"></i>
             </a>
           </div>
@@ -203,69 +204,33 @@
       <!--CHOOSE US-->
       <section class="choose section" id="choose">
         <div class="choose__overflow">
-          <div class="choose__container">
+          <div class="choose container">
             <div class="section__data">
               <h2 class="section__subtitle">Best Reason</h2>
               <div class="section__titles">
                 <h1 class="section__title-border">WHY</h1>
                 <h1 class="section__title">CHOOSE US ?</h1>
               </div>
-              <div class="choose__content">
-                <div class="slider">
-                  <div class="slides">
-                    <!--radio buttons start-->
-                    <input type="radio" name="radio-btn" value="" id="radio1" />
-                    <input type="radio" name="radio-btn" value="" id="radio2" />
-                    <input type="radio" name="radio-btn" value="" id="radio3" />
-                    <input type="radio" name="radio-btn" value="" id="radio4" />
-                    <!--radio buttons end-->
-                    <!--slide image start-->
-                    <div class="slide first">
-                      <img src="/images/register.png" alt="" />
-                    </div>
-                    <div class="slide">
-                      <img src="/images/register.png" alt="" />
-                    </div>
-                    <div class="slide">
-                      <img src="/images/register.png" alt="" />
-                    </div>
-                    <div class="slide">
-                      <img src="/images/register.png" alt="" />
-                    </div>
-                    <!--slide image end-->
-
-                    <!--automatic navigation start-->
-                    <div class="navigation-auto">
-                      <div class="auto-btn1"></div>
-                      <div class="auto-btn2"></div>
-                      <div class="auto-btn3"></div>
-                      <div class="auto-btn4"></div>
-                    </div>
-                    <!--automatic navigation end-->
+              <div class="banner_slider_wrap">
+                <div class="banner_slider choose__content">
+                  <div>
+                    <img src="/images/register.png" class="slick-image" />
                   </div>
-                  <!--manual navigation start-->
-                  <div class="navigation-manual">
-                    <label for="radio1" class="manual-btn"></label>
-                    <label for="radio2" class="manual-btn"></label>
-                    <label for="radio3" class="manual-btn"></label>
-                    <label for="radio4" class="manual-btn"></label>
-                  </div>
-                  <!--manual navigation end-->
+                  <div><img src="/images/2.png" class="slick-image" /></div>
+                  <div><img src="/images/3.png" class="slick-image" /></div>
                 </div>
-                <script type="text/javascript">
-                  var counter = 1;
-                  setInterval(function () {
-                    document.getElementById("radio" + counter).checked = true;
-                    counter++;
-                    if (counter > 4) {
-                      counter = 1;
-                    }
-                  }, 5000);
-                </script>
               </div>
             </div>
           </div>
         </div>
+        <script
+          type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        ></script>
+        <!-- <script
+          type="text/javascript"
+          src="/js/landing-page/slick.css"
+        ></script> -->
       </section>
 
       <!--PRICING-->
@@ -291,10 +256,13 @@
                 </div>
 
                 <h1 class="pricing__title">BASIC PACKAGE</h1>
-                <h2 class="pricing__number">₱1,200</h2>
+                <h2 class="pricing__number">₱1,500</h2>
               </header>
 
               <ul class="pricing__list">
+                <li class="pricing__item">
+                  <i class="ri-checkbox-circle-line"></i> 1 Month Membership
+                </li>
                 <li class="pricing__item">
                   <i class="ri-checkbox-circle-line"></i> Workout Guide
                 </li>
@@ -309,10 +277,6 @@
                   <i class="ri-checkbox-circle-line"></i> 1 Sando
                 </li>
               </ul>
-
-              <a href="#" class="button button__flex pricing__button">
-                Purchase Now <i class="ri-arrow-right-line"></i>
-              </a>
             </article>
 
             <article class="pricing__card pricing__card-active">
@@ -326,10 +290,13 @@
                 </div>
 
                 <h1 class="pricing__title">PREMIUM PACKAGE</h1>
-                <h2 class="pricing__number">₱1,500</h2>
+                <h2 class="pricing__number">₱6,380</h2>
               </header>
 
               <ul class="pricing__list">
+                <li class="pricing__item">
+                  <i class="ri-checkbox-circle-line"></i> 6 Months Membership
+                </li>
                 <li class="pricing__item">
                   <i class="ri-checkbox-circle-line"></i> Workout Guide
                 </li>
@@ -344,10 +311,6 @@
                   <i class="ri-checkbox-circle-line"></i> 1 Sando
                 </li>
               </ul>
-
-              <a href="#" class="button button__flex pricing__button">
-                Purchase Now <i class="ri-arrow-right-line"></i>
-              </a>
             </article>
 
             <article class="pricing__card">
@@ -361,10 +324,13 @@
                 </div>
 
                 <h1 class="pricing__title">DIAMOND PACKAGE</h1>
-                <h2 class="pricing__number">₱2,000</h2>
+                <h2 class="pricing__number">₱9,420</h2>
               </header>
 
               <ul class="pricing__list">
+                <li class="pricing__item">
+                  <i class="ri-checkbox-circle-line"></i> 9 Months Membership
+                </li>
                 <li class="pricing__item">
                   <i class="ri-checkbox-circle-line"></i> Workout Guide
                 </li>
@@ -379,10 +345,6 @@
                   <i class="ri-checkbox-circle-line"></i> 1 Sando
                 </li>
               </ul>
-
-              <a href="#" class="button button__flex pricing__button">
-                Purchase Now <i class="ri-arrow-right-line"></i>
-              </a>
             </article>
           </div>
         </div>
@@ -424,7 +386,7 @@
 
               <button
                 type="submit"
-                class="button button__flex calculate__button"
+                class="buttonn buttonn__flex calculate__button"
               >
                 Calculate Now <i class="ri-arrow-right-line"></i>
               </button>
@@ -474,16 +436,17 @@
 
             <ul class="footer__links">
               <li>
-                <a href="#program" class="footer__link">Flex Muscle</a>
+                <a href="/#program" class="footer__link">Flex Muscle</a>
+              </li>
+
+              <li>
+                <a href="/#program" class="footer__link">Cardio Exercise</a>
               </li>
               <li>
-                <a href="#program" class="footer__link">Cardio Exercise</a>
+                <a href="/#program" class="footer__link">Basic Yoga</a>
               </li>
               <li>
-                <a href="#program" class="footer__link">Basic Yoga</a>
-              </li>
-              <li>
-                <a href="#program" class="footer__link">Weight Lifting</a>
+                <a href="/#program" class="footer__link">Weight Lifting</a>
               </li>
             </ul>
           </div>
@@ -493,13 +456,13 @@
 
             <ul class="footer__links">
               <li>
-                <a href="#pricing" class="footer__link">Basic</a>
+                <a href="/#pricing" class="footer__link">Basic</a>
               </li>
               <li>
-                <a href="#pricing" class="footer__link">Premium</a>
+                <a href="/#pricing" class="footer__link">Premium</a>
               </li>
               <li>
-                <a href="#pricing" class="footer__link">Diamond</a>
+                <a href="/#pricing" class="footer__link">Diamond</a>
               </li>
             </ul>
           </div>
@@ -509,16 +472,16 @@
 
             <ul class="footer__links">
               <li>
-                <a href="contact.html" class="footer__link">Contact Us</a>
+                <a href="/contact-us" class="footer__link">Contact Us</a>
               </li>
               <li>
-                <a href="#" class="footer__link">About Us</a>
+                <a href="/about-us" class="footer__link">About Us</a>
               </li>
               <li>
-                <a href="#" class="footer__link">Careers</a>
+                <a href="/#pricing" class="footer__link">Pricing</a>
               </li>
               <li>
-                <a href="#" class="footer__link">Customers</a>
+                <a href="/user-manual" class="footer__link">User Manual</a>
               </li>
             </ul>
           </div>
@@ -564,7 +527,20 @@
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
     ></script>
     <!--MAIN JS-->
+    <script src="/js/landing-page/slick.js"></script>
     <script src="/js/landing-page/main.js"></script>
+
+    <script type="text/javascript">
+      $(".banner_slider").slick({
+        dots: true,
+        infinite: true,
+        speed: 1000,
+        autoplay: true,
+        fade: true,
+        speed: 1000,
+        slidesToShow: 1,
+      });
+    </script>
   </body>
 </html>
 {{end}}

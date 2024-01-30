@@ -84,20 +84,6 @@ createApp({
           <i class="fas fa-sign-out-alt"></i>
           </button>`;
           }
-          if (window.hasDeletePermission) {
-            buttons += `
-            <button
-              data-id=${row.id}
-              class="btn btn-outline-danger delete-log"
-              data-toggle="tooltip"
-              title="Delete Log"
-         
-          >
-            <i class="fas fa-trash"></i>
-          </button>
-            `;
-          }
-
           return buttons + `</div>`;
         },
       },

@@ -20,6 +20,7 @@ func(config ReportConfig ) ToDateOnly()(start string, end string, parseErr error
 }
 
 
+
 func (c ReportData) Value() (driver.Value, error) {
     b, err := json.Marshal(c)
     if err != nil {
@@ -43,6 +44,9 @@ type ReportData struct {
 	Earnings float64 `json:"earnings" db:"earnings"` 
 	EarningsBreakdown BreakDownJSON `json:"earningsBreakdown" db:"earnings_breakdown"`
 	PreparedBy string `json:"preparedBy" db:"prepared_by"`
+	ClientLogs []ClientLog `json:"clientLogs" db:"client_logs"`
+	NewMembers []Member `json:"newMembers" db:"new_members"`
+	CoachingPenalties []CoachAppointmentPenalty `json:"coachingPenalties"`
 }
 
 

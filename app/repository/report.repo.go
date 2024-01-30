@@ -89,7 +89,71 @@ func(repo * Report) GenerateReportData(startDate string, endDate string, prepare
 	if err != nil {
 		return model.ReportData{}, nil
 	}
-	
+	query = `SELECT 
+	client_log.id, 
+	client_log.client_id, 
+	client_log.amount_paid, 
+	client_log.is_member, 
+	JSON_OBJECT('publicId',client.public_id ,'id', client.id, 'givenName', client.given_name, 'middleName', client.middle_name, 'surname', client.surname, 'email', account.email)  as client,  
+	convert_tz(client_log.created_at, 'UTC', 'Asia/Manila') as created_at
+	FROM client_log 
+	INNER JOIN client ON client_log.client_id = client.id 
+	INNER JOIN account ON client.account_id = account.id
+	WHERE client_log.created_at BETWEEN ? AND ?
+	ORDER BY created_at DESC
+	`
+	err = repo.db.Select(&data.ClientLogs, query, startDate, endDate)
+	if err != nil {
+		return model.ReportData{}, err
+	}
+	query = `
+	SELECT client.id,subscription.id as subscription_id, client.given_name,client.middle_name, 
+	client.surname, 
+	account.email, client.mobile_number, 
+	client.public_id, subscription.valid_until, 
+	JSON_OBJECT('id', membership_plan_snapshot.id, 'description',
+    membership_plan_snapshot.description, 'months', 
+    membership_plan_snapshot.months, 'price', membership_plan_snapshot.price) as membership_plan,
+	subscription.created_at FROM subscription
+	INNER JOIN client on subscription.client_id = client.id
+	INNER JOIN account on client.account_id = account.id
+	INNER JOIN membership_plan_snapshot on subscription.membership_plan_snapshot_id = membership_plan_snapshot.id
+	where subscription.valid_until >= NOW() and subscription.cancelled_at is NULL and subscription.created_at between ? and ?
+	ORDER BY subscription.created_at DESC
+	`
+	err = repo.db.Select(&data.NewMembers, query, startDate, endDate)
+	if err != nil {
+		return model.ReportData{}, err
+	}
+	query = `
+	SELECT
+	coach_appointment_penalty.id, 
+	client_id, 
+	coach_id, 
+	amount,
+	(case when settled_at is null then false else true end) as is_settled,  
+	JSON_OBJECT(
+	   'publicId', client.public_id, 
+	   'id', client.id, 
+	   'givenName', client.given_name, 
+	   'middleName', client.middle_name, 
+	   'surname', client.surname)  as client,
+	JSON_OBJECT(
+	   'id', coach.id,
+	   'givenName', coach.given_name,
+	   'middleName', coach.middle_name,
+	   'surname', coach.surname
+	) as coach
+	FROM coach_appointment_penalty
+	INNER JOIN client on coach_appointment_penalty.client_id = client.id
+	INNER JOIN coach on coach_appointment_penalty.coach_id = coach.id
+	where coach_appointment_penalty.created_at between ? and ?
+	order by coach_appointment_penalty.created_at desc
+	`
+	err = repo.db.Select(&data.CoachingPenalties, query, startDate, endDate)
+	if err != nil {
+		return model.ReportData{}, err
+	}
 	result, err := repo.db.Exec("INSERT INTO report(data) VALUES(?)", data)
 
 	if err != nil {

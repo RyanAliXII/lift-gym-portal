@@ -101,6 +101,101 @@
           </div>
         </div>
         <div>
+          <div class="card shadow mb-4">
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold text-primary">Client Logs</h6>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Client ID</th>
+                    <th>Client</th>
+                    <th>Date and time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="clientLog of reportData.clientLogs">
+                    <td>{clientLog.client.publicId}</td>
+                    <td>
+                      {clientLog.client.givenName} {clientLog.client.surname}
+                    </td>
+                    <td>{toReadableDatetime(clientLog.createdAt)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card shadow mb-4">
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold text-primary">New Members</h6>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Client ID</th>
+                    <th>Client</th>
+                    <th>Plan</th>
+                    <th>Subscription start</th>
+                    <th>Subscription end</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="newMember of reportData.newMembers">
+                    <td>{newMember.publicId}</td>
+                    <td>{newMember.givenName} {newMember.surname}</td>
+                    <td>{newMember.membershipPlan.description}</td>
+                    <td>{toReadableDate(newMember.subscriptionStartDate)}</td>
+                    <td>{toReadableDate(newMember.validUntil)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card shadow mb-4">
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold text-primary">Penalties</h6>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Client ID</th>
+                    <th>Client</th>
+                    <th>Coach</th>
+                    <th>Amount</th>
+                    <th>Settled(Yes/No)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="penalty of reportData.coachingPenalties">
+                    <td>{penalty.client.publicId}</td>
+                    <td>{penalty.client.givenName} {penalty.client.surname}</td>
+                    <td>{penalty.coach.givenName} {penalty.coach.surname}</td>
+                    <td>{penalty.amount}</td>
+                    <td v-if="penalty.isSettled" class="text-success">Yes</td>
+                    <td v-else class="text-danger">No</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
           <div>
             <div class="card shadow mb-4">
               <div

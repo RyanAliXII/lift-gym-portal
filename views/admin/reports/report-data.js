@@ -22,6 +22,7 @@ createApp({
       reservations: 0,
       membershipRequests: 0,
       walkIns: [],
+      clientLogs: [],
       packageRequests: 0,
       earnings: 0,
       earningsBreakdown: {
@@ -119,6 +120,35 @@ createApp({
         maximumFractionDigits: 2,
       });
     };
+    const toReadableDatetime = (d) => {
+      if (!d) return "";
+      const dt = new Date(d);
+      try {
+        return dt.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+      } catch (error) {
+        return "";
+      }
+    };
+    const toReadableDate = (d) => {
+      if (!d) return "";
+      const dt = new Date(d);
+      try {
+        return dt.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+          day: "2-digit",
+        });
+      } catch (error) {
+        return "";
+      }
+    };
     onMounted(() => {
       fetchReportData();
     });
@@ -130,6 +160,8 @@ createApp({
       breakdownSeries,
       barChartOptions,
       walkInSeries,
+      toReadableDatetime,
+      toReadableDate,
       formatDate,
     };
   },
