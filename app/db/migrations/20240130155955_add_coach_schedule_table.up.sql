@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS coach_schedule(
-     id INT NOT NULL PRIMARY KEY,
+     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `date` DATE NOT NULL,
     `time` TIME NOT NULL,
     coach_id INT,

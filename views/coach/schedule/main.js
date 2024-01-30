@@ -12,7 +12,6 @@ createApp({
     });
 
     const errors = ref({});
-
     const onSubmit = async () => {
       try {
         errors.value = {};
@@ -24,10 +23,20 @@ createApp({
             "X-CSRF-Token": window.csrf,
           }),
         });
+
         const { data } = await response.json();
-        if (data?.errors) {
-          errors.value = data?.errors;
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
         }
+        swal.fire("Schedule", "Schedule has been created.", "success");
+        form.value = {
+          date: "",
+          time: "",
+        };
+        $("#addSchedModal").modal("hide");
       } catch (error) {
         console.error(error);
       }

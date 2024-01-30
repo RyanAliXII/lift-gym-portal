@@ -8,8 +8,10 @@ import (
 )
 
 type CoachSchedule struct{
-	Date string `json:"date"`
-	Time string `json:"time"`
+	Id int `json:"id" db:"id"`
+	Date string `json:"date" db:"date"`
+	Time string `json:"time" db:"time"`
+	CoachId int `json:"coachId" db:"coachId"`
 	Model 
 }
 func (m * CoachSchedule) Validate()(map[string]string, error) {

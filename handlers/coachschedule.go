@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/mysqlsession"
+	"lift-fitness-gym/app/repository"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -10,21 +12,36 @@ import (
 
 
 type CoachSchedule struct {
-
+	coachSchedRepo repository.CoachSchedule
 }
 func NewCoachScheduleHandler() CoachSchedule {
 	return CoachSchedule{
-
+		coachSchedRepo: repository.NewCoachSchedule(),
 	}
 }
 func( h * CoachSchedule)RenderCoachSchedulePage(c echo.Context) error {
+	contentType := c.Request().Header.Get("Content-Type")
+	if(contentType == "application/json"){
+		session := mysqlsession.SessionData{}
+		session.Bind(c.Get("sessionData"))
+		scheds, err := h.coachSchedRepo.GetSchedulesByCoachId(session.User.Id)
+		if err != nil {
+			logger.Error(err.Error(), zap.String("error", "GetSchedulesByCoachIdErr"))
+		}
+		return c.JSON(http.StatusOK, JSONResponse{
+			Status: http.StatusOK,
+			Data: Data{
+				"schedules": scheds,
+			},
+			Message: "",
+		})
+	}
 	return c.Render(http.StatusOK, "coach/schedule/main", Data{
 		"title": "Coach Schedule",
 		"module": "Coach Schedule",
 	})
 }
 func (h * CoachSchedule)NewSchedule(c echo.Context) error {
-
 	schedule := model.CoachSchedule{}
 	err := c.Bind(&schedule)
 	if err != nil {
@@ -42,6 +59,18 @@ func (h * CoachSchedule)NewSchedule(c echo.Context) error {
 			Data: Data{
 				"errors": fieldErrs,
 			},
+			Message: "Unknown error occured.",
+		})
+	}
+	session := mysqlsession.SessionData{}
+	session.Bind(c.Get("sessionData"))
+	schedule.CoachId = session.User.Id
+	err = h.coachSchedRepo.NewSchedule(schedule)
+	if err != nil {
+		logger.Error(err.Error(), zap.String("error", "NewScheduleErr"))
+		return c.JSON(http.StatusInternalServerError, JSONResponse{
+			Status: http.StatusInternalServerError,
+			Data: nil,
 			Message: "Unknown error occured.",
 		})
 	}
