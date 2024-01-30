@@ -236,6 +236,7 @@ func coachRoutes(router * echo.Group) {
 	paymentHandler := NewPaymentHistoryHandler()
 	workoutCategoryHandler := NewWorkoutCategoryHandler()
 	workoutHandler := NewWorkoutHandler()
+	coachSchedHandler := NewCoachScheduleHandler()
 	router.GET("/login", loginHandler.RenderCoachLoginPage)
 	router.POST("/login", loginHandler.LoginCoach)
 	router.GET("/reset-password", passwordHandler.RenderResetCoachPasswordPage)
@@ -263,4 +264,5 @@ func coachRoutes(router * echo.Group) {
 	router.DELETE("/workouts/:id", workoutHandler.DeleteWorkout)
 	router.POST("/profile/avatar", coachProfileHandler.ChangeAvatar)
 	router.GET("/profile/avatar", coachProfileHandler.GetAvatar)
+	router.GET("/coach-schedule", coachSchedHandler.RenderCoachSchedulePage)
 }
