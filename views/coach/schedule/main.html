@@ -34,7 +34,7 @@
             <div class="card shadow mb-4">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Coaching Schedule
+                  Your Schedules
                 </h6>
               </div>
               <div class="card-body">
@@ -53,12 +53,38 @@
                       </tr>
                     </thead>
 
-                    <tbody></tbody>
+                    <tbody>
+                      <tr v-for="schedule of schedules">
+                        <td>{toReadableDate(schedule.date)}</td>
+                        <td>{to12HR(schedule.time)}</td>
+                        <td>
+                          <div class="d-flex" style="gap: 5px">
+                            <button
+                              @click="initEditSched(schedule)"
+                              class="btn btn-outline-primary"
+                              title="Edit Schedule"
+                              data-toggle="tooltip"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              @click="initDelete(schedule.id)"
+                              class="btn btn-outline-danger"
+                              title="Delete Schedule"
+                              data-toggle="tooltip"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            {{template "coach/schedule/add-sched-modal" .}}
+            {{template "coach/schedule/add-sched-modal" .}} {{template
+            "coach/schedule/edit-sched-modal" .}}
           </div>
           <!-- /.container-fluid -->
         </div>
@@ -77,7 +103,8 @@
   <script>
     window.csrf = "{{.csrf}}";
   </script>
-  <script src="/js/coach/schedule/main.js"></script>
+
   {{template "partials/sb-scripts"}}
+  <script src="/js/coach/schedule/main.js"></script>
 </html>
 {{end}}
