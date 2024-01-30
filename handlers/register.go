@@ -264,5 +264,6 @@ func coachRoutes(router * echo.Group) {
 	router.DELETE("/workouts/:id", workoutHandler.DeleteWorkout)
 	router.POST("/profile/avatar", coachProfileHandler.ChangeAvatar)
 	router.GET("/profile/avatar", coachProfileHandler.GetAvatar)
-	router.GET("/coach-schedule", coachSchedHandler.RenderCoachSchedulePage)
+	router.GET("/schedules", coachSchedHandler.RenderCoachSchedulePage)
+	router.POST("/schedules", coachSchedHandler.NewSchedule)
 }
