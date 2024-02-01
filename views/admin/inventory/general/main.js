@@ -6,6 +6,7 @@ createApp({
   },
   setup() {
     const INITIAL_FORM = {
+      id: 0,
       name: "",
       brand: "",
       quantity: 0,
@@ -13,6 +14,7 @@ createApp({
       dateReceived: "",
       quantityThreshold: 0,
       costPrice: 0,
+      image: "",
     };
     const isLoading = ref(false);
     const errors = ref({});
@@ -24,6 +26,7 @@ createApp({
         const response = await fetch("/app/general/inventory", {
           headers: new Headers({
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
           }),
         });
         const { data } = await response.json();
@@ -66,6 +69,39 @@ createApp({
         isLoading.value = false;
       }
     };
+
+    const onSubmitUpdate = async () => {
+      try {
+        isLoading.value = true;
+        errors.value = {};
+        const formData = toFormData();
+        const response = await fetch(
+          `/app/general/inventory/${form.value.id}`,
+          {
+            method: "PUT",
+            body: formData,
+            headers: new Headers({
+              "X-CSRF-Token": window.csrf,
+            }),
+          }
+        );
+        const { data } = await response.json();
+
+        if (response.status >= 400) {
+          if (data?.errors) {
+            errors.value = data?.errors;
+          }
+          return;
+        }
+        form.value = { ...INITIAL_FORM };
+        swal.fire("Inventory Item", "Item has been updated.", "success");
+        $("#editItemModal").modal("hide");
+        fetchItems();
+      } catch (error) {
+      } finally {
+        isLoading.value = false;
+      }
+    };
     const toFormData = () => {
       const formData = new FormData();
       for (const [key, value] of Object.entries(form.value)) {
@@ -89,6 +125,47 @@ createApp({
       });
     };
 
+    const initEdit = (item) => {
+      errors.value = {};
+      form.value = { ...item };
+      $("#editItemModal").modal("show");
+    };
+    const initDelete = async (itemId) => {
+      const result = await swal.fire({
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it",
+        title: "Delete Inventory Item",
+        text: "Are you sure you want to delete inventory item?",
+        confirmButtonColor: "#d9534f",
+        cancelButtonText: "I don't want to delete the item",
+        icon: "warning",
+      });
+      if (result.isConfirmed) {
+        deleteItem(itemId);
+      }
+    };
+    const deleteItem = async (id) => {
+      try {
+        const response = await fetch(`/app/general/inventory/${id}`, {
+          method: "DELETE",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": window.csrf,
+          }),
+        });
+        if (response.status === 200) {
+          swal.fire(
+            "Inventory Item",
+            "Item deleted from inventory.",
+            "success"
+          );
+          fetchItems();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     onMounted(() => {
       fetchItems();
     });
@@ -98,8 +175,11 @@ createApp({
       handleImage,
       onSubmit,
       isLoading,
+      initEdit,
       formatCurrency,
       items,
+      initDelete,
+      onSubmitUpdate,
     };
   },
 }).mount("#GeneralInventoryPage");

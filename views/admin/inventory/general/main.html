@@ -46,6 +46,7 @@
                   >
                     <thead>
                       <tr>
+                        <th></th>
                         <th>Item</th>
                         <th>Brand</th>
                         <th>Unit of Measure</th>
@@ -62,6 +63,16 @@
                     <tbody>
                       <template v-for="item of items">
                         <tr>
+                          <td>
+                            <div v-if="item.image.length > 0">
+                              <img
+                                :src="'{{.publicURL}}/' + item.image"
+                                alt="item-image"
+                                class="img-thumbnail"
+                                style="max-width: 100px; max-height: 100px"
+                              />
+                            </div>
+                          </td>
                           <td>{item.name}</td>
                           <td>{item.brand}</td>
                           <td>{item.unitOfMeasure}</td>
@@ -88,6 +99,7 @@
                                 data-html="true"
                                 data-placement="top"
                                 title="Edit"
+                                @click="initEdit(item)"
                               >
                                 <i class="fas fa-edit"></i>
                               </button>
@@ -99,6 +111,7 @@
                                 data-html="true"
                                 data-placement="top"
                                 title="Delete"
+                                @click="initDelete(item.id)"
                               >
                                 <i class="fas fa-trash"></i>
                               </button>
@@ -107,70 +120,6 @@
                           </td>
                         </tr>
                       </template>
-                      <!-- <template v-for="equipment of equipments">
-                        <tr>
-                          <td>{equipment.name}</td>
-                          <td>{equipment.model}</td>
-
-                          <td
-                            v-if="equipment.quantity > equipment.quantityThreshold"
-                          >
-                            {equipment.quantity}
-                          </td>
-                          <td v-else class="text-danger font-weight-bold">
-                            {equipment.quantity}
-                          </td>
-                          <td>₱ {formatCurrency(equipment.costPrice)}</td>
-                          <td>{equipment.dateReceived}</td>
-                          <td
-                            v-if="equipment.quantity > equipment.quantityThreshold"
-                            class="text-success font-weight-bold"
-                          >
-                            Good
-                          </td>
-                          <td v-else class="text-danger font-weight-bold">
-                            Low Quantity
-                          </td>
-                          <td
-                            v-if="equipment.condition > equipment.conditionThreshold"
-                            class="text-success font-weight-bold"
-                          >
-                            Good Quality
-                          </td>
-                          <td v-else class="text-danger font-weight-bold">
-                            For Repair
-                          </td>
-                          <td>
-                            <div>
-                              {{if hasPermission "Inventory.Edit"
-                              .currentUser.Permissions}}
-                              <button
-                                class="btn btn-outline-primary"
-                                data-toggle="tooltip"
-                                data-html="true"
-                                data-placement="top"
-                                title="Edit"
-                                @click="initEdit(equipment)"
-                              >
-                                <i class="fas fa-edit"></i>
-                              </button>
-                              {{end}} {{if hasPermission "Inventory.Delete"
-                              .currentUser.Permissions}}
-                              <button
-                                class="btn btn-outline-danger ml-1"
-                                data-toggle="tooltip"
-                                data-html="true"
-                                data-placement="top"
-                                title="Delete"
-                                @click="initDelete(equipment.id)"
-                              >
-                                <i class="fas fa-trash"></i>
-                              </button>
-                              {{end}}
-                            </div>
-                          </td>
-                        </tr>
-                      </template> -->
                     </tbody>
                   </table>
                 </div>
@@ -178,7 +127,9 @@
             </div>
           </div>
           {{if hasPermission "Inventory.Create" .currentUser.Permissions}}
-          {{template "admin/inventory/general/add-item-modal" .}} {{end}}
+          {{template "admin/inventory/general/add-item-modal" .}} {{end}} {{if
+          hasPermission "Inventory.Edit" .currentUser.Permissions}} {{template
+          "admin/inventory/general/edit-item-modal" .}} {{end}}
         </div>
         <!-- End of Main Content -->
       </div>

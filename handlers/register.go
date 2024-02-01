@@ -172,6 +172,8 @@ func adminRoutes (router  * echo.Group){
 	router.PATCH("/staff-logs/:id/logout", staffLogs.Logout, middlewares.ValidatePermissions("StaffLog.Edit"))
 	router.GET("/general/inventory", generalInventory.RenderGeneralInventoryPage)
 	router.POST("/general/inventory", generalInventory.NewItem)
+	router.PUT("/general/inventory/:id", generalInventory.UpdateItem)
+	router.DELETE("/general/inventory/:id", generalInventory.DeleteItem)
 }	
 func clientRoutes(router * echo.Group){
 	loginHandler := NewLoginHandler()
