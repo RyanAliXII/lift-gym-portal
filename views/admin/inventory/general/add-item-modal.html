@@ -1,0 +1,180 @@
+{{define "admin/inventory/general/add-item-modal"}}
+<div
+  class="modal fade"
+  id="addItemModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addItemModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Item</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="onSubmitNew">
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name</label>
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              v-model="form.name"
+              :class="{'is-invalid': errors?.name}"
+            />
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.name}">
+              {errors?.name}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="model" class="col-form-label">Brand</label>
+            <input
+              type="text"
+              name="brand"
+              class="form-control"
+              v-model="form.brand"
+              :class="{'is-invalid': errors?.model}"
+            />
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.brand}">
+              {errors?.brand}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="quantity" class="col-form-label">Quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              class="form-control"
+              v-model="form.quantity"
+              :class="{'is-invalid': errors?.quantity}"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.quantity}"
+            >
+              {errors?.quantity}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="quantity" class="col-form-label">Unit of Measure</label>
+            <select class="form-control" v-model="form.unitOfMeasure">
+              <option value="pieces">Pieces</option>
+              <option value="grams">Grams(g)</option>
+              <option value="pounds">Pounds(lbs)</option>
+              <option value="kilograms">Kilograms(Kg)</option>
+              <option value="litres">Litres(L)</option>
+            </select>
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.unitMeasure}"
+            >
+              {errors?.unitMeasure}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantityThreshold" class="col-form-label"
+              >Expiration Date</label
+            >
+            <input
+              type="date"
+              name="expirationDate"
+              class="form-control"
+              v-model="form.expirationDate"
+              :class="{'is-invalid': errors?.expirationDate}"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.quantityThreshold}"
+            >
+              {errors?.expirationDate}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="quantityThreshold" class="col-form-label"
+              >Quantity Threshold</label
+            >
+            <input
+              type="number"
+              name="quantityThreshold"
+              class="form-control"
+              v-model="form.quantityThreshold"
+              :class="{'is-invalid': errors?.quantityThreshold}"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.quantityThreshold}"
+            >
+              {errors?.quantityThreshold}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="costPrice" class="col-form-label">Cost Price</label>
+            <input
+              type="number"
+              step=".01"
+              name="costPrice"
+              v-model="form.costPrice"
+              class="form-control"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.costPrice}"
+            >
+              {errors?.costPrice}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dateReceived" class="col-form-label"
+              >Date Received</label
+            >
+            <input
+              type="date"
+              name="dateReceived"
+              v-model="form.dateReceived"
+              class="form-control"
+              :class="{'is-invalid': errors?.dateReceived}"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.dateReceived}"
+            >
+              {errors?.dateReceived}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dateReceived" class="col-form-label">Image</label>
+            <input
+              class="d-block"
+              type="file"
+              name="image"
+              :class="{'is-invalid': errors?.image}"
+            />
+
+            <div class="invalid-feedback" :class="{'d-block': errors?.image}">
+              {errors?.image}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

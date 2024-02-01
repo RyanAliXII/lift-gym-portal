@@ -85,7 +85,6 @@ func (h * LoginHandler) Login (c echo.Context) error {
 		permissions = acl.Permissions
 	}else{
 		role, err := h.roleRepository.GetRoleById(dbUser.RoleId)
-		fmt.Println(role)
 		if err != nil {	
 			if err != sql.ErrNoRows{
 				logger.Error(err.Error(), zap.String("error", "getRoleByUserIdErr"))

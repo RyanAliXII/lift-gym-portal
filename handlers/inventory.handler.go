@@ -36,8 +36,8 @@ func (h *InventoryHandler) RenderInventoryPage(c echo.Context) error {
 		}})
 	}
 	return c.Render(http.StatusOK, "admin/inventory/main", Data{
-		"title": "Item Inventory",
-		"module": "Inventory",
+		"title": "Equipment Inventory",
+		"module": "Equipment Inventory",
 		"csrf": c.Get("csrf"),
 	})
 }
