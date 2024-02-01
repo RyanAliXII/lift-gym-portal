@@ -21,7 +21,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="onSubmitNew">
+        <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="name" class="col-form-label">Name</label>
             <input
@@ -43,7 +43,7 @@
               name="brand"
               class="form-control"
               v-model="form.brand"
-              :class="{'is-invalid': errors?.model}"
+              :class="{'is-invalid': errors?.brand}"
             />
 
             <div class="invalid-feedback" :class="{'d-block': errors?.brand}">
@@ -71,9 +71,10 @@
             <label for="quantity" class="col-form-label">Unit of Measure</label>
             <select class="form-control" v-model="form.unitOfMeasure">
               <option value="pieces">Pieces</option>
-              <option value="grams">Grams(g)</option>
-              <option value="pounds">Pounds(lbs)</option>
-              <option value="kilograms">Kilograms(Kg)</option>
+              <option value="pack">Pack</option>
+              <option value="grams">Grams(G)</option>
+              <option value="pounds">Pounds(LBS)</option>
+              <option value="kilograms">Kilograms(KG)</option>
               <option value="litres">Litres(L)</option>
             </select>
 
@@ -162,6 +163,7 @@
             <input
               class="d-block"
               type="file"
+              @change="handleImage"
               name="image"
               :class="{'is-invalid': errors?.image}"
             />
@@ -171,7 +173,9 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary" :disabled="isLoading">
+            Save
+          </button>
         </form>
       </div>
     </div>

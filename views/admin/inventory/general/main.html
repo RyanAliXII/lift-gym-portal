@@ -56,11 +56,57 @@
                         <th>Expiration Date</th>
 
                         <th></th>
-                        <th></th>
                       </tr>
                     </thead>
 
                     <tbody>
+                      <template v-for="item of items">
+                        <tr>
+                          <td>{item.name}</td>
+                          <td>{item.brand}</td>
+                          <td>{item.unitOfMeasure}</td>
+                          <td>{item.quantity}</td>
+                          <td>₱ {formatCurrency(item.costPrice)}</td>
+                          <td>{item.dateReceived}</td>
+                          <td v-if="item.quantity > item.quantityThreshold">
+                            {item.quantity}
+                          </td>
+                          <td v-else class="text-danger font-weight-bold">
+                            {item.quantity}
+                          </td>
+                          <td v-if="item.expirationDate.length > 0">
+                            {item.expirationDate}
+                          </td>
+                          <td v-else>N/A</td>
+                          <td>
+                            <div>
+                              {{if hasPermission "Inventory.Edit"
+                              .currentUser.Permissions}}
+                              <button
+                                class="btn btn-outline-primary"
+                                data-toggle="tooltip"
+                                data-html="true"
+                                data-placement="top"
+                                title="Edit"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              {{end}} {{if hasPermission "Inventory.Delete"
+                              .currentUser.Permissions}}
+                              <button
+                                class="btn btn-outline-danger ml-1"
+                                data-toggle="tooltip"
+                                data-html="true"
+                                data-placement="top"
+                                title="Delete"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                              {{end}}
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
                       <!-- <template v-for="equipment of equipments">
                         <tr>
                           <td>{equipment.name}</td>
