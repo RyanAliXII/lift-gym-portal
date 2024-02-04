@@ -59,6 +59,7 @@
                   >
                     <thead>
                       <tr>
+                        <th></th>
                         <th>Item</th>
                         <th>Make/Model</th>
                         <th>Quantity</th>
@@ -73,6 +74,16 @@
                     <tbody>
                       <template v-for="equipment of equipments">
                         <tr>
+                          <td>
+                            <div v-if="equipment.image.length > 0">
+                              <img
+                                :src="'{{.publicURL}}/' + equipment.image"
+                                alt="item-image"
+                                class="img-thumbnail"
+                                style="max-width: 100px; max-height: 100px"
+                              />
+                            </div>
+                          </td>
                           <td>{equipment.name}</td>
                           <td>{equipment.model}</td>
 

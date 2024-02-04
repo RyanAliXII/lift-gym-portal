@@ -112,11 +112,12 @@ createApp({
       }
       return formData;
     };
-    const handleImage = (event) => {
-      const img = event.target.files[0];
-      if (!img) return;
-      image.value = img;
-    };
+    // const handleImage = (event) => {
+    //   const img = event.target.files[0];
+
+    //   if (!img) return;
+    //   image.value = img;
+    // };
     const formatCurrency = (money) => {
       if (!money) return 0;
       return money.toLocaleString(undefined, {

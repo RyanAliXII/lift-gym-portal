@@ -7,6 +7,7 @@ createApp({
   setup() {
     const equipments = ref([]);
     const stat = ref({ totalCost: 0 });
+    const isLoading = ref(false);
     const {
       values,
       errors,
@@ -23,6 +24,8 @@ createApp({
         condition: 100,
         quantityThreshold: 0,
         conditionThreshold: 0,
+        image: "",
+        imageFile: null,
         dateReceived: format(new Date(), "yyyy-MM-dd"),
       },
       validationSchema: object({}),
@@ -40,18 +43,27 @@ createApp({
     const conditionThreshold = defineInputBinds("conditionThreshold", {
       validateOnChange: true,
     });
+
     const dateReceived = defineInputBinds("dateReceived", {
+      validateOnChange: true,
+    });
+    const handleImageSelect = (event) => {
+      const imageFile = event.target.files?.[0];
+      setValues({ imageFile });
+    };
+    const image = defineInputBinds("imageFile", {
       validateOnChange: true,
     });
     const onSubmitNew = async () => {
       try {
+        isLoading.value = true;
+        const formData = toFormData();
         const response = await fetch("/app/inventory", {
           method: "POST",
           headers: new Headers({
-            "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
           }),
-          body: JSON.stringify(values),
+          body: formData,
         });
         const { data } = await response.json();
         if (response.status === 400) {
@@ -72,9 +84,18 @@ createApp({
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        isLoading.value = false;
       }
     };
+    const toFormData = () => {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(values)) {
+        formData.append(key, value);
+      }
 
+      return formData;
+    };
     const fetchEquipments = async () => {
       try {
         const response = await fetch("/app/inventory", {
@@ -108,12 +129,12 @@ createApp({
     });
     const onSubmitUpdate = async () => {
       try {
+        const formData = toFormData();
         const url = `/app/inventory/${values?.id}`;
         const response = await fetch(url, {
-          body: JSON.stringify(values),
+          body: formData,
           method: "PUT",
           headers: new Headers({
-            "Content-Type": "application/json",
             "X-CSRF-Token": window.csrf,
           }),
         });
@@ -166,6 +187,7 @@ createApp({
         deleteEquipment(id);
       }
     };
+
     const formatCurrency = (money) => {
       if (!money) return 0;
       return money.toLocaleString(undefined, {
@@ -181,6 +203,7 @@ createApp({
       dateReceived,
       errors,
       equipments,
+      handleImageSelect,
       onSubmitNew,
       onSubmitUpdate,
       initDelete,
@@ -190,6 +213,9 @@ createApp({
       quantityThreshold,
       condition,
       formatCurrency,
+      isLoading,
+      values,
+      image,
     };
   },
   compilerOptions: {

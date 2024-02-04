@@ -157,6 +157,32 @@
               {errors?.dateReceived}
             </div>
           </div>
+          <div class="form-group">
+            <label for="dateReceived" class="col-form-label">Image</label>
+            <div class="d-block" v-if="values.image.length > 0">
+              <img
+                :src="'{{.publicURL}}/' + values.image"
+                alt="item-image"
+                class="img-thumbnail"
+                style="max-width: 200px; max-height: 200px"
+              />
+            </div>
+            <input
+              class="d-block mt-2"
+              type="file"
+              @change="handleImageSelect"
+              name="image"
+              :class="{'is-invalid': errors?.imageFile}"
+            />
+
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.imageFile}"
+            >
+              {errors?.imageFile}
+            </div>
+          </div>
+
           <button type="submit" class="btn btn-primary">Save</button>
         </form>
       </div>

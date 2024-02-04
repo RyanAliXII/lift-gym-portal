@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"lift-fitness-gym/app/model"
+	"lift-fitness-gym/app/pkg/objstore"
 	"lift-fitness-gym/app/repository"
 	"net/http"
 	"strconv"
@@ -33,12 +34,14 @@ func (h *InventoryHandler) RenderInventoryPage(c echo.Context) error {
 		return c.JSON(http.StatusOK, JSONResponse{Status: http.StatusOK, Data:Data{
 			"equipments": equipments,
 			"stat": stat,
+			
 		}})
 	}
 	return c.Render(http.StatusOK, "admin/inventory/main", Data{
 		"title": "Equipment Inventory",
 		"module": "Equipment Inventory",
 		"csrf": c.Get("csrf"),
+		"publicURL": objstore.PublicURL,
 	})
 }
 func (h *InventoryHandler) NewEquipment(c echo.Context) error {
@@ -51,6 +54,12 @@ func (h *InventoryHandler) NewEquipment(c echo.Context) error {
 			Status: http.StatusBadRequest,
 			Message: "Unknown error occured.",
 		})
+	}
+	equipment.ImageFile, err = c.FormFile("imageFile")
+	if err != nil {
+		if err.Error() != "http: no such file"{
+			logger.Error(err.Error(), zap.String("error", "GetFileErr"))
+		}
 	}
 	err, fields := equipment.Validate() 
 	if err != nil {
@@ -96,7 +105,12 @@ func (h *InventoryHandler) UpdateEquipment(c echo.Context) error {
 			Message: "Unknown error occured.",
 		})
 	}
-
+	equipment.ImageFile, err = c.FormFile("imageFile")
+	if err != nil {
+		if err.Error() != "http: no such file"{
+			logger.Error(err.Error(), zap.String("error", "GetFileErr"))
+		}
+	}
 	err, fields := equipment.Validate() 
 	if err != nil {
 		logger.Error(err.Error(), zap.String("error", "validationErr"))

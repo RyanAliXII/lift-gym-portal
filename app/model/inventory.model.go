@@ -9,15 +9,17 @@ import (
 )
 
 type Equipment struct {
-	Id 			 int `json:"id" db:"id"`
-	Name         string  `json:"name" db:"name"`
-	ModelOrMake  string  `json:"model" db:"model"`
-	Quantity     int     `json:"quantity" db:"quantity"`
-	CostPrice    float64 `json:"costPrice" db:"cost_price"`
-	Condition 		int `json:"condition" db:"condition"`	
-	QuantityThreshold int `json:"quantityThreshold" db:"quantity_threshold"`
-	ConditionThreshold int `json:"conditionThreshold" db:"condition_threshold"`
-	DateReceived string  `json:"dateReceived" db:"date_received"`
+	Id 			 int `json:"id" form:"id" db:"id"`
+	Name         string  `json:"name" form:"name" db:"name"`
+	ModelOrMake  string  `json:"model" form:"model" db:"model"`
+	Quantity     int     `json:"quantity" form:"quantity" db:"quantity"`
+	CostPrice    float64 `json:"costPrice" form:"costPrice" db:"cost_price"`
+	Condition 		int `json:"condition" form:"condition" db:"condition"`	
+	QuantityThreshold int `json:"quantityThreshold" form:"quantityThreshold" db:"quantity_threshold"`
+	ConditionThreshold int `json:"conditionThreshold" form:"conditionThreshold" db:"condition_threshold"`
+	DateReceived string  `json:"dateReceived" form:"dateReceived" db:"date_received"`
+	ImageFile *multipart.FileHeader `json:"imageFile"`
+	Image string `json:"image" form:"image" db:"image"`
 	Model
 }
 
@@ -34,6 +36,16 @@ func (m Equipment) Validate()(error, map[string]string) {
 	validation.Field(&m.Condition, validation.Required.Error("Condition is required."), validation.Min(1).Error("Condition must not be less than 1"), validation.Max(100).Error("Condition must no exceed 100")),
 	validation.Field(&m.QuantityThreshold, validation.Min(0).Error("Quantity threshold must not be less than 0")),
 	validation.Field(&m.ConditionThreshold, validation.Min(0).Error("Condition threshold must not be less than 0")),
+	validation.Field(&m.ImageFile, validation.By(func(value interface{}) error {
+		if(m.ImageFile == nil) {
+			return nil
+		}
+		contentType := m.ImageFile.Header["Content-Type"][0]
+		if(contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/webp"){
+			return fmt.Errorf("image should be .png, .jpg or .webp")
+		}
+		return nil
+	})),
 	validation.Field(&m.DateReceived, validation.Required.Error("Date received is required."), validation.By(func(value interface{}) error {
 		format := "2006-01-02"
 		strDate ,_ := value.(string)
@@ -69,6 +81,16 @@ func (m * GeneralItem) Validate()(map[string]string, error) {
 	validation.Field(&m.CostPrice, validation.Required.Error("Cost price is required."), validation.Min(float64(1)).Error("Cost price should be atleast 1")),
 	validation.Field(&m.UnitOfMeasure, validation.Required.Error("Unit of measure is required."), validation.In("pack", "pieces", "pounds", "kilograms", "grams", "litres")),
 	validation.Field(&m.QuantityThreshold,validation.Min(0).Error("Quantity threshold must not be less than 0")),
+	validation.Field(&m.ImageFile, validation.By(func(value interface{}) error {
+		if(m.ImageFile == nil) {
+			return nil
+		}
+		contentType := m.ImageFile.Header["Content-Type"][0]
+		if(contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/webp"){
+			return fmt.Errorf("image should be .png, .jpg or .webp")
+		}
+		return nil
+	})),
 	validation.Field(&m.ExpirationDate,  validation.By(func(value interface{}) error {
 		if(len(m.ExpirationDate) == 0){
 			return nil
@@ -78,16 +100,6 @@ func (m * GeneralItem) Validate()(map[string]string, error) {
 		_, err := time.Parse(format, strDate)
 		if err != nil {
 			return fmt.Errorf("Invalid expiration date")
-		}
-		return nil
-	})),
-	validation.Field(&m.ImageFile, validation.By(func(value interface{}) error {
-		if(m.ImageFile == nil) {
-			return nil
-		}
-		contentType := m.ImageFile.Header["Content-Type"][0]
-		if(contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/webp"){
-			return fmt.Errorf("image should be .png, .jpg or .webp")
 		}
 		return nil
 	})),

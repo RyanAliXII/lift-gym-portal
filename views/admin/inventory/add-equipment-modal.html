@@ -156,7 +156,24 @@
               {errors?.dateReceived}
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <div class="form-group">
+            <label for="imageFile" class="col-form-label">Image</label>
+            <input
+              type="file"
+              name="imageFile"
+              @change="handleImageSelect"
+              class="d-block"
+            />
+            <div
+              class="invalid-feedback"
+              :class="{'d-block': errors?.imageFile}"
+            >
+              {errors?.imageFile}
+            </div>
+          </div>
+          <button :disabled="isLoading" type="submit" class="btn btn-primary">
+            Save
+          </button>
         </form>
       </div>
     </div>
