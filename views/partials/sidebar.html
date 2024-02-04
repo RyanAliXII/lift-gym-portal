@@ -232,11 +232,30 @@
     </div>
   </li>
   {{if hasPermission "Inventory.Read" .currentUser.Permissions}}
+
   <li class="nav-item">
-    <a class="nav-link" href="/app/inventory">
-      <i class="fas fa-box"></i>
-      <span>Inventory</span></a
+    <a
+      class="nav-link collapsed"
+      href="#"
+      data-toggle="collapse"
+      data-target="#collapseInventory"
+      aria-expanded="false"
+      aria-controls="collapseInventory"
     >
+      <i class="fas fa-box"></i>
+      <span>Inventory</span>
+    </a>
+    <div
+      id="collapseInventory"
+      class="collapse"
+      aria-labelledby="collapseInventory"
+      data-parent="#accordionSidebar"
+    >
+      <div class="bg-white py-2 collapse-inner rounded">
+        <a class="collapse-item" href="/app/general/inventory">General</a>
+        <a class="collapse-item" href="/app/inventory">Equipments</a>
+      </div>
+    </div>
   </li>
   {{end}}
 
