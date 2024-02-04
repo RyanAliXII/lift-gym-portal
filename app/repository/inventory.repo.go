@@ -69,7 +69,7 @@ func (repo * InventoryRepository) UpdateEquipment(equipment model.Equipment) err
 	}
 
 	_, err := repo.db.Exec("UPDATE equipment SET name = ?, model = ?, quantity = ?, cost_price = ?, date_received = ?, `condition` = ?, quantity_threshold = ?, condition_threshold = ?, image = ? where id = ?", equipment.Name, 
-	equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived,equipment.Condition, equipment.QuantityThreshold, equipment.ConditionThreshold,equipment.Image, equipment.Id)
+	equipment.ModelOrMake, equipment.Quantity, equipment.CostPrice, equipment.DateReceived,equipment.Condition, equipment.QuantityThreshold, equipment.ConditionThreshold, equipment.Image, equipment.Id)
   return err
 }
 func (repo * InventoryRepository) DeleteEquipment(id int) error {
